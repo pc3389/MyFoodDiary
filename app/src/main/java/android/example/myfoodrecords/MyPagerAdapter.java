@@ -1,5 +1,9 @@
 package android.example.myfoodrecords;
 
+import android.example.myfoodrecords.fragments.CalanderFragment;
+import android.example.myfoodrecords.fragments.FavoriteFragment;
+import android.example.myfoodrecords.fragments.SummaryFragment;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">My Food Records</string>
+    <string name="add_item">Add Food Item</string>
+    <string name="setting">Settings</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
 </resources>
