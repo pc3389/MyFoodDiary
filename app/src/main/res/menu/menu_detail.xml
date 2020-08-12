@@ -5,6 +5,11 @@
     tools:context=".activities.DetailActivity">
 
     <item
+        android:id="@+id/favorite_btn"
+        app:showAsAction="ifRoom"
+        android:title=""
+        android:icon="@drawable/star_grey"/>
+    <item
         android:id="@+id/edit_menu"
         android:title="@string/edit"
         app:showAsAction="never" />

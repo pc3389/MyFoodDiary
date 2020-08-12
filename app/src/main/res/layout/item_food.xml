@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/food_pic_iv"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/image_width_list"
+        android:layout_height="@dimen/image_height_list"
         android:src="@drawable/ic_launcher_background"
         android:scaleType="center" />
 

@@ -28,7 +28,6 @@ public class SummaryFragment extends Fragment {
     private RealmChangeListener realmChangeListener;
 
     private View rootView;
-    private List<Food> foodList = new ArrayList<>();
 
     private RecyclerView recyclerView;
 
@@ -37,8 +36,7 @@ public class SummaryFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        realm = Realm.getDefaultInstance();
+        setupRealm();
     }
 
     @Nullable
@@ -52,17 +50,15 @@ public class SummaryFragment extends Fragment {
         return rootView;
     }
 
-    private void setupUi() {
-
-
-
+    private void setupRealm() {
+        realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
         helper.selectFromDb();
+    }
 
+    private void setupUi() {
         recyclerView = rootView.findViewById(R.id.summary_rc);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-
         SummaryAdapter summaryAdapter = new SummaryAdapter(helper.retireve(), getActivity());
         recyclerView.setAdapter(summaryAdapter);
         refresh();
@@ -78,6 +74,5 @@ public class SummaryFragment extends Fragment {
         };
         realm.addChangeListener(realmChangeListener);
     }
-
 
 }

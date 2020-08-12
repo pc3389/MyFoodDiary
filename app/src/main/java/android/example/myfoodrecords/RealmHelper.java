@@ -12,8 +12,8 @@ import io.realm.RealmResults;
 
 public class RealmHelper {
 
-    Realm realm;
-    RealmResults<Food> foodRealmResults;
+    private Realm realm;
+    private RealmResults<Food> foodRealmResults;
 
     public RealmHelper(Realm realm) {
         this.realm = realm;
@@ -21,6 +21,10 @@ public class RealmHelper {
 
     public void selectFromDb() {
         foodRealmResults = realm.where(Food.class).findAll();
+    }
+
+    public void selectFavoriteFromDb() {
+        foodRealmResults = realm.where(Food.class).equalTo("isFavorite", true).findAll();
     }
 
     //Insert & Update

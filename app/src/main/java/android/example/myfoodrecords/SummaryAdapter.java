@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.example.myfoodrecords.activities.DetailActivity;
 import android.example.myfoodrecords.model.Food;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,10 +54,16 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
     @Override
     public void onBindViewHolder(@NonNull SummaryViewHolder holder, int position) {
         final Food food = foodList.get(position);
+
         holder.foodNameTextView.setText(food.getName());
         holder.foodTypeTextView.setText(food.getFoodType());
         holder.foodDateTextView.setText(food.getDate());
         holder.foodRatingTextView.setText(String.valueOf(food.getRating()));
+        if(food.getPhotoPath() != null) {
+            new PhotoUtil(food.getPhotoPath(), true);
+            holder.foodImageView.setImageBitmap(PhotoUtil.setPic());
+        }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -72,6 +79,8 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
     public int getItemCount() {
         return foodList.size();
     }
+
+
 
 
 }

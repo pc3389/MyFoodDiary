@@ -14,6 +14,7 @@ public class MyApplication extends Application {
         
         RealmConfiguration config =
                 new RealmConfiguration.Builder()
+                        .name("myfoodrealm.realm")
                         .build();
 
 

@@ -13,15 +13,19 @@ public class Food extends RealmObject {
     private String date;
     private String foodType;
     private String location;
+    private String photoPath;
+    private Boolean isFavorite = false;
 
     public Food(){}
 
-    public Food(String name, String rating, String date, String foodType, String location) {
+    public Food(String name, String rating, String date, String foodType, String location, String photoPath, Boolean isFavorite) {
         this.name = name;
         this.rating = rating;
         this.date = date;
         this.foodType = foodType;
         this.location = location;
+        this.photoPath = photoPath;
+        this.isFavorite = isFavorite;
     }
 
     public int getId() {
@@ -71,4 +75,21 @@ public class Food extends RealmObject {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+    }
+
+    public Boolean getFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        isFavorite = favorite;
+    }
+
 }
