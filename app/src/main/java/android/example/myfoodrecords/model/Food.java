@@ -1,24 +1,26 @@
 package android.example.myfoodrecords.model;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class Food extends RealmObject {
 
     @PrimaryKey
-    private int id;
+    public static int id;
 
     private String name;
     private String rating;
     private String date;
     private String foodType;
-    private String location;
+    private int location;
     private String photoPath;
     private Boolean isFavorite = false;
+    private PlaceModel placeModel;
 
     public Food(){}
 
-    public Food(String name, String rating, String date, String foodType, String location, String photoPath, Boolean isFavorite) {
+    public Food(String name, String rating, String date, String foodType, int location, String photoPath, Boolean isFavorite) {
         this.name = name;
         this.rating = rating;
         this.date = date;
@@ -68,11 +70,11 @@ public class Food extends RealmObject {
         this.foodType = foodType;
     }
 
-    public String getLocation() {
+    public int getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(int location) {
         this.location = location;
     }
 
@@ -92,4 +94,11 @@ public class Food extends RealmObject {
         isFavorite = favorite;
     }
 
+    public PlaceModel getPlaceModel() {
+        return placeModel;
+    }
+
+    public void setPlaceModel(PlaceModel placeModel) {
+        this.placeModel = placeModel;
+    }
 }

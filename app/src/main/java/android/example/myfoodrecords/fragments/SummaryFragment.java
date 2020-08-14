@@ -3,7 +3,6 @@ package android.example.myfoodrecords.fragments;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.RealmHelper;
 import android.example.myfoodrecords.SummaryAdapter;
-import android.example.myfoodrecords.model.Food;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -53,13 +49,13 @@ public class SummaryFragment extends Fragment {
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectFromDb();
+        helper.selectFoodFromDb();
     }
 
     private void setupUi() {
         recyclerView = rootView.findViewById(R.id.summary_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        SummaryAdapter summaryAdapter = new SummaryAdapter(helper.retireve(), getActivity());
+        SummaryAdapter summaryAdapter = new SummaryAdapter(helper.retireveFoodAll(), getActivity());
         recyclerView.setAdapter(summaryAdapter);
         refresh();
     }
@@ -68,7 +64,7 @@ public class SummaryFragment extends Fragment {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                SummaryAdapter adapter = new SummaryAdapter(helper.retireve(), getActivity());
+                SummaryAdapter adapter = new SummaryAdapter(helper.retireveFoodAll(), getActivity());
                 recyclerView.setAdapter(adapter);
             }
         };

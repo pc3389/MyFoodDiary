@@ -2,6 +2,7 @@ package android.example.myfoodrecords;
 
 import android.example.myfoodrecords.activities.MainActivity;
 import android.example.myfoodrecords.model.Food;
+import android.example.myfoodrecords.model.PlaceModel;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -14,13 +15,18 @@ public class RealmHelper {
 
     private Realm realm;
     private RealmResults<Food> foodRealmResults;
+    private RealmResults<PlaceModel> placeRealmResults;
 
     public RealmHelper(Realm realm) {
         this.realm = realm;
     }
 
-    public void selectFromDb() {
+    public void selectFoodFromDb() {
         foodRealmResults = realm.where(Food.class).findAll();
+    }
+
+    public void selectPlaceFromDb() {
+        placeRealmResults = realm.where(PlaceModel.class).findAll();
     }
 
     public void selectFavoriteFromDb() {
@@ -28,7 +34,7 @@ public class RealmHelper {
     }
 
     //Insert & Update
-    public void insert(final Food food) {
+    public void insertFood(final Food food) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -46,11 +52,47 @@ public class RealmHelper {
         });
     }
 
+    public void insertPlace(final PlaceModel place) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                int newKey = 0;
+                Number maxId = realm.where(Food.class).max("id");
+                if(place.getId() < 1) {
+                    if(maxId == null) {
+                        newKey = 1;
+                    } else {newKey = maxId.intValue()+1;}
+                } else newKey = place.getId();
+                place.setId(newKey);
+
+                realm.insertOrUpdate(place);
+            }
+        });
+    }
+
     //Read
-    public List<Food> retireve() {
+    public List<Food> retireveFoodAll() {
         List<Food> foodList = new ArrayList<>(foodRealmResults);
         return foodList;
     }
+
+    public List<PlaceModel> retirevePlaceAll() {
+        List<PlaceModel> placeList = new ArrayList<>(placeRealmResults);
+        return placeList;
+    }
+
+    public Food retrieveFoodWithId(int foodId) {
+        Food food = new Food();
+        food = realm.where(Food.class).equalTo("id", foodId).findFirst();
+        return food;
+    }
+
+    public PlaceModel retrievePlaceWithId(int placeId) {
+        PlaceModel placeModel = new PlaceModel();
+        placeModel = realm.where(PlaceModel.class).equalTo("id", placeId).findFirst();
+        return placeModel;
+    }
+
 
     //DeleteAll
     public void deleteAll() {

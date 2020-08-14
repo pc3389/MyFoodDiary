@@ -12,14 +12,17 @@ import android.example.myfoodrecords.RealmHelper;
 import android.example.myfoodrecords.model.Food;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.File;
@@ -39,10 +42,15 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     private EditText mTypeEditText;
     private EditText mDateEditText;
     private EditText mRatingEditText;
-    private EditText mLocationEditText;
+    private Spinner mLocationSpinner;
     private ImageView mPhotoImageView;
 
     static final int REQUEST_TAKE_PHOTO = 1;
+    public static final int REQUEST_MAP = 2;
+    public static final int RESULT_MAP = 3;
+    public static final int REQUEST_HOME = 4;
+    public static final int RESULT_HOME = 5;
+
     private String currentPhotoPath;
 
     int id = 0;
@@ -60,7 +68,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectFromDb();
+        helper.selectFoodFromDb();
 
         id = getIntent().getIntExtra("id", 0);
 
@@ -69,13 +77,15 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
                 .findFirst();
 
     }
+
     private void setupUi() {
 
         mNameEditText = findViewById(R.id.editor_food_name_edit);
         mTypeEditText = findViewById(R.id.editor_food_type_edit);
         mDateEditText = findViewById(R.id.editor_date_edit);
         mRatingEditText = findViewById(R.id.editor_rating_edit);
-        mLocationEditText = findViewById(R.id.editor_location_edit);
+        mLocationSpinner = findViewById(R.id.editor_location_spinner);
+        setupSpinner();
         mPhotoImageView = findViewById(R.id.editor_food_iv);
 
         mPhotoImageView.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +100,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             mTypeEditText.setText(food.getFoodType());
             mDateEditText.setText(food.getDate());
             mRatingEditText.setText(food.getRating());
-            mLocationEditText.setText(food.getLocation());
+            mLocationSpinner.setSelection(food.getLocation());
             currentPhotoPath = food.getPhotoPath();
             loadPhoto();
         }
@@ -101,8 +111,8 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             @Override
             public void onClick(View v) {
                 nullCheck();
-                if(!mNameEditText.getText().toString().equals("")) {
-                    saveData();
+                if (!mNameEditText.getText().toString().equals("")) {
+                    saveFoodData();
                     finish();
                 }
             }
@@ -116,18 +126,18 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     }
 
     // Saves the data model to Realm database
-    private void saveData() {
+    private void saveFoodData() {
         Food food = new Food();
         food.setId(id);
         food.setName(mNameEditText.getText().toString());
         food.setFoodType(mTypeEditText.getText().toString());
         food.setDate(mDateEditText.getText().toString());
         food.setRating(mRatingEditText.getText().toString());
-        food.setLocation(mLocationEditText.getText().toString());
+        food.setLocation(mLocationSpinner.getSelectedItemPosition());
         food.setPhotoPath(currentPhotoPath);
 
         RealmHelper realmHelper = new RealmHelper(realm);
-        realmHelper.insert(food);
+        realmHelper.insertFood(food);
     }
 
     private void dispatchTakePictureIntent() {
@@ -157,6 +167,12 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             loadPhoto();
+        } else if (requestCode == REQUEST_MAP && resultCode == RESULT_MAP) {
+            //TODO Result from MAP
+
+        } else if (requestCode == REQUEST_HOME && resultCode == RESULT_HOME) {
+            //TODO Result from Home
+
         }
     }
 
@@ -166,7 +182,6 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         photoAsync.delegate = this;
         photoAsync.execute();
     }
-
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -189,21 +204,42 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         mPhotoImageView.setImageBitmap(bitmap);
     }
 
-/*
-    public class getPhotoAsync extends AsyncTask<Void, Void, Bitmap> {
+    private void setupSpinner() {
 
-        @Override
-        protected Bitmap doInBackground(Void... voids) {
-            PhotoUtil photoUtil = new PhotoUtil(currentPhotoPath, false);
-            return photoUtil.setPic();
-        }
+        ArrayAdapter locationSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.array_location_options, android.R.layout.simple_spinner_item);
+        locationSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        mLocationSpinner.setAdapter(locationSpinnerAdapter);
+        mLocationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selection = (String) parent.getItemAtPosition(position);
+                if (!TextUtils.isEmpty(selection)) {
+                    if (selection.equals(getString(R.string.spinner_not_selected))) {
 
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            mPhotoImageView.setImageBitmap(bitmap);
-        }
+                    } else if (selection.equals(getString(R.string.location_home))) {
+                        //TODO Home data to place realm
+                    } else if (selection.equals(getString(R.string.location_select_from_map))) {
+                        Intent intent = new Intent(EditorActivity.this, MapsActivity.class);
+                        intent.putExtra("requestCode", REQUEST_MAP);
+                        intent.putExtra("foodId", id);
+                        //TODO set placeprimarykey if exists
+                        startActivityForResult(intent, REQUEST_MAP);
+                    } else {
+                        Intent intent = new Intent(EditorActivity.this, MapsActivity.class);
+                        intent.putExtra("requestCode", REQUEST_HOME);
+                        intent.putExtra("foodId", id);
+                        //TODO set placeprimarykey if exists
+                        startActivityForResult(intent, REQUEST_HOME);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
- */
 
 }

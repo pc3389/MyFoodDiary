@@ -5,4 +5,11 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="save">Save</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="show_in_map_btn">Show in Map</string>
+    <string name="location_home">Home</string>
+    <string name="location_select_from_map">Select from Map</string>
+    <string name="location_set_current_address">Set Current Home Address</string>
+    <string name="spinner_not_selected">No Location</string>
+
 </resources>

@@ -2,20 +2,21 @@ package android.example.myfoodrecords.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.example.myfoodrecords.PhotoAsyncResponse;
 import android.example.myfoodrecords.PhotoUtil;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.RealmHelper;
 import android.example.myfoodrecords.model.Food;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,8 +35,9 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     private TextView mRatingTextView;
     private TextView mDateTextView;
     private TextView mTypeTextView;
-    private TextView mLocationTextView;
+//    private TextView mLocationTextView;
     private ImageView mPhotoImageView;
+    private Button showInMapButton;
 
     private boolean isFavorite;
 
@@ -51,7 +53,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectFromDb();
+        helper.selectFoodFromDb();
 
         id = getIntent().getIntExtra("id", 0);
 
@@ -69,17 +71,31 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         mRatingTextView = findViewById(R.id.detail_rating_tv);
         mDateTextView = findViewById(R.id.detail_date_tv);
         mTypeTextView = findViewById(R.id.detail_food_type_tv);
-        mLocationTextView = findViewById(R.id.detail_location_tv);
+//        mLocationTextView = findViewById(R.id.detail_location_tv);
         mPhotoImageView = findViewById(R.id.detail_food_iv);
+        showInMapButton = findViewById(R.id.show_map_button);
+        showMapOnClick();
 
         mNameTextView.setText(food.getName());
         mRatingTextView.setText(food.getRating());
         mDateTextView.setText(food.getDate());
         mTypeTextView.setText(food.getFoodType());
-        mLocationTextView.setText(food.getLocation());
+//        mLocationTextView.setText(food.getLocation());
         isFavorite = food.getFavorite();
 
         loadPhoto();
+    }
+
+    private void showMapOnClick() {
+        showInMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailActivity.this, MapsActivity.class);
+                intent.putExtra("foodId", 0);
+                intent.putExtra("requestCode", 0);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -99,22 +115,24 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
 
         if (id == R.id.favorite_btn) {
             if(!isFavorite) {
-                item.setIcon(getResources().getDrawable(R.drawable.star_yellow, getTheme()));
+                item.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.star_yellow, getTheme()));
                 isFavorite = true;
             } else {
-                item.setIcon(getResources().getDrawable(R.drawable.star_grey, getTheme()));
+                item.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.star_grey, getTheme()));
                 isFavorite = false;
             }
-            saveData();
+            saveFoodData();
 
-        }
-        if (id == android.R.id.home) {
+        } else if (id == android.R.id.home) {
             finish();
             return true;
         } else if (id == R.id.edit_menu) {
             Intent intent = new Intent(this, EditorActivity.class);
             intent.putExtra("id", food.getId());
             startActivity(intent);
+        } else if (id == R.id.delete_menu) {
+            helper.delete(food.getId());
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -133,7 +151,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         mPhotoImageView.setImageBitmap(bitmap);
     }
 
-    private void saveData() {
+    private void saveFoodData() {
         Food newfood = new Food();
         newfood.setId(food.getId());
         newfood.setName(food.getName());
@@ -143,7 +161,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         newfood.setLocation(food.getLocation());
         newfood.setPhotoPath(food.getPhotoPath());
         newfood.setFavorite(isFavorite);
-        helper.insert(newfood);
+        helper.insertFood(newfood);
     }
 
 }

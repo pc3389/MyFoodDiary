@@ -50,7 +50,7 @@ public class FavoriteFragment extends Fragment {
     private void setupUi() {
         recyclerView = rootView.findViewById(R.id.favorite_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        SummaryAdapter summaryAdapter = new SummaryAdapter(helper.retireve(), getActivity());
+        SummaryAdapter summaryAdapter = new SummaryAdapter(helper.retireveFoodAll(), getActivity());
         recyclerView.setAdapter(summaryAdapter);
         refresh();
     }
@@ -59,7 +59,7 @@ public class FavoriteFragment extends Fragment {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                SummaryAdapter adapter = new SummaryAdapter(helper.retireve(), getActivity());
+                SummaryAdapter adapter = new SummaryAdapter(helper.retireveFoodAll(), getActivity());
                 recyclerView.setAdapter(adapter);
             }
         };
