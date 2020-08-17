@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.example.myfoodrecords.MyApplication;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.RealmHelper;
 import android.example.myfoodrecords.model.Food;
@@ -39,10 +40,14 @@ import io.realm.Realm;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
-    private Realm realm;
-    private RealmHelper helper;
+    private Realm placeRealm;
+    private Realm foodRealm;
+    private RealmHelper placeHelper;
+    private RealmHelper foodHelper;
     private Food food;
+
     private PlaceModel placeModel = new PlaceModel();
+    private PlaceModel newPlaceModel = new PlaceModel();
 
     private Button saveButton;
     private boolean locationPermissionGranted;
@@ -53,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int foodId = 0;
     private int placePrimaryKey = 0;
 
-    public static final String INTENT_PUT = "placePrimaryKey";
+    public static final String PUT_PLACE_ID = "placePrimaryKey";
 
     //TODO Carmera view looks blurry. Search for solution
 
@@ -61,24 +66,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        latLng = new LatLng(43, -79);
 
         setupRealm();
         setupUI();
     }
 
     private void setupRealm() {
-        realm = Realm.getDefaultInstance();
-        helper = new RealmHelper(realm);
-        helper.selectPlaceFromDb();
+        placeRealm = Realm.getInstance(MyApplication.placeConfig);
+        placeHelper = new RealmHelper(placeRealm);
+
+        foodRealm = Realm.getDefaultInstance();
+        foodHelper = new RealmHelper(foodRealm);
     }
 
     private void setupUI() {
         saveButton = findViewById(R.id.map_save_button);
-        requestCode = getIntent().getExtras().getInt("requestCode");
-        foodId = getIntent().getExtras().getInt("foodId");
+        requestCode = getIntent().getExtras().getInt(EditorActivity.PUT_REQUEST_CODE);
+        foodId = getIntent().getExtras().getInt(EditorActivity.PUT_FOOD_ID);
         if (requestCode == 0) {
-            loadMapLocationFromRealm();
+            saveButton.setVisibility(View.GONE);
         }
+        loadMapLocationFromRealm();
 
         setupAutoComplete();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -92,13 +101,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         getLocationPermission();
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        map.addMarker(new MarkerOptions().position(sydney));
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        map.addMarker(new MarkerOptions().position(latLng));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
         updateLocationUI();
         setMapClickListener();
         setMyLocationListener();
@@ -121,24 +128,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
-            public void onPlaceSelected(@NotNull Place place) {
+            public void onPlaceSelected(@NotNull final Place place) {
                 LatLng selectedPlaceLagLng = place.getLatLng();
                 addMarkerAndMoveCamera(selectedPlaceLagLng);
-                if (place.getId() != null) {
-                    placeModel.setPlaceId(place.getId());
-                }
-                if (place.getName() != null) {
-                    placeModel.setPlaceName(place.getName());
-                }
-                if (place.getLatLng() != null) {
-                    placeModel.setLatLng(place.getLatLng().toString());
-                }
-                if (place.getAddress() != null) {
-                    placeModel.setAddress(place.getAddress());
-                }
+
+                newPlaceModel.setPlaceId(place.getId());
+                newPlaceModel.setPlaceName(place.getName());
+                newPlaceModel.setLat(place.getLatLng().latitude);
+                newPlaceModel.setLng(place.getLatLng().longitude);
+                newPlaceModel.setAddress(place.getAddress());
                 if (place.getRating() != null) {
-                    placeModel.setPlaceRating(place.getRating().floatValue());
+                    newPlaceModel.setPlaceRating(place.getRating().floatValue());
                 }
+
+
             }
 
             @Override
@@ -151,12 +154,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //TODO Load Map from saved location called from DetailActivity
     private void loadMapLocationFromRealm() {
-        saveButton.setVisibility(View.GONE);
-        placeModel = realm.where(PlaceModel.class)
+        food = foodRealm.where(Food.class)
                 .equalTo("id", foodId)
                 .findFirst();
-        if(placeModel != null) {
-            placePrimaryKey = placeModel.getId();
+        if (food != null) {
+            placeModel = food.getPlaceModel();
+            if (placeModel != null) {
+                latLng = new LatLng(placeModel.getLat(), placeModel.getLng());
+            }
         }
     }
 
@@ -198,7 +203,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map.clear();
         map.addMarker(new MarkerOptions().position(latLng));
         MapsActivity.latLng = latLng;
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
 
@@ -209,9 +214,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             switch (requestCode) {
                 case EditorActivity.REQUEST_MAP:
                     //TODO save data to Place Realm
-                    placeModel.setPrivate(false);
+                    newPlaceModel.setPrivate(false);
                     savePlace();
-                    intent.putExtra(INTENT_PUT, placeModel.getId());
+                    intent.putExtra(PUT_PLACE_ID, newPlaceModel.getId());
                     setResult(EditorActivity.RESULT_MAP, intent);
                     break;
 
@@ -219,10 +224,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     //TODO save data to Place Realm
                     placeModel.setPrivate(true);
                     savePlace();
-                    intent.putExtra(INTENT_PUT, placeModel.getId());
+                    intent.putExtra(PUT_PLACE_ID, newPlaceModel.getId());
                     setResult(EditorActivity.RESULT_HOME, intent);
                     break;
             }
+            finish();
         }
     }
 
@@ -272,9 +278,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //TODO SavePlace
     private void savePlace() {
-        helper.insertPlace(placeModel);
-        if(foodId != 0) {
-            helper.insertFood(food);
+        if (newPlaceModel != null) {
+            placeHelper.insertPlace(newPlaceModel);
         }
     }
 

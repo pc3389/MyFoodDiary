@@ -1,8 +1,5 @@
 package android.example.myfoodrecords.model;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -13,7 +10,8 @@ public class PlaceModel extends RealmObject {
 
     private int foodId;
     private String placeId;
-    private String latLng;
+    private double lat;
+    private double lng;
     private String placeName;
     private String address;
     private float placeRating;
@@ -46,12 +44,20 @@ public class PlaceModel extends RealmObject {
         this.placeId = placeId;
     }
 
-    public String getLatLng() {
-        return latLng;
+    public double getLat() {
+        return lat;
     }
 
-    public void setLatLng(String latLng) {
-        this.latLng = latLng;
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
     }
 
     public String getPlaceName() {

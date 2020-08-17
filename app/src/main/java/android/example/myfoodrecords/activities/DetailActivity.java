@@ -38,6 +38,8 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
 //    private TextView mLocationTextView;
     private ImageView mPhotoImageView;
     private Button showInMapButton;
+    private TextView mPlaceNameTextView;
+    private TextView mPlaceAddressTextView;
 
     private boolean isFavorite;
 
@@ -74,6 +76,8 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
 //        mLocationTextView = findViewById(R.id.detail_location_tv);
         mPhotoImageView = findViewById(R.id.detail_food_iv);
         showInMapButton = findViewById(R.id.show_map_button);
+        mPlaceNameTextView = findViewById(R.id.detail_place_name_tv);
+        mPlaceAddressTextView = findViewById(R.id.detail_place_address_tv);
         showMapOnClick();
 
         mNameTextView.setText(food.getName());
@@ -82,6 +86,10 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         mTypeTextView.setText(food.getFoodType());
 //        mLocationTextView.setText(food.getLocation());
         isFavorite = food.getFavorite();
+        if(food.getPlaceModel() != null) {
+            mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
+            mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
+        }
 
         loadPhoto();
     }
@@ -91,7 +99,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(DetailActivity.this, MapsActivity.class);
-                intent.putExtra("foodId", 0);
+                intent.putExtra("foodId", food.getId());
                 intent.putExtra("requestCode", 0);
                 startActivity(intent);
             }
@@ -158,7 +166,6 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         newfood.setFoodType(food.getFoodType());
         newfood.setDate(food.getDate());
         newfood.setRating(food.getRating());
-        newfood.setLocation(food.getLocation());
         newfood.setPhotoPath(food.getPhotoPath());
         newfood.setFavorite(isFavorite);
         helper.insertFood(newfood);

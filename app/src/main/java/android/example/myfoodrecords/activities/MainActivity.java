@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.example.myfoodrecords.MyPagerAdapter;
 import android.example.myfoodrecords.R;
+import android.example.myfoodrecords.RealmHelper;
 import android.example.myfoodrecords.activities.EditorActivity;
+import android.example.myfoodrecords.model.Food;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,12 +18,16 @@ import android.view.MenuItem;
 
 import com.google.android.material.tabs.TabLayout;
 
+import io.realm.Realm;
+
 public class MainActivity extends AppCompatActivity {
 
     private MyPagerAdapter mFragmentAdapter;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     public static Context context;
+    private Realm realm;
+    private RealmHelper helper;
 
 
     @Override
@@ -30,7 +36,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
 
+        setupRealm();
         setupUi();
+    }
+
+    private void setupRealm() {
+        realm = Realm.getDefaultInstance();
+        helper = new RealmHelper(realm);
+        helper.selectFoodFromDb();
     }
 
     private void setupUi() {
@@ -64,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.settings_menu) {
             return true;
+        }
+
+        if(id == R.id.delete_all) {
+            helper.deleteAll();
         }
         return false;
     }

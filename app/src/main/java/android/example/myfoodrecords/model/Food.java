@@ -7,28 +7,17 @@ import io.realm.annotations.PrimaryKey;
 public class Food extends RealmObject {
 
     @PrimaryKey
-    public static int id;
+    private int id;
 
     private String name;
     private String rating;
     private String date;
     private String foodType;
-    private int location;
     private String photoPath;
     private Boolean isFavorite = false;
     private PlaceModel placeModel;
 
     public Food(){}
-
-    public Food(String name, String rating, String date, String foodType, int location, String photoPath, Boolean isFavorite) {
-        this.name = name;
-        this.rating = rating;
-        this.date = date;
-        this.foodType = foodType;
-        this.location = location;
-        this.photoPath = photoPath;
-        this.isFavorite = isFavorite;
-    }
 
     public int getId() {
         return id;
@@ -68,14 +57,6 @@ public class Food extends RealmObject {
 
     public void setFoodType(String foodType) {
         this.foodType = foodType;
-    }
-
-    public int getLocation() {
-        return location;
-    }
-
-    public void setLocation(int location) {
-        this.location = location;
     }
 
     public String getPhotoPath() {

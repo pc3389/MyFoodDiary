@@ -7,16 +7,25 @@ import io.realm.RealmConfiguration;
 
 public class MyApplication extends Application {
 
+    public static RealmConfiguration placeConfig;
+    public static RealmConfiguration foodConfig;
+
     @Override
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
-        
-        RealmConfiguration config =
+
+        foodConfig =
                 new RealmConfiguration.Builder()
-                        .name("myfoodrealm4.realm")
+                        .name("myfoodrealm12.realm")
                         .build();
 
-        Realm.setDefaultConfiguration(config);
+        Realm.setDefaultConfiguration(foodConfig);
+
+        placeConfig =
+                new RealmConfiguration.Builder()
+                        .name("myPlaceRealm3.realm")
+                        .build();
+
     }
 }

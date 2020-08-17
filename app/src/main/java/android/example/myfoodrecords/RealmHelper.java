@@ -40,10 +40,12 @@ public class RealmHelper {
             public void execute(Realm realm) {
                 int newKey = 0;
                 Number maxId = realm.where(Food.class).max("id");
-                if(food.getId() < 1) {
-                    if(maxId == null) {
+                if (food.getId() < 1) {
+                    if (maxId == null) {
                         newKey = 1;
-                    } else {newKey = maxId.intValue()+1;}
+                    } else {
+                        newKey = maxId.intValue() + 1;
+                    }
                 } else newKey = food.getId();
                 food.setId(newKey);
 
@@ -57,15 +59,17 @@ public class RealmHelper {
             @Override
             public void execute(Realm realm) {
                 int newKey = 0;
-                Number maxId = realm.where(Food.class).max("id");
-                if(place.getId() < 1) {
-                    if(maxId == null) {
+                Number maxId = realm.where(PlaceModel.class).max("id");
+                if (place.getId() < 1) {
+                    if (maxId == null) {
                         newKey = 1;
-                    } else {newKey = maxId.intValue()+1;}
+                    } else {
+                        newKey = maxId.intValue() + 1;
+                    }
                 } else newKey = place.getId();
                 place.setId(newKey);
 
-                realm.insertOrUpdate(place);
+                realm.copyToRealmOrUpdate(place);
             }
         });
     }

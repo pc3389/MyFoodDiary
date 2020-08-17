@@ -5,11 +5,13 @@ import androidx.core.content.FileProvider;
 
 import android.content.Intent;
 import android.example.myfoodrecords.BuildConfig;
+import android.example.myfoodrecords.MyApplication;
 import android.example.myfoodrecords.PhotoAsyncResponse;
 import android.example.myfoodrecords.PhotoUtil;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.RealmHelper;
 import android.example.myfoodrecords.model.Food;
+import android.example.myfoodrecords.model.PlaceModel;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,9 +36,11 @@ import io.realm.Realm;
 
 public class EditorActivity extends AppCompatActivity implements PhotoAsyncResponse {
 
-    private Realm realm;
-    private RealmHelper helper;
+    private Realm foodRealm;
+    private Realm placeRealm;
+    private RealmHelper foodHelper;
     private Food food;
+    private PlaceModel placeModel;
 
     private EditText mNameEditText;
     private EditText mTypeEditText;
@@ -46,6 +50,8 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     private ImageView mPhotoImageView;
 
     static final int REQUEST_TAKE_PHOTO = 1;
+    public static final String PUT_REQUEST_CODE = "requestCode";
+    public static final String PUT_FOOD_ID = "foodId";
     public static final int REQUEST_MAP = 2;
     public static final int RESULT_MAP = 3;
     public static final int REQUEST_HOME = 4;
@@ -53,7 +59,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
 
     private String currentPhotoPath;
 
-    int id = 0;
+    int foodId = 0;
 
 
     @Override
@@ -66,14 +72,14 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     }
 
     private void setupRealm() {
-        realm = Realm.getDefaultInstance();
-        helper = new RealmHelper(realm);
-        helper.selectFoodFromDb();
+        foodRealm = Realm.getDefaultInstance();
+        foodHelper = new RealmHelper(foodRealm);
+        placeRealm = Realm.getInstance(MyApplication.placeConfig);
 
-        id = getIntent().getIntExtra("id", 0);
+        foodId = getIntent().getIntExtra("id", 0);
 
-        food = realm.where(Food.class)
-                .equalTo("id", id)
+        food = foodRealm.where(Food.class)
+                .equalTo("id", foodId)
                 .findFirst();
 
     }
@@ -95,14 +101,17 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             }
         });
 
-        if (id != 0) {
+        if (foodId != 0) {
             mNameEditText.setText(food.getName());
             mTypeEditText.setText(food.getFoodType());
             mDateEditText.setText(food.getDate());
             mRatingEditText.setText(food.getRating());
-            mLocationSpinner.setSelection(food.getLocation());
+            //TODO Location detail
             currentPhotoPath = food.getPhotoPath();
-            loadPhoto();
+            if(currentPhotoPath != null) {
+                loadPhoto();
+            }
+            placeModel = food.getPlaceModel();
         }
 
         Button saveButton = findViewById(R.id.save_button);
@@ -128,15 +137,15 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     // Saves the data model to Realm database
     private void saveFoodData() {
         Food food = new Food();
-        food.setId(id);
+        food.setId(foodId);
         food.setName(mNameEditText.getText().toString());
         food.setFoodType(mTypeEditText.getText().toString());
         food.setDate(mDateEditText.getText().toString());
         food.setRating(mRatingEditText.getText().toString());
-        food.setLocation(mLocationSpinner.getSelectedItemPosition());
         food.setPhotoPath(currentPhotoPath);
+        food.setPlaceModel(placeModel);
 
-        RealmHelper realmHelper = new RealmHelper(realm);
+        RealmHelper realmHelper = new RealmHelper(foodRealm);
         realmHelper.insertFood(food);
     }
 
@@ -169,6 +178,9 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             loadPhoto();
         } else if (requestCode == REQUEST_MAP && resultCode == RESULT_MAP) {
             //TODO Result from MAP
+
+            placeModel = placeRealm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PUT_PLACE_ID, 0)).findFirst();
+
 
         } else if (requestCode == REQUEST_HOME && resultCode == RESULT_HOME) {
             //TODO Result from Home
@@ -221,14 +233,14 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
                         //TODO Home data to place realm
                     } else if (selection.equals(getString(R.string.location_select_from_map))) {
                         Intent intent = new Intent(EditorActivity.this, MapsActivity.class);
-                        intent.putExtra("requestCode", REQUEST_MAP);
-                        intent.putExtra("foodId", id);
+                        intent.putExtra(PUT_REQUEST_CODE, REQUEST_MAP);
+                        intent.putExtra(PUT_FOOD_ID, foodId);
                         //TODO set placeprimarykey if exists
                         startActivityForResult(intent, REQUEST_MAP);
                     } else {
                         Intent intent = new Intent(EditorActivity.this, MapsActivity.class);
-                        intent.putExtra("requestCode", REQUEST_HOME);
-                        intent.putExtra("foodId", id);
+                        intent.putExtra(PUT_REQUEST_CODE, REQUEST_HOME);
+                        intent.putExtra(PUT_FOOD_ID, foodId);
                         //TODO set placeprimarykey if exists
                         startActivityForResult(intent, REQUEST_HOME);
                     }
