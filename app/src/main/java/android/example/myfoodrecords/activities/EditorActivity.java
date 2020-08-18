@@ -5,7 +5,6 @@ import androidx.core.content.FileProvider;
 
 import android.content.Intent;
 import android.example.myfoodrecords.BuildConfig;
-import android.example.myfoodrecords.MyApplication;
 import android.example.myfoodrecords.PhotoAsyncResponse;
 import android.example.myfoodrecords.PhotoUtil;
 import android.example.myfoodrecords.PrivatePlaceAdapter;
@@ -51,13 +50,13 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     private ImageView mPhotoImageView;
 
     static final int REQUEST_TAKE_PHOTO = 1;
-    public static final String PUT_REQUEST_CODE = "requestCode";
-    public static final String PUT_FOOD_ID = "foodId";
+    public static final String REQUEST_CODE_KEY = "requestCode";
+    public static final String FOOD_ID_KEY = "foodId";
     public static final int REQUEST_MAP = 2;
     public static final int RESULT_MAP = 3;
     public static final int REQUEST_HOME = 4;
     public static final int RESULT_HOME = 5;
-    public static final int REQUEST_PRIVATE_PLACE = 1;
+    public static final int REQUEST_PRIVATE_PLACE = 6;
 
     private String currentPhotoPath;
 
@@ -178,7 +177,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             loadPhoto();
         } else if (requestCode == REQUEST_MAP && resultCode == RESULT_MAP) {
-            placeModel = foodRealm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PUT_PLACE_ID, 0)).findFirst();
+            placeModel = foodRealm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PLACE_ID_KEY, 0)).findFirst();
         } else if (requestCode == REQUEST_PRIVATE_PLACE && resultCode == PrivatePlaceAdapter.RESULT_PRIVATE_PLACE) {
             placeModel = foodRealm.where(PlaceModel.class).equalTo("id", data.getIntExtra(PrivatePlaceAdapter.PUT_PLACE_ID, 0)).findFirst();
         }
@@ -230,13 +229,13 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
                         startActivityForResult(intent, REQUEST_PRIVATE_PLACE);
                     } else if (selection.equals(getString(R.string.location_select_from_map))) {
                         Intent intent = new Intent(EditorActivity.this, MapsActivity.class);
-                        intent.putExtra(PUT_REQUEST_CODE, REQUEST_MAP);
-                        intent.putExtra(PUT_FOOD_ID, foodId);
+                        intent.putExtra(REQUEST_CODE_KEY, REQUEST_MAP);
+                        intent.putExtra(FOOD_ID_KEY, foodId);
                         startActivityForResult(intent, REQUEST_MAP);
                     } else {
                         Intent intent = new Intent(EditorActivity.this, MapsActivity.class);
-                        intent.putExtra(PUT_REQUEST_CODE, REQUEST_HOME);
-                        intent.putExtra(PUT_FOOD_ID, foodId);
+                        intent.putExtra(REQUEST_CODE_KEY, REQUEST_HOME);
+                        intent.putExtra(FOOD_ID_KEY, foodId);
                         startActivityForResult(intent, REQUEST_HOME);
                     }
                 }

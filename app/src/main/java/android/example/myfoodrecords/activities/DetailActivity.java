@@ -30,6 +30,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     private Food food;
 
     private int id;
+    public static int DETAIL_REQUEST = 0;
 
     private TextView mNameTextView;
     private TextView mRatingTextView;
@@ -99,8 +100,8 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(DetailActivity.this, MapsActivity.class);
-                intent.putExtra("foodId", food.getId());
-                intent.putExtra("requestCode", 0);
+                intent.putExtra(EditorActivity.FOOD_ID_KEY, food.getId());
+                intent.putExtra(EditorActivity.REQUEST_CODE_KEY, DETAIL_REQUEST);
                 startActivity(intent);
             }
         });
@@ -139,7 +140,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             intent.putExtra("id", food.getId());
             startActivity(intent);
         } else if (id == R.id.delete_menu) {
-            helper.delete(food.getId());
+            helper.deleteFood(food.getId());
             finish();
         }
         return super.onOptionsItemSelected(item);

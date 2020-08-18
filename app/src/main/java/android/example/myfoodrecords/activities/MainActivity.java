@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.example.myfoodrecords.MyPagerAdapter;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.RealmHelper;
-import android.example.myfoodrecords.activities.EditorActivity;
-import android.example.myfoodrecords.model.Food;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -80,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(id == R.id.delete_all) {
-            helper.deleteAll();
+            helper.deleteAllFood();
         }
         return false;
     }

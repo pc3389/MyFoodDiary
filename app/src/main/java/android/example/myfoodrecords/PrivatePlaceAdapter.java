@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.example.myfoodrecords.activities.DetailActivity;
 import android.example.myfoodrecords.activities.EditorActivity;
 import android.example.myfoodrecords.activities.MapsActivity;
+import android.example.myfoodrecords.activities.PrivatePlaceActivity;
 import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.model.PlaceModel;
 import android.view.LayoutInflater;
@@ -26,7 +27,7 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
 
     public static final String PRIVATE_PLACE_KEY = "PrivatePlace";
     public static final String PUT_PLACE_ID = "placeKey";
-    public static final int RESULT_PRIVATE_PLACE = 1;
+    public static final int RESULT_PRIVATE_PLACE = 13;
     private Activity mActivity;
 
 
@@ -51,13 +52,14 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
     @NonNull
     @Override
     public PlaceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_food, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_place, parent, false);
         return new PrivatePlaceAdapter.PlaceViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
         final PlaceModel placeModel = placeModelList.get(position);
+
         holder.placeNameTextView.setText(placeModel.getPlaceName());
         holder.placeAddressTextView.setText(placeModel.getAddress());
 
@@ -66,11 +68,13 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
             public boolean onLongClick(View v) {
                 Intent intent = new Intent(context, MapsActivity.class);
                 intent.putExtra(PRIVATE_PLACE_KEY, placeModel.getId());
+                intent.putExtra(EditorActivity.REQUEST_CODE_KEY, PrivatePlaceActivity.REQUSET_PRIVATE_PLACE);
                 context.startActivity(intent);
                 //TODO do the things in MapsActivity
                 return true;
             }
         });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,8 +90,6 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
     public int getItemCount() {
         return placeModelList.size();
     }
-
-
 
 
 }

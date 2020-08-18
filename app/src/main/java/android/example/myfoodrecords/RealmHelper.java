@@ -29,7 +29,10 @@ public class RealmHelper {
         placeRealmResults = realm.where(PlaceModel.class).findAll();
     }
 
-    public void selectFavoritePlaceFromDb() {
+    /**
+     *
+     */
+    public void selectPrivatePlaceFromDb() {
         placeRealmResults = realm.where(PlaceModel.class).equalTo("isPrivate", true).findAll();
     }
 
@@ -37,7 +40,11 @@ public class RealmHelper {
         foodRealmResults = realm.where(Food.class).equalTo("isFavorite", true).findAll();
     }
 
-    //Insert & Update
+    /**
+     *
+     * @param food
+     *
+     */
     public void insertFood(final Food food) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -78,7 +85,12 @@ public class RealmHelper {
         });
     }
 
-    //Read
+    /**
+     * Read Food data from Realm. Used to update the RecyclerView
+     *
+     * @return
+     *
+     */
     public List<Food> retireveFoodAll() {
         List<Food> foodList = new ArrayList<>(foodRealmResults);
         return foodList;
@@ -102,8 +114,10 @@ public class RealmHelper {
     }
 
 
-    //DeleteAll
-    public void deleteAll() {
+    /**
+     *
+     */
+    public void deleteAllFood() {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -123,12 +137,45 @@ public class RealmHelper {
         });
     }
 
-    //Delete
-    public void delete(final int id) {
+    public void deleteAllPlaces() {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<PlaceModel> results = realm.where(PlaceModel.class).findAll();
+                results.deleteAllFromRealm();
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(MainActivity.context, "Successfully deleted the data", Toast.LENGTH_SHORT).show();
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Toast.makeText(MainActivity.context, "Failed to delete the data", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     *
+     * @param id
+     */
+    public void deleteFood(final int id) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 RealmResults<Food> result = realm.where(Food.class).equalTo("id", id).findAll();
+                result.deleteAllFromRealm();
+            }
+        });
+    }
+
+    public void deletePlace(final int id) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<PlaceModel> result = realm.where(PlaceModel.class).equalTo("id", id).findAll();
                 result.deleteAllFromRealm();
             }
         });

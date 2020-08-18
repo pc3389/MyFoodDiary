@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.example.myfoodrecords.MyApplication;
 import android.example.myfoodrecords.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.RealmHelper;
@@ -23,6 +22,8 @@ public class PrivatePlaceActivity extends AppCompatActivity {
     private RealmChangeListener realmChangeListener;
     private Button addButton;
 
+    public static final int REQUSET_PRIVATE_PLACE = 11;
+
     private RecyclerView recyclerView;
 
     @Override
@@ -35,10 +36,9 @@ public class PrivatePlaceActivity extends AppCompatActivity {
     }
 
     private void setupRealm() {
-//        realm = Realm.getInstance(MyApplication.placeConfig);
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectFavoritePlaceFromDb();
+        helper.selectPrivatePlaceFromDb();
     }
 
     private void setupUi() {
@@ -47,6 +47,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PrivatePlaceActivity.this, MapsActivity.class);
+                intent.putExtra(EditorActivity.REQUEST_CODE_KEY, REQUSET_PRIVATE_PLACE);
                 startActivity(intent);
             }
         });

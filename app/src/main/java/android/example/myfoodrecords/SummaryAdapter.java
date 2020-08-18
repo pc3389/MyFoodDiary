@@ -18,8 +18,8 @@ import java.util.List;
 
 public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryViewHolder> {
 
-    List<Food> foodList;
-    Context context;
+    private List<Food> foodList;
+    private Context context;
 
 
     public class SummaryViewHolder extends RecyclerView.ViewHolder {

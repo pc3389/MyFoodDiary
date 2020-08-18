@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.example.myfoodrecords.MyApplication;
+import android.example.myfoodrecords.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.RealmHelper;
 import android.example.myfoodrecords.model.Food;
@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
@@ -49,9 +48,7 @@ import io.realm.Realm;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPoiClickListener {
 
     private GoogleMap map;
-    private Realm placeRealm;
     private Realm foodRealm;
-    private RealmHelper placeHelper;
     private RealmHelper foodHelper;
     private Food food;
 
@@ -61,13 +58,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button saveButton;
     private boolean locationPermissionGranted;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 8;
+    public static final int RESULT_PRIVATE_PLACE = 3;
     private static final String TAG = "MapsActivityTag";
-    public static final String PUT_PLACE_ID = "placePrimaryKey";
+    public static final String PLACE_ID_KEY = "placePrimaryKey";
 
     public static LatLng latLng;
     private int requestCode;
     private int foodId = 0;
+    private int placeId = 0;
     private PlacesClient placesClient;
+    private boolean isPrivatePlace = false;
 
     private String placeAddress;
     private String placeName;
@@ -83,22 +83,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setupRealm() {
-        /*
-        placeRealm = Realm.getInstance(MyApplication.placeConfig);
-        placeHelper = new RealmHelper(placeRealm);
-
-         */
-
         foodRealm = Realm.getDefaultInstance();
         foodHelper = new RealmHelper(foodRealm);
     }
 
     private void setupUI() {
         saveButton = findViewById(R.id.map_save_button);
-        requestCode = getIntent().getExtras().getInt(EditorActivity.PUT_REQUEST_CODE);
-        foodId = getIntent().getExtras().getInt(EditorActivity.PUT_FOOD_ID);
-        if (requestCode == 0) {
+        requestCode = getIntent().getExtras().getInt(EditorActivity.REQUEST_CODE_KEY);
+        foodId = getIntent().getExtras().getInt(EditorActivity.FOOD_ID_KEY);
+        if (requestCode == DetailActivity.DETAIL_REQUEST) {
             saveButton.setVisibility(View.GONE);
+        }
+        if (requestCode == PrivatePlaceActivity.REQUSET_PRIVATE_PLACE) {
+            isPrivatePlace = true;
+            placeId = getIntent().getExtras().getInt(PrivatePlaceAdapter.PRIVATE_PLACE_KEY);
         }
 
         loadMapLocationFromRealm();
@@ -203,17 +201,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
     private void loadMapLocationFromRealm() {
-        food = foodRealm.where(Food.class)
-                .equalTo("id", foodId)
-                .findFirst();
-        if (food != null) {
-            placeModel = food.getPlaceModel();
+        if (isPrivatePlace && placeId != 0) {
+            placeModel = foodRealm.where(PlaceModel.class)
+                    .equalTo("id", placeId)
+                    .findFirst();
             if (placeModel != null) {
                 latLng = new LatLng(placeModel.getLat(), placeModel.getLng());
                 placeName = placeModel.getPlaceName();
                 placeAddress = placeModel.getAddress();
+            }
+
+        } else {
+            food = foodRealm.where(Food.class)
+                    .equalTo("id", foodId)
+                    .findFirst();
+            if (food != null) {
+                placeModel = food.getPlaceModel();
+                if (placeModel != null) {
+                    latLng = new LatLng(placeModel.getLat(), placeModel.getLng());
+                    placeName = placeModel.getPlaceName();
+                    placeAddress = placeModel.getAddress();
+                }
             }
         }
     }
@@ -272,25 +281,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
-
     private void getLocation() {
-
         if (requestCode != 0) {
             Intent intent = new Intent();
             switch (requestCode) {
                 case EditorActivity.REQUEST_MAP:
                     newPlaceModel.setPrivate(false);
                     savePlace();
-                    intent.putExtra(PUT_PLACE_ID, newPlaceModel.getId());
+                    intent.putExtra(PLACE_ID_KEY, newPlaceModel.getId());
                     setResult(EditorActivity.RESULT_MAP, intent);
                     break;
 
-                case EditorActivity.REQUEST_HOME:
-                    //TODO save data to Place Realm
-                    placeModel.setPrivate(true);
+                case PrivatePlaceActivity.REQUSET_PRIVATE_PLACE:
+                    newPlaceModel.setPrivate(true);
                     savePlace();
-                    intent.putExtra(PUT_PLACE_ID, newPlaceModel.getId());
-                    setResult(EditorActivity.RESULT_HOME, intent);
+                    Intent intent2 = new Intent(MapsActivity.this, PlaceDetailActivity.class);
+                    intent2.putExtra(PLACE_ID_KEY, newPlaceModel.getId());
+                    startActivity(intent2);
                     break;
             }
             finish();
