@@ -29,6 +29,10 @@ public class RealmHelper {
         placeRealmResults = realm.where(PlaceModel.class).findAll();
     }
 
+    public void selectFavoritePlaceFromDb() {
+        placeRealmResults = realm.where(PlaceModel.class).equalTo("isPrivate", true).findAll();
+    }
+
     public void selectFavoriteFromDb() {
         foodRealmResults = realm.where(Food.class).equalTo("isFavorite", true).findAll();
     }

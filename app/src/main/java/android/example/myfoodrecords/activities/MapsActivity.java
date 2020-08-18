@@ -17,16 +17,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
@@ -34,10 +42,11 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 import io.realm.Realm;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPoiClickListener {
 
     private GoogleMap map;
     private Realm placeRealm;
@@ -53,14 +62,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean locationPermissionGranted;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 8;
     private static final String TAG = "MapsActivityTag";
-    public static LatLng latLng;
-    int requestCode;
-    private int foodId = 0;
-    private int placePrimaryKey = 0;
-
     public static final String PUT_PLACE_ID = "placePrimaryKey";
 
-    //TODO Carmera view looks blurry. Search for solution
+    public static LatLng latLng;
+    private int requestCode;
+    private int foodId = 0;
+    private PlacesClient placesClient;
+
+    private String placeAddress;
+    private String placeName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +97,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (requestCode == 0) {
             saveButton.setVisibility(View.GONE);
         }
+
         loadMapLocationFromRealm();
 
+        // Initialize the SDK
+        Places.initialize(getApplicationContext(), getString(R.string.google_place_key));
+
+        // Create a new PlacesClient instance
+        placesClient = Places.createClient(this);
+
         setupAutoComplete();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -103,8 +121,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map = googleMap;
 
         getLocationPermission();
-
-        map.addMarker(new MarkerOptions().position(latLng));
+        map.setOnPoiClickListener(this);
+        map.addMarker(new MarkerOptions().position(latLng).title(placeName).snippet(placeAddress));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
         updateLocationUI();
         setMapClickListener();
@@ -112,11 +130,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setupAutoComplete() {
-        // Initialize the SDK
-        Places.initialize(getApplicationContext(), getString(R.string.google_place_key));
-
-        // Create a new PlacesClient instance
-        PlacesClient placesClient = Places.createClient(this);
 
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -132,6 +145,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 LatLng selectedPlaceLagLng = place.getLatLng();
                 addMarkerAndMoveCamera(selectedPlaceLagLng);
 
+                placeName = place.getName();
+                placeAddress = place.getAddress();
                 newPlaceModel.setPlaceId(place.getId());
                 newPlaceModel.setPlaceName(place.getName());
                 newPlaceModel.setLat(place.getLatLng().latitude);
@@ -140,8 +155,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (place.getRating() != null) {
                     newPlaceModel.setPlaceRating(place.getRating().floatValue());
                 }
-
-
             }
 
             @Override
@@ -149,10 +162,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
-
     }
 
-    //TODO Load Map from saved location called from DetailActivity
+    @Override
+    public void onPoiClick(PointOfInterest poi) {
+        map.clear();
+        String placeId = poi.placeId;
+        List<Place.Field> placeField = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.TYPES, Place.Field.ADDRESS, Place.Field.RATING);
+        final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeField);
+        placesClient.fetchPlace(request).addOnSuccessListener(new OnSuccessListener<FetchPlaceResponse>() {
+            @Override
+            public void onSuccess(FetchPlaceResponse response) {
+                Place place = response.getPlace();
+                placeName = place.getName();
+                placeAddress = place.getAddress();
+
+                newPlaceModel.setPlaceId(place.getId());
+                newPlaceModel.setPlaceName(place.getName());
+                newPlaceModel.setLat(place.getLatLng().latitude);
+                newPlaceModel.setLng(place.getLatLng().longitude);
+                newPlaceModel.setAddress(place.getAddress());
+                if (place.getRating() != null) {
+                    newPlaceModel.setPlaceRating(place.getRating().floatValue());
+                }
+                Marker marker = map.addMarker(new MarkerOptions().position(place.getLatLng()).title(placeName).snippet(placeAddress));
+                marker.showInfoWindow();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                if (exception instanceof ApiException) {
+                    final ApiException apiException = (ApiException) exception;
+                    final int statusCode = apiException.getStatusCode();
+                    Log.e(TAG, "Place not found: " + exception.getMessage() + statusCode);
+                }
+            }
+        });
+    }
+
+
     private void loadMapLocationFromRealm() {
         food = foodRealm.where(Food.class)
                 .equalTo("id", foodId)
@@ -161,6 +209,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             placeModel = food.getPlaceModel();
             if (placeModel != null) {
                 latLng = new LatLng(placeModel.getLat(), placeModel.getLng());
+                placeName = placeModel.getPlaceName();
+                placeAddress = placeModel.getAddress();
             }
         }
     }
@@ -181,10 +231,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setMapClickListener() {
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                addMarkerAndMoveCamera(latLng);
+            }
+        });
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                marker.showInfoWindow();
+                return true;
+            }
+        });
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                addMarkerAndMoveCamera(latLng);
+                map.clear();
             }
         });
     }
@@ -201,7 +264,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void addMarkerAndMoveCamera(LatLng latLng) {
         map.clear();
-        map.addMarker(new MarkerOptions().position(latLng));
+        map.addMarker(new MarkerOptions().position(latLng).title(placeName).snippet(placeAddress));
         MapsActivity.latLng = latLng;
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
@@ -213,7 +276,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Intent intent = new Intent();
             switch (requestCode) {
                 case EditorActivity.REQUEST_MAP:
-                    //TODO save data to Place Realm
                     newPlaceModel.setPrivate(false);
                     savePlace();
                     intent.putExtra(PUT_PLACE_ID, newPlaceModel.getId());
@@ -276,7 +338,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    //TODO SavePlace
     private void savePlace() {
         if (newPlaceModel != null) {
             placeHelper.insertPlace(newPlaceModel);
