@@ -7,7 +7,7 @@ import io.realm.RealmConfiguration;
 
 public class MyApplication extends Application {
 
-    public static RealmConfiguration placeConfig;
+    //public static RealmConfiguration placeConfig;
     public static RealmConfiguration foodConfig;
 
     @Override
@@ -22,10 +22,13 @@ public class MyApplication extends Application {
 
         Realm.setDefaultConfiguration(foodConfig);
 
+        /*
         placeConfig =
                 new RealmConfiguration.Builder()
                         .name("myPlaceRealm3.realm")
                         .build();
+
+         */
 
     }
 }

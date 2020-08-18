@@ -83,8 +83,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setupRealm() {
+        /*
         placeRealm = Realm.getInstance(MyApplication.placeConfig);
         placeHelper = new RealmHelper(placeRealm);
+
+         */
 
         foodRealm = Realm.getDefaultInstance();
         foodHelper = new RealmHelper(foodRealm);
@@ -340,7 +343,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void savePlace() {
         if (newPlaceModel != null) {
-            placeHelper.insertPlace(newPlaceModel);
+            foodHelper.insertPlace(newPlaceModel);
         }
     }
 

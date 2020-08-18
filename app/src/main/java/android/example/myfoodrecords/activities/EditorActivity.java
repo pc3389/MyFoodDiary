@@ -8,6 +8,7 @@ import android.example.myfoodrecords.BuildConfig;
 import android.example.myfoodrecords.MyApplication;
 import android.example.myfoodrecords.PhotoAsyncResponse;
 import android.example.myfoodrecords.PhotoUtil;
+import android.example.myfoodrecords.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.RealmHelper;
 import android.example.myfoodrecords.model.Food;
@@ -75,7 +76,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     private void setupRealm() {
         foodRealm = Realm.getDefaultInstance();
         foodHelper = new RealmHelper(foodRealm);
-        placeRealm = Realm.getInstance(MyApplication.placeConfig);
+//        placeRealm = Realm.getInstance(MyApplication.placeConfig);
 
         foodId = getIntent().getIntExtra("id", 0);
 
@@ -177,10 +178,9 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             loadPhoto();
         } else if (requestCode == REQUEST_MAP && resultCode == RESULT_MAP) {
-            placeModel = placeRealm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PUT_PLACE_ID, 0)).findFirst();
-        } else if (requestCode == REQUEST_HOME && resultCode == RESULT_HOME) {
-            //TODO Result from Home
-
+            placeModel = foodRealm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PUT_PLACE_ID, 0)).findFirst();
+        } else if (requestCode == REQUEST_PRIVATE_PLACE && resultCode == PrivatePlaceAdapter.RESULT_PRIVATE_PLACE) {
+            placeModel = foodRealm.where(PlaceModel.class).equalTo("id", data.getIntExtra(PrivatePlaceAdapter.PUT_PLACE_ID, 0)).findFirst();
         }
     }
 
@@ -226,7 +226,6 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
                     if (selection.equals(getString(R.string.spinner_not_selected))) {
 
                     } else if (selection.equals(getString(R.string.location_home))) {
-                        //TODO Home Detail
                         Intent intent = new Intent(EditorActivity.this,PrivatePlaceActivity.class);
                         startActivityForResult(intent, REQUEST_PRIVATE_PLACE);
                     } else if (selection.equals(getString(R.string.location_select_from_map))) {

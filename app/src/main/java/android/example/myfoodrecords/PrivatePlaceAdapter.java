@@ -1,5 +1,6 @@
 package android.example.myfoodrecords;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.example.myfoodrecords.activities.DetailActivity;
@@ -25,6 +26,8 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
 
     public static final String PRIVATE_PLACE_KEY = "PrivatePlace";
     public static final String PUT_PLACE_ID = "placeKey";
+    public static final int RESULT_PRIVATE_PLACE = 1;
+    private Activity mActivity;
 
 
     public class PlaceViewHolder extends RecyclerView.ViewHolder {
@@ -38,9 +41,10 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
         }
     }
 
-    public PrivatePlaceAdapter(List<PlaceModel> placeModelList, Context context) {
+    public PrivatePlaceAdapter(List<PlaceModel> placeModelList, Context context, Activity mActivity) {
         this.placeModelList = placeModelList;
         this.context = context;
+        this.mActivity = mActivity;
     }
 
 
@@ -72,8 +76,8 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.putExtra(PUT_PLACE_ID, placeModel.getId());
-                //TODO Send
-//                this.getClass().setResult(EditorActivity.RESULT_MAP, intent);
+                mActivity.setResult(RESULT_PRIVATE_PLACE, intent);
+                mActivity.finish();
             }
         });
     }
