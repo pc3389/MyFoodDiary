@@ -9,6 +9,7 @@ import android.example.myfoodrecords.PhotoAsyncResponse;
 import android.example.myfoodrecords.PhotoUtil;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.RealmHelper;
+import android.example.myfoodrecords.SummaryAdapter;
 import android.example.myfoodrecords.model.Food;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -18,14 +19,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 public class DetailActivity extends AppCompatActivity implements PhotoAsyncResponse {
 
     private Realm realm;
     private RealmHelper helper;
+    private RealmChangeListener realmChangeListener;
 
     private Food food;
 
@@ -33,10 +37,9 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     public static int DETAIL_REQUEST = 0;
 
     private TextView mNameTextView;
-    private TextView mRatingTextView;
+    private RatingBar mRatingBar;
     private TextView mDateTextView;
     private TextView mTypeTextView;
-//    private TextView mLocationTextView;
     private ImageView mPhotoImageView;
     private Button showInMapButton;
     private TextView mPlaceNameTextView;
@@ -58,7 +61,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         helper = new RealmHelper(realm);
         helper.selectFoodFromDb();
 
-        id = getIntent().getIntExtra("id", 0);
+        id = getIntent().getIntExtra(SummaryAdapter.KEY_ITEM_FOOD_ID, 0);
 
         food = realm.where(Food.class)
                 .equalTo("id", id)
@@ -68,13 +71,12 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     private void setupUi() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        id = getIntent().getIntExtra("id", 0);
+        id = getIntent().getIntExtra(SummaryAdapter.KEY_ITEM_FOOD_ID, 0);
 
         mNameTextView = findViewById(R.id.detail_food_name_tv);
-        mRatingTextView = findViewById(R.id.detail_rating_tv);
+        mRatingBar = findViewById(R.id.detail_rating_tv);
         mDateTextView = findViewById(R.id.detail_date_tv);
         mTypeTextView = findViewById(R.id.detail_food_type_tv);
-//        mLocationTextView = findViewById(R.id.detail_location_tv);
         mPhotoImageView = findViewById(R.id.detail_food_iv);
         showInMapButton = findViewById(R.id.show_map_button);
         mPlaceNameTextView = findViewById(R.id.detail_place_name_tv);
@@ -82,17 +84,20 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         showMapOnClick();
 
         mNameTextView.setText(food.getName());
-        mRatingTextView.setText(food.getRating());
+        mRatingBar.setRating(food.getRating());
         mDateTextView.setText(food.getDate());
         mTypeTextView.setText(food.getFoodType());
-//        mLocationTextView.setText(food.getLocation());
         isFavorite = food.getFavorite();
         if(food.getPlaceModel() != null) {
             mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
             mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
         }
 
+        reatingBarChangeListener();
+
         loadPhoto();
+        refresh();
+
     }
 
     private void showMapOnClick() {
@@ -100,8 +105,8 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(DetailActivity.this, MapsActivity.class);
-                intent.putExtra(EditorActivity.FOOD_ID_KEY, food.getId());
-                intent.putExtra(EditorActivity.REQUEST_CODE_KEY, DETAIL_REQUEST);
+                intent.putExtra(EditorActivity.KEY_EDITOR_FOOD_ID, food.getId());
+                intent.putExtra(EditorActivity.KEY_REQUEST_CODE, DETAIL_REQUEST);
                 startActivity(intent);
             }
         });
@@ -172,4 +177,30 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         helper.insertFood(newfood);
     }
 
+    private void refresh() {
+        realmChangeListener = new RealmChangeListener() {
+            @Override
+            public void onChange(Object o) {
+                if (food.getPlaceModel() != null) {
+                    mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
+                    mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
+                }
+            }
+        };
+        realm.addChangeListener(realmChangeListener);
+    }
+
+    private void reatingBarChangeListener() {
+        mRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        food.setRating(rating);
+                    }
+                });
+            }
+        });
+    }
 }

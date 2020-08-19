@@ -3,6 +3,7 @@ package android.example.myfoodrecords.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.example.myfoodrecords.BuildConfig;
 import android.example.myfoodrecords.PhotoAsyncResponse;
@@ -24,39 +25,48 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import io.realm.Realm;
 
-public class EditorActivity extends AppCompatActivity implements PhotoAsyncResponse {
+public class EditorActivity extends AppCompatActivity implements PhotoAsyncResponse, DatePickerDialog.OnDateSetListener {
 
-    private Realm foodRealm;
-    private Realm placeRealm;
-    private RealmHelper foodHelper;
+    private Realm realm;
+    private RealmHelper helper;
+
     private Food food;
     private PlaceModel placeModel;
 
     private EditText mNameEditText;
     private EditText mTypeEditText;
     private EditText mDateEditText;
-    private EditText mRatingEditText;
+    private RatingBar mRatingBar;
     private Spinner mLocationSpinner;
     private ImageView mPhotoImageView;
+    private TextView mPlaceNameTextView;
+    private TextView mPlaceAddressTextView;
 
     static final int REQUEST_TAKE_PHOTO = 1;
-    public static final String REQUEST_CODE_KEY = "requestCode";
-    public static final String FOOD_ID_KEY = "foodId";
+    public static final String KEY_REQUEST_CODE = "requestCode";
+    public static final String KEY_EDITOR_FOOD_ID = "foodId2";
     public static final int REQUEST_MAP = 2;
     public static final int RESULT_MAP = 3;
-    public static final int REQUEST_HOME = 4;
-    public static final int RESULT_HOME = 5;
-    public static final int REQUEST_PRIVATE_PLACE = 6;
+    public static final int REQUEST_PRIVATE_PLACE = 4;
+
+    private DatePickerDialog datePickerDialog;
+    private int Year, Month, Day;
+    private Calendar calendar;
 
     private String currentPhotoPath;
 
@@ -70,19 +80,18 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
 
         setupRealm();
         setupUi();
+        datePickerSetUp();
     }
 
     private void setupRealm() {
-        foodRealm = Realm.getDefaultInstance();
-        foodHelper = new RealmHelper(foodRealm);
-//        placeRealm = Realm.getInstance(MyApplication.placeConfig);
+        realm = Realm.getDefaultInstance();
+        helper = new RealmHelper(realm);
 
         foodId = getIntent().getIntExtra("id", 0);
 
-        food = foodRealm.where(Food.class)
+        food = realm.where(Food.class)
                 .equalTo("id", foodId)
                 .findFirst();
-
     }
 
     private void setupUi() {
@@ -90,10 +99,12 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         mNameEditText = findViewById(R.id.editor_food_name_edit);
         mTypeEditText = findViewById(R.id.editor_food_type_edit);
         mDateEditText = findViewById(R.id.editor_date_edit);
-        mRatingEditText = findViewById(R.id.editor_rating_edit);
+        mRatingBar = findViewById(R.id.editor_rating_edit);
         mLocationSpinner = findViewById(R.id.editor_location_spinner);
         setupSpinner();
         mPhotoImageView = findViewById(R.id.editor_food_iv);
+        mPlaceNameTextView = findViewById(R.id.editor_place_name_tv);
+        mPlaceAddressTextView = findViewById(R.id.editor_place_address_tv);
 
         mPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,12 +117,16 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             mNameEditText.setText(food.getName());
             mTypeEditText.setText(food.getFoodType());
             mDateEditText.setText(food.getDate());
-            mRatingEditText.setText(food.getRating());
+            mRatingBar.setRating(food.getRating());
             currentPhotoPath = food.getPhotoPath();
-            if(currentPhotoPath != null) {
+            if (currentPhotoPath != null) {
                 loadPhoto();
             }
             placeModel = food.getPlaceModel();
+            if (placeModel != null) {
+                mPlaceNameTextView.setText(placeModel.getPlaceName());
+                mPlaceAddressTextView.setText(placeModel.getAddress());
+            }
         }
 
         Button saveButton = findViewById(R.id.save_button);
@@ -128,6 +143,40 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         });
     }
 
+    private void datePickerSetUp() {
+        mDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar = Calendar.getInstance();
+                Year = calendar.get(Calendar.YEAR);
+                Month = calendar.get(Calendar.MONTH);
+                Day = calendar.get(Calendar.DAY_OF_MONTH);
+                datePickerDialog = DatePickerDialog.newInstance(EditorActivity.this, Year, Month, Day);
+                datePickerDialog.setThemeDark(false);
+                datePickerDialog.showYearPickerFirst(false);
+                datePickerDialog.setTitle("Date Picker");
+
+                datePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+
+                        Toast.makeText(EditorActivity.this, "Datepicker Canceled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                datePickerDialog.show(getSupportFragmentManager(), "DatePickerDialog");
+            }
+        });
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        String date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+        Toast.makeText(EditorActivity.this, date, Toast.LENGTH_LONG).show();
+        mDateEditText.setText(date);
+    }
+
     private void nullCheck() {
         if (mNameEditText.getText().toString().equals("")) {
             Toast.makeText(this, "Please enter the Food Name", Toast.LENGTH_SHORT).show();
@@ -141,12 +190,11 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         food.setName(mNameEditText.getText().toString());
         food.setFoodType(mTypeEditText.getText().toString());
         food.setDate(mDateEditText.getText().toString());
-        food.setRating(mRatingEditText.getText().toString());
+        food.setRating(mRatingBar.getRating());
         food.setPhotoPath(currentPhotoPath);
         food.setPlaceModel(placeModel);
 
-        RealmHelper realmHelper = new RealmHelper(foodRealm);
-        realmHelper.insertFood(food);
+        helper.insertFood(food);
     }
 
     private void dispatchTakePictureIntent() {
@@ -177,9 +225,13 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             loadPhoto();
         } else if (requestCode == REQUEST_MAP && resultCode == RESULT_MAP) {
-            placeModel = foodRealm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PLACE_ID_KEY, 0)).findFirst();
+            placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PLACE_ID_KEY, 0)).findFirst();
+            mPlaceNameTextView.setText(placeModel.getPlaceName());
+            mPlaceAddressTextView.setText(placeModel.getAddress());
         } else if (requestCode == REQUEST_PRIVATE_PLACE && resultCode == PrivatePlaceAdapter.RESULT_PRIVATE_PLACE) {
-            placeModel = foodRealm.where(PlaceModel.class).equalTo("id", data.getIntExtra(PrivatePlaceAdapter.PUT_PLACE_ID, 0)).findFirst();
+            placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(PrivatePlaceAdapter.PUT_PLACE_ID, 0)).findFirst();
+            mPlaceNameTextView.setText(placeModel.getPlaceName());
+            mPlaceAddressTextView.setText(placeModel.getAddress());
         }
     }
 
@@ -224,19 +276,14 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
                 if (!TextUtils.isEmpty(selection)) {
                     if (selection.equals(getString(R.string.spinner_not_selected))) {
 
-                    } else if (selection.equals(getString(R.string.location_home))) {
-                        Intent intent = new Intent(EditorActivity.this,PrivatePlaceActivity.class);
+                    } else if (selection.equals(getString(R.string.location_private_place))) {
+                        Intent intent = new Intent(EditorActivity.this, PrivatePlaceActivity.class);
                         startActivityForResult(intent, REQUEST_PRIVATE_PLACE);
                     } else if (selection.equals(getString(R.string.location_select_from_map))) {
                         Intent intent = new Intent(EditorActivity.this, MapsActivity.class);
-                        intent.putExtra(REQUEST_CODE_KEY, REQUEST_MAP);
-                        intent.putExtra(FOOD_ID_KEY, foodId);
+                        intent.putExtra(KEY_REQUEST_CODE, REQUEST_MAP);
+                        intent.putExtra(KEY_EDITOR_FOOD_ID, foodId);
                         startActivityForResult(intent, REQUEST_MAP);
-                    } else {
-                        Intent intent = new Intent(EditorActivity.this, MapsActivity.class);
-                        intent.putExtra(REQUEST_CODE_KEY, REQUEST_HOME);
-                        intent.putExtra(FOOD_ID_KEY, foodId);
-                        startActivityForResult(intent, REQUEST_HOME);
                     }
                 }
             }
@@ -246,6 +293,4 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             }
         });
     }
-
-
 }

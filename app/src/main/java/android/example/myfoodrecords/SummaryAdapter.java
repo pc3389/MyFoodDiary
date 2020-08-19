@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.example.myfoodrecords.activities.DetailActivity;
 import android.example.myfoodrecords.model.Food;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
 
     private List<Food> foodList;
     private Context context;
+    public static final String KEY_ITEM_FOOD_ID = "foodId1";
 
 
     public class SummaryViewHolder extends RecyclerView.ViewHolder {
@@ -69,7 +69,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("id", food.getId());
+                intent.putExtra(KEY_ITEM_FOOD_ID, food.getId());
                 context.startActivity(intent);
             }
         });

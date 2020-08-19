@@ -3,16 +3,13 @@ package android.example.myfoodrecords;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.example.myfoodrecords.activities.DetailActivity;
 import android.example.myfoodrecords.activities.EditorActivity;
 import android.example.myfoodrecords.activities.MapsActivity;
 import android.example.myfoodrecords.activities.PrivatePlaceActivity;
-import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.model.PlaceModel;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -68,7 +65,7 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
             public boolean onLongClick(View v) {
                 Intent intent = new Intent(context, MapsActivity.class);
                 intent.putExtra(PRIVATE_PLACE_KEY, placeModel.getId());
-                intent.putExtra(EditorActivity.REQUEST_CODE_KEY, PrivatePlaceActivity.REQUSET_PRIVATE_PLACE);
+                intent.putExtra(EditorActivity.KEY_REQUEST_CODE, PrivatePlaceActivity.REQUSET_PRIVATE_PLACE);
                 context.startActivity(intent);
                 //TODO do the things in MapsActivity
                 return true;

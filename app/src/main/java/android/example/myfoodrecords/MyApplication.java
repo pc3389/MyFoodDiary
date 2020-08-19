@@ -17,18 +17,9 @@ public class MyApplication extends Application {
 
         foodConfig =
                 new RealmConfiguration.Builder()
-                        .name("myfoodrealm12.realm")
+                        .name("myfoodrealm13.realm")
                         .build();
 
         Realm.setDefaultConfiguration(foodConfig);
-
-        /*
-        placeConfig =
-                new RealmConfiguration.Builder()
-                        .name("myPlaceRealm3.realm")
-                        .build();
-
-         */
-
     }
 }

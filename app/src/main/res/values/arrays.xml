@@ -2,8 +2,7 @@
 <resources>
     <string-array name="array_location_options">
         <item>@string/spinner_not_selected</item>
-        <item>@string/location_home</item>
+        <item>@string/location_private_place</item>
         <item>@string/location_select_from_map</item>
-        <item>@string/location_set_current_address</item>
     </string-array>
 </resources>

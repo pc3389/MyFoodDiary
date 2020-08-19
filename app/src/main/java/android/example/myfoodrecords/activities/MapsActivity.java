@@ -89,8 +89,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void setupUI() {
         saveButton = findViewById(R.id.map_save_button);
-        requestCode = getIntent().getExtras().getInt(EditorActivity.REQUEST_CODE_KEY);
-        foodId = getIntent().getExtras().getInt(EditorActivity.FOOD_ID_KEY);
+        requestCode = getIntent().getExtras().getInt(EditorActivity.KEY_REQUEST_CODE);
+        foodId = getIntent().getExtras().getInt(EditorActivity.KEY_EDITOR_FOOD_ID);
         if (requestCode == DetailActivity.DETAIL_REQUEST) {
             saveButton.setVisibility(View.GONE);
         }
@@ -277,6 +277,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void addMarkerAndMoveCamera(LatLng latLng) {
         map.clear();
         map.addMarker(new MarkerOptions().position(latLng).title(placeName).snippet(placeAddress));
+        newPlaceModel.setLat(latLng.latitude);
+        newPlaceModel.setLng(latLng.longitude);
         MapsActivity.latLng = latLng;
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
@@ -294,6 +296,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 case PrivatePlaceActivity.REQUSET_PRIVATE_PLACE:
                     newPlaceModel.setPrivate(true);
+                    newPlaceModel.setId(placeId);
                     savePlace();
                     Intent intent2 = new Intent(MapsActivity.this, PlaceDetailActivity.class);
                     intent2.putExtra(PLACE_ID_KEY, newPlaceModel.getId());

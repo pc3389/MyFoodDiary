@@ -47,7 +47,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PrivatePlaceActivity.this, MapsActivity.class);
-                intent.putExtra(EditorActivity.REQUEST_CODE_KEY, REQUSET_PRIVATE_PLACE);
+                intent.putExtra(EditorActivity.KEY_REQUEST_CODE, REQUSET_PRIVATE_PLACE);
                 startActivity(intent);
             }
         });

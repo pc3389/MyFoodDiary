@@ -10,7 +10,7 @@ public class Food extends RealmObject {
     private int id;
 
     private String name;
-    private String rating;
+    private float rating;
     private String date;
     private String foodType;
     private String photoPath;
@@ -35,11 +35,11 @@ public class Food extends RealmObject {
         this.name = name;
     }
 
-    public String getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
