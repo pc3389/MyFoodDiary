@@ -1,8 +1,8 @@
-package android.example.myfoodrecords;
+package android.example.myfoodrecords.adapter;
 
-import android.example.myfoodrecords.fragments.CalanderFragment;
-import android.example.myfoodrecords.fragments.FavoriteFragment;
 import android.example.myfoodrecords.fragments.SummaryFragment;
+import android.example.myfoodrecords.fragments.FavoriteFragment;
+import android.example.myfoodrecords.fragments.ItemViewFragment;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -19,13 +19,13 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch(position) {
             case 0:
-                return new SummaryFragment();
+                return new ItemViewFragment();
 
             case 1:
                 return new FavoriteFragment();
 
             case 2:
-                return new CalanderFragment();
+                return new SummaryFragment();
 
             default:
                 return null;

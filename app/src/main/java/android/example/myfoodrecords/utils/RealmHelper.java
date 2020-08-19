@@ -1,4 +1,4 @@
-package android.example.myfoodrecords;
+package android.example.myfoodrecords.utils;
 
 import android.example.myfoodrecords.activities.MainActivity;
 import android.example.myfoodrecords.model.Food;
@@ -33,11 +33,15 @@ public class RealmHelper {
      *
      */
     public void selectPrivatePlaceFromDb() {
-        placeRealmResults = realm.where(PlaceModel.class).equalTo("isPrivate", true).findAll();
+        placeRealmResults = realm.where(PlaceModel.class)
+                .equalTo("isPrivate", true)
+                .findAll();
     }
 
     public void selectFavoriteFromDb() {
-        foodRealmResults = realm.where(Food.class).equalTo("isFavorite", true).findAll();
+        foodRealmResults = realm.where(Food.class)
+                .equalTo("isFavorite", true)
+                .findAll();
     }
 
     /**
@@ -91,26 +95,54 @@ public class RealmHelper {
      * @return
      *
      */
-    public List<Food> retireveFoodAll() {
+    public List<Food> retrieveFoodAll() {
         List<Food> foodList = new ArrayList<>(foodRealmResults);
         return foodList;
     }
 
-    public List<PlaceModel> retirevePlaceAll() {
+    public List<PlaceModel> retrievePlaceAll() {
         List<PlaceModel> placeList = new ArrayList<>(placeRealmResults);
         return placeList;
     }
 
+    public List<Food> retireveFoodWithNameSorted() {
+        RealmResults<Food> foodRealmResults;
+        foodRealmResults = realm.where(Food.class)
+                .sort("name")
+                .findAll();
+        return new ArrayList<>(foodRealmResults);
+    }
+
+    public List<Food> retrieveFoodWithPlaceNameSorted() {
+        RealmResults<Food> foodRealmResults;
+        foodRealmResults = realm.where(Food.class)
+                .sort("placeName")
+                .findAll();
+        return new ArrayList<>(foodRealmResults);
+    }
+
     public Food retrieveFoodWithId(int foodId) {
-        Food food = new Food();
+        Food food;
         food = realm.where(Food.class).equalTo("id", foodId).findFirst();
         return food;
     }
 
     public PlaceModel retrievePlaceWithId(int placeId) {
-        PlaceModel placeModel = new PlaceModel();
+        PlaceModel placeModel;
         placeModel = realm.where(PlaceModel.class).equalTo("id", placeId).findFirst();
         return placeModel;
+    }
+
+    public List<Food> retrieveFoodListWithName(int foodName) {
+        List<Food> food;
+        food = realm.where(Food.class).equalTo("name", foodName).findAll();
+        return food;
+    }
+
+    public List<PlaceModel> retrievePlaceListWithName(int placeName) {
+        List<PlaceModel> placeModelList;
+        placeModelList = realm.where(PlaceModel.class).equalTo("name", placeName).findAll();
+        return placeModelList;
     }
 
 

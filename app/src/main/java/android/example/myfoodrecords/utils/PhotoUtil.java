@@ -1,5 +1,7 @@
-package android.example.myfoodrecords;
+package android.example.myfoodrecords.utils;
 
+import android.example.myfoodrecords.PhotoAsyncResponse;
+import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.activities.MainActivity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

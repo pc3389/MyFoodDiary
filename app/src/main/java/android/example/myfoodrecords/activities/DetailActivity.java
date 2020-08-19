@@ -6,10 +6,10 @@ import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Intent;
 import android.example.myfoodrecords.PhotoAsyncResponse;
-import android.example.myfoodrecords.PhotoUtil;
+import android.example.myfoodrecords.utils.PhotoUtil;
 import android.example.myfoodrecords.R;
-import android.example.myfoodrecords.RealmHelper;
-import android.example.myfoodrecords.SummaryAdapter;
+import android.example.myfoodrecords.utils.RealmHelper;
+import android.example.myfoodrecords.adapter.ItemViewAdapter;
 import android.example.myfoodrecords.model.Food;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -61,7 +61,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         helper = new RealmHelper(realm);
         helper.selectFoodFromDb();
 
-        id = getIntent().getIntExtra(SummaryAdapter.KEY_ITEM_FOOD_ID, 0);
+        id = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
 
         food = realm.where(Food.class)
                 .equalTo("id", id)
@@ -71,7 +71,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     private void setupUi() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        id = getIntent().getIntExtra(SummaryAdapter.KEY_ITEM_FOOD_ID, 0);
+        id = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
 
         mNameTextView = findViewById(R.id.detail_food_name_tv);
         mRatingBar = findViewById(R.id.detail_rating_tv);

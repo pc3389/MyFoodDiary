@@ -1,7 +1,9 @@
-package android.example.myfoodrecords;
+package android.example.myfoodrecords.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.example.myfoodrecords.utils.PhotoUtil;
+import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.activities.DetailActivity;
 import android.example.myfoodrecords.model.Food;
 import android.view.LayoutInflater;
@@ -15,21 +17,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryViewHolder> {
+public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
 
     private List<Food> foodList;
     private Context context;
     public static final String KEY_ITEM_FOOD_ID = "foodId1";
 
 
-    public class SummaryViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
         private ImageView foodImageView;
         private TextView foodNameTextView;
         private TextView foodRatingTextView;
         private TextView foodDateTextView;
         private TextView foodTypeTextView;
 
-        public SummaryViewHolder(@NonNull View itemView) {
+        public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             foodImageView =itemView.findViewById(R.id.food_pic_iv);
             foodNameTextView = itemView.findViewById(R.id.food_name_tv);
@@ -39,20 +41,20 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
         }
     }
 
-    public SummaryAdapter(List<Food> foodList, Context context) {
+    public ItemViewAdapter(List<Food> foodList, Context context) {
         this.foodList = foodList;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public SummaryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_food, parent, false);
-        return new SummaryViewHolder(v);
+        return new ItemViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SummaryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         final Food food = foodList.get(position);
 
         holder.foodNameTextView.setText(food.getName());

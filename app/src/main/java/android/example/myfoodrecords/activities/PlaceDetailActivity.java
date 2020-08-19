@@ -3,7 +3,7 @@ package android.example.myfoodrecords.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.example.myfoodrecords.R;
-import android.example.myfoodrecords.RealmHelper;
+import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.model.PlaceModel;
 import android.os.Bundle;
 import android.view.View;

@@ -6,9 +6,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.example.myfoodrecords.MyPagerAdapter;
+import android.example.myfoodrecords.adapter.MyPagerAdapter;
 import android.example.myfoodrecords.R;
-import android.example.myfoodrecords.RealmHelper;
+import android.example.myfoodrecords.utils.RealmHelper;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;

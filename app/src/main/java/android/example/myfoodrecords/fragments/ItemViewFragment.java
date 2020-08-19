@@ -17,14 +17,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 
-public class FavoriteFragment extends Fragment {
+public class ItemViewFragment extends Fragment {
 
     private Realm realm;
     private RealmHelper helper;
     private RealmChangeListener realmChangeListener;
 
     private View rootView;
+
     private RecyclerView recyclerView;
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,20 +38,22 @@ public class FavoriteFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView =  inflater.inflate(R.layout.fragment_favorite, container, false);
+
+        rootView = inflater.inflate(R.layout.fragment_item_view, container, false);
 
         setupUi();
+
         return rootView;
     }
 
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectFavoriteFromDb();
+        helper.selectFoodFromDb();
     }
 
     private void setupUi() {
-        recyclerView = rootView.findViewById(R.id.favorite_rc);
+        recyclerView = rootView.findViewById(R.id.item_view_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         ItemViewAdapter itemViewAdapter = new ItemViewAdapter(helper.retrieveFoodAll(), getActivity());
         recyclerView.setAdapter(itemViewAdapter);

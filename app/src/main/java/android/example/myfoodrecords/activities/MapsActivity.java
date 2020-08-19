@@ -7,9 +7,9 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.example.myfoodrecords.PrivatePlaceAdapter;
+import android.example.myfoodrecords.adapter.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
-import android.example.myfoodrecords.RealmHelper;
+import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.model.PlaceModel;
 import android.location.Location;

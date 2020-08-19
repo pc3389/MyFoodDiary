@@ -5,9 +5,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.example.myfoodrecords.PrivatePlaceAdapter;
+import android.example.myfoodrecords.adapter.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
-import android.example.myfoodrecords.RealmHelper;
+import android.example.myfoodrecords.utils.RealmHelper;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -53,7 +53,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         });
         recyclerView = findViewById(R.id.private_address_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retirevePlaceAll(), this, this);
+        PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retrievePlaceAll(), this, this);
         recyclerView.setAdapter(privatePlaceAdapter);
         refresh();
     }
@@ -62,7 +62,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retirevePlaceAll(), PrivatePlaceActivity.this, PrivatePlaceActivity.this);
+                PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retrievePlaceAll(), PrivatePlaceActivity.this, PrivatePlaceActivity.this);
                 recyclerView.setAdapter(privatePlaceAdapter);
             }
         };

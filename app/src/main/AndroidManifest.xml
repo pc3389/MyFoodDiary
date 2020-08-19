@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.PlaceDetailActivity"></activity>
+        <activity android:name=".activities.SummaryDetailActivity"></activity>
+        <activity android:name=".activities.PlaceDetailActivity" />
         <activity android:name=".activities.PrivatePlaceActivity" />
         <!--
              //TODO add api keys in local.property

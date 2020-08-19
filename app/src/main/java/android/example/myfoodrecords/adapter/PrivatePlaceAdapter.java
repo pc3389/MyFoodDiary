@@ -1,8 +1,9 @@
-package android.example.myfoodrecords;
+package android.example.myfoodrecords.adapter;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.activities.EditorActivity;
 import android.example.myfoodrecords.activities.MapsActivity;
 import android.example.myfoodrecords.activities.PrivatePlaceActivity;
@@ -67,7 +68,6 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
                 intent.putExtra(PRIVATE_PLACE_KEY, placeModel.getId());
                 intent.putExtra(EditorActivity.KEY_REQUEST_CODE, PrivatePlaceActivity.REQUSET_PRIVATE_PLACE);
                 context.startActivity(intent);
-                //TODO do the things in MapsActivity
                 return true;
             }
         });
