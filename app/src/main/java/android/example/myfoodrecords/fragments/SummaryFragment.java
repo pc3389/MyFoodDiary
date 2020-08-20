@@ -1,6 +1,5 @@
 package android.example.myfoodrecords.fragments;
 
-import android.example.myfoodrecords.adapter.ItemViewAdapter;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.adapter.SummaryAdapter;
 import android.example.myfoodrecords.model.Food;
@@ -19,6 +18,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.realm.Realm;
@@ -35,6 +37,9 @@ public class SummaryFragment extends Fragment {
     private RecyclerView recyclerView;
     private Button foodButton;
     private Button placeButton;
+
+    public static final String foodString = "food";
+    public static final String placeString = "place";
 
     private List<SummaryItem> summaryItemList;
 
@@ -72,6 +77,7 @@ public class SummaryFragment extends Fragment {
                 setFoodSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
+                SummaryAdapter.foodOrPlace = foodString;
             }
         });
         placeButton = rootView.findViewById(R.id.summary_place_button);
@@ -81,20 +87,21 @@ public class SummaryFragment extends Fragment {
                 setPlaceSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
+                SummaryAdapter.foodOrPlace = placeString;
             }
         });
     }
 
     private void setFoodSummaryItemList() {
         summaryItemList = new ArrayList<>();
-        List<Food> sortedFoodList= helper.retireveFoodWithNameSorted();
+        List<Food> sortedFoodList = helper.retrieveFoodWithNameSorted();
         int count = 0;
         float rating = 0;
 
-        for(int i = 0; i < sortedFoodList.size() - 1; i++) {
+        for (int i = 0; i < sortedFoodList.size() - 1; i++) {
             rating += sortedFoodList.get(i).getRating();
             count++;
-            if(!sortedFoodList.get(i).getName().equals(sortedFoodList.get(i + 1).getName())) {
+            if (!sortedFoodList.get(i).getName().equals(sortedFoodList.get(i + 1).getName())) {
 
                 String name = sortedFoodList.get(i).getName();
                 addItemToSummayItemList(name, count, rating);
@@ -108,31 +115,41 @@ public class SummaryFragment extends Fragment {
         String secondLastName = sortedFoodList.get(lastIndex - 1).getName();
         float lastItemRating = sortedFoodList.get(lastIndex).getRating();
 
-        if(!lastItemName.equals(secondLastName)) {
+        if (!lastItemName.equals(secondLastName)) {
             addItemToSummayItemList(lastItemName, 1, lastItemRating);
         } else {
             addItemToSummayItemList(lastItemName, count + 1, rating + lastItemRating);
         }
     }
 
-    //TODO summaryList Place. need to fix
     private void setPlaceSummaryItemList() {
         summaryItemList = new ArrayList<>();
-        List<Food> sortedFoodList= helper.retrieveFoodWithPlaceNameSorted();
+        List<Food> sortedFoodList = helper.retrieveFoodWithNameSorted();
+        List<Integer> removeNumber = new ArrayList<>();
+        for (int i = 0; i < sortedFoodList.size(); i++) {
+            if (sortedFoodList.get(i).getPlaceModel() == null) {
+                removeNumber.add(i);
+            } else if (sortedFoodList.get(i).getPlaceModel().getPlaceName() == null) {
+                removeNumber.add(i);
+            }
+        }
+        for (int i = removeNumber.size() - 1; i >= 0; i--) {
+            sortedFoodList.remove((int) removeNumber.get(i));
+        }
+        Collections.sort(sortedFoodList, new FoodPlaceComparator());
         int count = 0;
         float rating = 0;
 
-        for(int i = 0; i < sortedFoodList.size() - 1; i++) {
+        for (int i = 0; i < sortedFoodList.size() - 1; i++) {
             rating += sortedFoodList.get(i).getRating();
             count++;
-            if(sortedFoodList.get(i).getPlaceModel().getPlaceName() != null && sortedFoodList.get(i + 1).getPlaceModel().getPlaceName() != null) {
-                if (!sortedFoodList.get(i).getName().equals(sortedFoodList.get(i + 1).getName())) {
-
-                    String name = sortedFoodList.get(i).getPlaceModel().getPlaceName();
-                    addItemToSummayItemList(name, count, rating);
-                    count = 0;
-                    rating = 0;
-                }
+            String thisItemPlaceName = sortedFoodList.get(i).getPlaceModel().getPlaceName();
+            String nextItemPlaceName = sortedFoodList.get(i + 1).getPlaceModel().getPlaceName();
+            if (!thisItemPlaceName.equals(nextItemPlaceName)) {
+                String name = sortedFoodList.get(i).getPlaceModel().getPlaceName();
+                addItemToSummayItemList(name, count, rating);
+                count = 0;
+                rating = 0;
             }
         }
 
@@ -141,10 +158,17 @@ public class SummaryFragment extends Fragment {
         String secondLastName = sortedFoodList.get(lastIndex - 1).getPlaceModel().getPlaceName();
         float lastItemRating = sortedFoodList.get(lastIndex).getRating();
 
-        if(!lastItemName.equals(secondLastName)) {
+        if (!lastItemName.equals(secondLastName)) {
             addItemToSummayItemList(lastItemName, 1, lastItemRating);
         } else {
             addItemToSummayItemList(lastItemName, count + 1, rating + lastItemRating);
+        }
+    }
+
+    private static class FoodPlaceComparator implements Comparator<Food> {
+        @Override
+        public int compare(Food o1, Food o2) {
+            return o1.getPlaceModel().getPlaceName().compareTo(o2.getPlaceModel().getPlaceName());
         }
     }
 

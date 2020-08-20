@@ -91,6 +91,8 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         if(food.getPlaceModel() != null) {
             mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
             mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
+        } else {
+            showInMapButton.setVisibility(View.INVISIBLE);
         }
 
         reatingBarChangeListener();

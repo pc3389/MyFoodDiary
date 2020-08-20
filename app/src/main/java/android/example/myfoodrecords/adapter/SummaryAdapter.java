@@ -19,9 +19,11 @@ import java.util.List;
 public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryViewHolder> {
 
     public static final String KEY_SUMMARY_NAME = "summaryName";
+    public static final String KEY_FOOD_OR_PLACE = "foodOrPlace";
 
     private List<SummaryItem> summaryItemList;
     private Context context;
+    public static String foodOrPlace = "food";
 
     public static class SummaryViewHolder extends RecyclerView.ViewHolder {
         private TextView nameTextView;
@@ -58,6 +60,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
             public void onClick(View v) {
                 Intent intent = new Intent(context, SummaryDetailActivity.class);
                 intent.putExtra(KEY_SUMMARY_NAME, summaryItemList.get(position).getName());
+                intent.putExtra(KEY_FOOD_OR_PLACE,foodOrPlace);
                 context.startActivity(intent);
             }
         });

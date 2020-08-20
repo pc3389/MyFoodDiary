@@ -16,5 +16,7 @@
     <string name="food_button">Food</string>
     <string name="summary_item_number_detail"># of Items:</string>
     <string name="summary_average_rating">Average Rating:</string>
+    <string name="food_name">Food Name</string>
+    <string name="food_type">Food Type</string>
 
 </resources>

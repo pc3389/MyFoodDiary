@@ -105,18 +105,10 @@ public class RealmHelper {
         return placeList;
     }
 
-    public List<Food> retireveFoodWithNameSorted() {
+    public List<Food> retrieveFoodWithNameSorted() {
         RealmResults<Food> foodRealmResults;
         foodRealmResults = realm.where(Food.class)
                 .sort("name")
-                .findAll();
-        return new ArrayList<>(foodRealmResults);
-    }
-
-    public List<Food> retrieveFoodWithPlaceNameSorted() {
-        RealmResults<Food> foodRealmResults;
-        foodRealmResults = realm.where(Food.class)
-                .sort("placeName")
                 .findAll();
         return new ArrayList<>(foodRealmResults);
     }
@@ -133,16 +125,16 @@ public class RealmHelper {
         return placeModel;
     }
 
-    public List<Food> retrieveFoodListWithName(int foodName) {
+    public List<Food> retrieveFoodListWithName(String foodName) {
         List<Food> food;
         food = realm.where(Food.class).equalTo("name", foodName).findAll();
         return food;
     }
 
-    public List<PlaceModel> retrievePlaceListWithName(int placeName) {
-        List<PlaceModel> placeModelList;
-        placeModelList = realm.where(PlaceModel.class).equalTo("name", placeName).findAll();
-        return placeModelList;
+    public List<Food> retrieveFoodListWithPlaceName(String placeName) {
+        List<Food> food;
+        food = realm.where(Food.class).equalTo("placeModel.placeName", placeName).findAll();
+        return food;
     }
 
 
