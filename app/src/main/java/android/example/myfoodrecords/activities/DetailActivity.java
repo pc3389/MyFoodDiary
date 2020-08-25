@@ -21,9 +21,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.jetbrains.annotations.NotNull;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmModel;
 
 public class DetailActivity extends AppCompatActivity implements PhotoAsyncResponse {
 
@@ -33,7 +37,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
 
     private Food food;
 
-    private int id;
+    private int foodId;
     public static int DETAIL_REQUEST = 0;
 
     private TextView mNameTextView;
@@ -61,17 +65,17 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         helper = new RealmHelper(realm);
         helper.selectFoodFromDb();
 
-        id = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
+        foodId = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
 
         food = realm.where(Food.class)
-                .equalTo("id", id)
+                .equalTo("id", foodId)
                 .findFirst();
     }
 
     private void setupUi() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        id = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
+        foodId = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
 
         mNameTextView = findViewById(R.id.detail_food_name_tv);
         mRatingBar = findViewById(R.id.detail_rating_tv);
@@ -147,8 +151,32 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             intent.putExtra("id", food.getId());
             startActivity(intent);
         } else if (id == R.id.delete_menu) {
-            helper.deleteFood(food.getId());
+            Food food = realm.where(Food.class).equalTo("id", foodId).findFirst();
+            food.addChangeListener(new RealmChangeListener<RealmModel>() {
+                @Override
+                public void onChange(RealmModel realmModel) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(DetailActivity.this, "Delete Successful", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(@NotNull Realm realm) {
+                    if (food == null) {
+                        Toast.makeText(DetailActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        food.deleteFromRealm();
+                    }
+                }
+            });
+
             finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -183,7 +211,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                if (food.getPlaceModel() != null) {
+                if (food.isValid() && food.getPlaceModel() != null) {
                     mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
                     mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
                 }

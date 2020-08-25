@@ -1,5 +1,6 @@
 package android.example.myfoodrecords.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.example.myfoodrecords.fragments.SummaryFragment;
 import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class SummaryDetailActivity extends AppCompatActivity {
     }
 
     private void setupUi() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         String valueFoodOrPlace = intent.getExtras().getString(SummaryAdapter.KEY_FOOD_OR_PLACE);
         String name = intent.getExtras().getString(SummaryAdapter.KEY_SUMMARY_NAME);
@@ -55,6 +58,16 @@ public class SummaryDetailActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         ItemViewAdapter itemViewAdapter = new ItemViewAdapter(foodList, this);
         recyclerView.setAdapter(itemViewAdapter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

@@ -189,8 +189,8 @@ public class RealmHelper {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<Food> result = realm.where(Food.class).equalTo("id", id).findAll();
-                result.deleteAllFromRealm();
+                Food result = realm.where(Food.class).equalTo("id", id).findFirst();
+                result.deleteFromRealm();
             }
         });
     }
@@ -199,8 +199,8 @@ public class RealmHelper {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<PlaceModel> result = realm.where(PlaceModel.class).equalTo("id", id).findAll();
-                result.deleteAllFromRealm();
+                PlaceModel result = realm.where(PlaceModel.class).equalTo("id", id).findFirst();
+                result.deleteFromRealm();
             }
         });
     }

@@ -1,5 +1,6 @@
 package android.example.myfoodrecords.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -95,6 +97,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     }
 
     private void setupUi() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mNameEditText = findViewById(R.id.editor_food_name_edit);
         mTypeEditText = findViewById(R.id.editor_food_type_edit);
@@ -292,5 +295,15 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

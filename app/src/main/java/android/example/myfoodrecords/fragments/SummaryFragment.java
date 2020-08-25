@@ -95,73 +95,92 @@ public class SummaryFragment extends Fragment {
     private void setFoodSummaryItemList() {
         summaryItemList = new ArrayList<>();
         List<Food> sortedFoodList = helper.retrieveFoodWithNameSorted();
-        int count = 0;
-        float rating = 0;
+        if (sortedFoodList.size() > 0) {
+            int count = 0;
+            float rating = 0;
 
-        for (int i = 0; i < sortedFoodList.size() - 1; i++) {
-            rating += sortedFoodList.get(i).getRating();
-            count++;
-            if (!sortedFoodList.get(i).getName().equals(sortedFoodList.get(i + 1).getName())) {
+            for (int i = 0; i < sortedFoodList.size() - 1; i++) {
+                rating += sortedFoodList.get(i).getRating();
+                count++;
+                if (!sortedFoodList.get(i).getName().equals(sortedFoodList.get(i + 1).getName())) {
 
-                String name = sortedFoodList.get(i).getName();
-                addItemToSummayItemList(name, count, rating);
-                count = 0;
-                rating = 0;
+                    String name = sortedFoodList.get(i).getName();
+                    addItemToSummayItemList(name, count, rating);
+                    count = 0;
+                    rating = 0;
+                }
+            }
+            if (sortedFoodList.size() == 1) {
+                int lastIndex = sortedFoodList.size() - 1;
+                String lastItemName = sortedFoodList.get(lastIndex).getName();
+                float lastItemRating = sortedFoodList.get(lastIndex).getRating();
+                addItemToSummayItemList(lastItemName, 1, lastItemRating);
+
+            } else if (sortedFoodList.size() > 1) {
+                int lastIndex = sortedFoodList.size() - 1;
+                String lastItemName = sortedFoodList.get(lastIndex).getName();
+                String secondLastName = sortedFoodList.get(lastIndex - 1).getName();
+                float lastItemRating = sortedFoodList.get(lastIndex).getRating();
+
+                if (!lastItemName.equals(secondLastName)) {
+                    addItemToSummayItemList(lastItemName, 1, lastItemRating);
+                } else {
+                    addItemToSummayItemList(lastItemName, count + 1, rating + lastItemRating);
+                }
             }
         }
 
-        int lastIndex = sortedFoodList.size() - 1;
-        String lastItemName = sortedFoodList.get(lastIndex).getName();
-        String secondLastName = sortedFoodList.get(lastIndex - 1).getName();
-        float lastItemRating = sortedFoodList.get(lastIndex).getRating();
-
-        if (!lastItemName.equals(secondLastName)) {
-            addItemToSummayItemList(lastItemName, 1, lastItemRating);
-        } else {
-            addItemToSummayItemList(lastItemName, count + 1, rating + lastItemRating);
-        }
     }
 
     private void setPlaceSummaryItemList() {
         summaryItemList = new ArrayList<>();
         List<Food> sortedFoodList = helper.retrieveFoodWithNameSorted();
-        List<Integer> removeNumber = new ArrayList<>();
-        for (int i = 0; i < sortedFoodList.size(); i++) {
-            if (sortedFoodList.get(i).getPlaceModel() == null) {
-                removeNumber.add(i);
-            } else if (sortedFoodList.get(i).getPlaceModel().getPlaceName() == null) {
-                removeNumber.add(i);
+        if (sortedFoodList.size() > 0) {
+            List<Integer> removeNumber = new ArrayList<>();
+            for (int i = 0; i < sortedFoodList.size(); i++) {
+                if (sortedFoodList.get(i).getPlaceModel() == null) {
+                    removeNumber.add(i);
+                } else if (sortedFoodList.get(i).getPlaceModel().getPlaceName() == null) {
+                    removeNumber.add(i);
+                }
             }
-        }
-        for (int i = removeNumber.size() - 1; i >= 0; i--) {
-            sortedFoodList.remove((int) removeNumber.get(i));
-        }
-        Collections.sort(sortedFoodList, new FoodPlaceComparator());
-        int count = 0;
-        float rating = 0;
-
-        for (int i = 0; i < sortedFoodList.size() - 1; i++) {
-            rating += sortedFoodList.get(i).getRating();
-            count++;
-            String thisItemPlaceName = sortedFoodList.get(i).getPlaceModel().getPlaceName();
-            String nextItemPlaceName = sortedFoodList.get(i + 1).getPlaceModel().getPlaceName();
-            if (!thisItemPlaceName.equals(nextItemPlaceName)) {
-                String name = sortedFoodList.get(i).getPlaceModel().getPlaceName();
-                addItemToSummayItemList(name, count, rating);
-                count = 0;
-                rating = 0;
+            for (int i = removeNumber.size() - 1; i >= 0; i--) {
+                sortedFoodList.remove((int) removeNumber.get(i));
             }
-        }
+            Collections.sort(sortedFoodList, new FoodPlaceComparator());
+            int count = 0;
+            float rating = 0;
 
-        int lastIndex = sortedFoodList.size() - 1;
-        String lastItemName = sortedFoodList.get(lastIndex).getPlaceModel().getPlaceName();
-        String secondLastName = sortedFoodList.get(lastIndex - 1).getPlaceModel().getPlaceName();
-        float lastItemRating = sortedFoodList.get(lastIndex).getRating();
+            for (int i = 0; i < sortedFoodList.size() - 1; i++) {
+                rating += sortedFoodList.get(i).getRating();
+                count++;
+                String thisItemPlaceName = sortedFoodList.get(i).getPlaceModel().getPlaceName();
+                String nextItemPlaceName = sortedFoodList.get(i + 1).getPlaceModel().getPlaceName();
+                if (!thisItemPlaceName.equals(nextItemPlaceName)) {
+                    String name = sortedFoodList.get(i).getPlaceModel().getPlaceName();
+                    addItemToSummayItemList(name, count, rating);
+                    count = 0;
+                    rating = 0;
+                }
+            }
 
-        if (!lastItemName.equals(secondLastName)) {
-            addItemToSummayItemList(lastItemName, 1, lastItemRating);
-        } else {
-            addItemToSummayItemList(lastItemName, count + 1, rating + lastItemRating);
+            if(sortedFoodList.size() == 1) {
+                int lastIndex = sortedFoodList.size() - 1;
+                String lastItemName = sortedFoodList.get(lastIndex).getPlaceModel().getPlaceName();
+                float lastItemRating = sortedFoodList.get(lastIndex).getRating();
+                addItemToSummayItemList(lastItemName, 1, lastItemRating);
+            } else if (sortedFoodList.size() > 1) {
+                int lastIndex = sortedFoodList.size() - 1;
+                String lastItemName = sortedFoodList.get(lastIndex).getPlaceModel().getPlaceName();
+                String secondLastName = sortedFoodList.get(lastIndex - 1).getPlaceModel().getPlaceName();
+                float lastItemRating = sortedFoodList.get(lastIndex).getRating();
+
+                if (!lastItemName.equals(secondLastName)) {
+                    addItemToSummayItemList(lastItemName, 1, lastItemRating);
+                } else {
+                    addItemToSummayItemList(lastItemName, count + 1, rating + lastItemRating);
+                }
+            }
         }
     }
 
@@ -180,3 +199,4 @@ public class SummaryFragment extends Fragment {
         summaryItemList.add(summaryItem);
     }
 }
+
