@@ -10,7 +10,7 @@
     <string name="location_private_place">Private Address</string>
     <string name="location_select_from_map">Select from Map</string>
     <string name="location_set_current_address">Set Current Home Address</string>
-    <string name="spinner_not_selected">No Location</string>
+    <string name="spinner_not_selected">Edit Location</string>
     <string name="delete_all_items">Delete All Items</string>
     <string name="place_button">Place</string>
     <string name="food_button">Food</string>

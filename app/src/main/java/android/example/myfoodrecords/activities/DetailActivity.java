@@ -212,6 +212,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             @Override
             public void onChange(Object o) {
                 if (food.isValid() && food.getPlaceModel() != null) {
+                    loadPhoto();
                     mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
                     mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
                 }

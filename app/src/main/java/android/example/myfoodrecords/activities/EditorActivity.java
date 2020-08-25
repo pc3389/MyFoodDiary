@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,16 +53,21 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
 
     private EditText mNameEditText;
     private EditText mTypeEditText;
-    private EditText mDateEditText;
+    private TextView mDateTextView;
     private RatingBar mRatingBar;
     private Spinner mLocationSpinner;
     private ImageView mPhotoImageView;
     private TextView mPlaceNameTextView;
     private TextView mPlaceAddressTextView;
+    private LinearLayout linearLayoutPlace;
 
     static final int REQUEST_TAKE_PHOTO = 1;
     public static final String KEY_REQUEST_CODE = "requestCode";
     public static final String KEY_EDITOR_FOOD_ID = "foodId2";
+    private static final String KEY_INSTANCE_PHOTO = "savein";
+    private static final String KEY_INSTANCE_ADDRESS = "keyAddress";
+    private static final String KEY_INSTANCE_NAME = "keyPlaceName";
+    private static final String KEY_INSTANCE_DATE = "keyDate";
     public static final int REQUEST_MAP = 2;
     public static final int RESULT_MAP = 3;
     public static final int REQUEST_PRIVATE_PLACE = 4;
@@ -101,13 +107,14 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
 
         mNameEditText = findViewById(R.id.editor_food_name_edit);
         mTypeEditText = findViewById(R.id.editor_food_type_edit);
-        mDateEditText = findViewById(R.id.editor_date_edit);
+        mDateTextView = findViewById(R.id.editor_date_edit);
         mRatingBar = findViewById(R.id.editor_rating_edit);
         mLocationSpinner = findViewById(R.id.editor_location_spinner);
         setupSpinner();
         mPhotoImageView = findViewById(R.id.editor_food_iv);
         mPlaceNameTextView = findViewById(R.id.editor_place_name_tv);
         mPlaceAddressTextView = findViewById(R.id.editor_place_address_tv);
+        linearLayoutPlace = findViewById(R.id.linear_layout_place);
 
         mPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +126,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         if (foodId != 0) {
             mNameEditText.setText(food.getName());
             mTypeEditText.setText(food.getFoodType());
-            mDateEditText.setText(food.getDate());
+            mDateTextView.setText(food.getDate());
             mRatingBar.setRating(food.getRating());
             currentPhotoPath = food.getPhotoPath();
             if (currentPhotoPath != null) {
@@ -127,8 +134,11 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             }
             placeModel = food.getPlaceModel();
             if (placeModel != null) {
+                linearLayoutPlace.setVisibility(View.VISIBLE);
                 mPlaceNameTextView.setText(placeModel.getPlaceName());
                 mPlaceAddressTextView.setText(placeModel.getAddress());
+            } else {
+                linearLayoutPlace.setVisibility(View.GONE);
             }
         }
 
@@ -147,7 +157,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     }
 
     private void datePickerSetUp() {
-        mDateEditText.setOnClickListener(new View.OnClickListener() {
+        mDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calendar = Calendar.getInstance();
@@ -177,7 +187,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         String date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
         Toast.makeText(EditorActivity.this, date, Toast.LENGTH_LONG).show();
-        mDateEditText.setText(date);
+        mDateTextView.setText(date);
     }
 
     private void nullCheck() {
@@ -192,7 +202,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         food.setId(foodId);
         food.setName(mNameEditText.getText().toString());
         food.setFoodType(mTypeEditText.getText().toString());
-        food.setDate(mDateEditText.getText().toString());
+        food.setDate(mDateTextView.getText().toString());
         food.setRating(mRatingBar.getRating());
         food.setPhotoPath(currentPhotoPath);
         food.setPlaceModel(placeModel);
@@ -305,5 +315,49 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        if(currentPhotoPath != null) {
+            outState.putString(KEY_INSTANCE_PHOTO, currentPhotoPath);
+        }
+        if(mPlaceAddressTextView.getText() != null) {
+            outState.putString(KEY_INSTANCE_ADDRESS, mPlaceAddressTextView.getText().toString());
+        }
+        if(mPlaceNameTextView.getText() != null) {
+            outState.putString(KEY_INSTANCE_NAME, mPlaceNameTextView.getText().toString());
+        }
+        if(mDateTextView.getText() != null) {
+            outState.putString(KEY_INSTANCE_DATE, mDateTextView.getText().toString());
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        currentPhotoPath = savedInstanceState.getString(KEY_INSTANCE_PHOTO);
+        if(currentPhotoPath != null) {
+            loadPhoto();
+        }
+        String address = savedInstanceState.getString(KEY_INSTANCE_ADDRESS);
+        String placeName = savedInstanceState.getString(KEY_INSTANCE_NAME);
+        String date = savedInstanceState.getString(KEY_INSTANCE_DATE);
+        if(address != null) {
+            mPlaceAddressTextView.setText(address);
+        }
+        if(placeName != null) {
+            mPlaceNameTextView.setText(placeName);
+        }
+        if(date != null) {
+            mDateTextView.setText(date);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLocationSpinner.setSelection(0);
     }
 }
