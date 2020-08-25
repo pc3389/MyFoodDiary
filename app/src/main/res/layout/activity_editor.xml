@@ -14,7 +14,7 @@
         <ImageView
             android:id="@+id/editor_food_iv"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/image_height"
+            android:layout_height="wrap_content"
             android:padding="16dp"
             android:scaleType="fitCenter"
             android:src="@mipmap/ic_no_food"

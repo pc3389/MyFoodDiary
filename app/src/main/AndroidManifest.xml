@@ -19,11 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.SummaryDetailActivity"></activity>
-        <activity android:name=".activities.PlaceDetailActivity" />
-        <activity android:name=".activities.PrivatePlaceActivity" />
         <!--
-             //TODO add api keys in local.property
+             //TODO copy and paste api keys in local.property
              placeApiKey = YOUR_API_KEY
              mapApiKey = YOUR_API_KEY
         -->
@@ -31,9 +28,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".activities.MapsActivity"
-            android:label="@string/title_activity_maps" />
+
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -44,9 +39,18 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <activity android:name=".activities.EditorActivity" />
-        <activity android:name=".activities.DetailActivity" />
+        <activity android:name=".activities.SummaryDetailActivity"/>
+        <activity android:name=".activities.PlaceDetailActivity" />
+        <activity android:name=".activities.PrivatePlaceActivity" />
+        <activity
+            android:name=".activities.MapsActivity"
+            android:label="@string/title_activity_maps" />
+        <activity
+            android:name=".activities.EditorActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activities.DetailActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

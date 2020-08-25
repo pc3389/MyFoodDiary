@@ -41,7 +41,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     public static int DETAIL_REQUEST = 0;
 
     private TextView mNameTextView;
-    private RatingBar mRatingBar;
+    private TextView mRatingTextView;
     private TextView mDateTextView;
     private TextView mTypeTextView;
     private ImageView mPhotoImageView;
@@ -78,7 +78,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         foodId = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
 
         mNameTextView = findViewById(R.id.detail_food_name_tv);
-        mRatingBar = findViewById(R.id.detail_rating_tv);
+        mRatingTextView = findViewById(R.id.detail_rating_tv);
         mDateTextView = findViewById(R.id.detail_date_tv);
         mTypeTextView = findViewById(R.id.detail_food_type_tv);
         mPhotoImageView = findViewById(R.id.detail_food_iv);
@@ -88,7 +88,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         showMapOnClick();
 
         mNameTextView.setText(food.getName());
-        mRatingBar.setRating(food.getRating());
+        mRatingTextView.setText(String.valueOf(food.getRating()));
         mDateTextView.setText(food.getDate());
         mTypeTextView.setText(food.getFoodType());
         isFavorite = food.getFavorite();
@@ -98,8 +98,6 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         } else {
             showInMapButton.setVisibility(View.INVISIBLE);
         }
-
-        reatingBarChangeListener();
 
         loadPhoto();
         refresh();
@@ -219,19 +217,5 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             }
         };
         realm.addChangeListener(realmChangeListener);
-    }
-
-    private void reatingBarChangeListener() {
-        mRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        food.setRating(rating);
-                    }
-                });
-            }
-        });
     }
 }
