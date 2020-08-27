@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBackGround">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,8 +18,7 @@
             android:id="@+id/detail_food_iv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:scaleType="fitCenter"
+            android:scaleType="centerCrop"
             android:src="@mipmap/ic_no_food"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -36,6 +36,7 @@
             <LinearLayout style="@style/LinearLayoutVertical10dp">
 
                 <TextView
+                    android:textStyle="bold"
                     style="@style/DetailLargeText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -52,6 +53,7 @@
             <LinearLayout style="@style/LinearLayoutVertical10dp">
 
                 <TextView
+                    android:textStyle="bold"
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -68,6 +70,7 @@
             <LinearLayout style="@style/LinearLayoutVertical10dp">
 
                 <TextView
+                    android:textStyle="bold"
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -84,6 +87,7 @@
             <LinearLayout style="@style/LinearLayoutVertical10dp">
 
                 <TextView
+                    android:textStyle="bold"
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -96,6 +100,21 @@
                     android:layout_weight="2"
                     tools:text="2019/12/13" />
             </LinearLayout>
+        <LinearLayout style="@style/LinearLayoutVertical10dp">
+            <TextView
+                android:text="@string/description"
+                android:textStyle="bold"
+                style="@style/DetailMediumText"
+                android:layout_width="0dp"
+                android:layout_weight="1" />
+            <TextView
+                android:id="@+id/detail_description_tv"
+                style="@style/DetailMediumText"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                tools:text="This is Description"/>
+        </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -112,6 +131,7 @@
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:textStyle="bold"
                     android:text="Location: " />
 
                 <TextView
@@ -128,6 +148,7 @@
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:textStyle="bold"
                     android:text="Address: " />
 
                 <TextView

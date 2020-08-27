@@ -19,7 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RatingBar;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +48,8 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     private Button showInMapButton;
     private TextView mPlaceNameTextView;
     private TextView mPlaceAddressTextView;
+    private TextView mDescriptionTextView;
+    private LinearLayout mPlaceLinearLayout;
 
     private boolean isFavorite;
 
@@ -85,18 +87,22 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         showInMapButton = findViewById(R.id.show_map_button);
         mPlaceNameTextView = findViewById(R.id.detail_place_name_tv);
         mPlaceAddressTextView = findViewById(R.id.detail_place_address_tv);
+        mDescriptionTextView = findViewById(R.id.detail_description_tv);
+        mPlaceLinearLayout = findViewById(R.id.detail_linear_layout_place);
         showMapOnClick();
 
         mNameTextView.setText(food.getName());
         mRatingTextView.setText(String.valueOf(food.getRating()));
         mDateTextView.setText(food.getDate());
         mTypeTextView.setText(food.getFoodType());
+        mDescriptionTextView.setText(food.getDescription());
         isFavorite = food.getFavorite();
         if(food.getPlaceModel() != null) {
             mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
             mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
         } else {
             showInMapButton.setVisibility(View.INVISIBLE);
+            mPlaceLinearLayout.setVisibility(View.INVISIBLE);
         }
 
         loadPhoto();
@@ -202,6 +208,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         newfood.setRating(food.getRating());
         newfood.setPhotoPath(food.getPhotoPath());
         newfood.setFavorite(isFavorite);
+        newfood.setDescription(food.getDescription());
         helper.insertFood(newfood);
     }
 
@@ -210,9 +217,15 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             @Override
             public void onChange(Object o) {
                 if (food.isValid() && food.getPlaceModel() != null) {
-                    loadPhoto();
+                    mNameTextView.setText(food.getName());
+                    mRatingTextView.setText(String.valueOf(food.getRating()));
+                    mDateTextView.setText(food.getDate());
+                    mTypeTextView.setText(food.getFoodType());
+                    mDescriptionTextView.setText(food.getDescription());
                     mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
                     mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
+                    mDateTextView.setText(food.getDate());
+                    loadPhoto();
                 }
             }
         };

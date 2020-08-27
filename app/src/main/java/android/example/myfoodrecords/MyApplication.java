@@ -7,7 +7,6 @@ import io.realm.RealmConfiguration;
 
 public class MyApplication extends Application {
 
-    //public static RealmConfiguration placeConfig;
     public static RealmConfiguration foodConfig;
 
     @Override
@@ -17,7 +16,7 @@ public class MyApplication extends Application {
 
         foodConfig =
                 new RealmConfiguration.Builder()
-                        .name("myfoodrealm13.realm")
+                        .name("myfoodrealm14.realm")
                         .build();
 
         Realm.setDefaultConfiguration(foodConfig);

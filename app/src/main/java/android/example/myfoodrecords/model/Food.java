@@ -16,6 +16,7 @@ public class Food extends RealmObject {
     private String photoPath;
     private Boolean isFavorite = false;
     private PlaceModel placeModel;
+    private String description;
 
     public Food(){}
 
@@ -81,5 +82,13 @@ public class Food extends RealmObject {
 
     public void setPlaceModel(PlaceModel placeModel) {
         this.placeModel = placeModel;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -11,10 +11,12 @@
             android:layout_height="wrap_content"
             tools:text="Place Name"
             android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textColor="@color/primary_text"/>
         <TextView
             android:id="@+id/item_place_address_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Address"/>
+            tools:text="Address"
+            android:textColor="@color/primary_text"/>
 </LinearLayout>

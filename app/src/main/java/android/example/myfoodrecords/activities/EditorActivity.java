@@ -54,6 +54,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
 
     private EditText mNameEditText;
     private EditText mTypeEditText;
+    private EditText mDescriptionEditText;
     private TextView mDateTextView;
     private RatingBar mRatingBar;
     private Spinner mLocationSpinner;
@@ -108,6 +109,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
 
         mNameEditText = findViewById(R.id.editor_food_name_edit);
         mTypeEditText = findViewById(R.id.editor_food_type_edit);
+        mDescriptionEditText = findViewById(R.id.editor_description_edit);
         mDateTextView = findViewById(R.id.editor_date_edit);
         mRatingBar = findViewById(R.id.editor_rating_edit);
         mLocationSpinner = findViewById(R.id.editor_location_spinner);
@@ -128,6 +130,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             mNameEditText.setText(food.getName());
             mTypeEditText.setText(food.getFoodType());
             mDateTextView.setText(food.getDate());
+            mDescriptionEditText.setText(food.getDescription());
             mRatingBar.setRating(food.getRating());
             currentPhotoPath = food.getPhotoPath();
             if (currentPhotoPath != null) {
@@ -203,6 +206,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         food.setId(foodId);
         food.setName(mNameEditText.getText().toString());
         food.setFoodType(mTypeEditText.getText().toString());
+        food.setDescription(mDescriptionEditText.getText().toString());
         food.setDate(mDateTextView.getText().toString());
         food.setRating(mRatingBar.getRating());
         food.setPhotoPath(currentPhotoPath);

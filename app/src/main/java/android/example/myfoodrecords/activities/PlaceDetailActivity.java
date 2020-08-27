@@ -22,6 +22,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
     private EditText addressEditText;
     private Button saveButton;
     private Button deleteButton;
+    private int id = 0;
 
     private PlaceModel newPlaceModel = new PlaceModel();
 
@@ -50,13 +51,17 @@ public class PlaceDetailActivity extends AppCompatActivity {
         final PlaceModel placeModel = helper.retrievePlaceWithId(placeId);
         nameEditText.setText(placeModel.getPlaceName());
         addressEditText.setText(placeModel.getAddress());
+        id = placeModel.getId();
+        if(id == 0) {
+            deleteButton.setVisibility(View.INVISIBLE);
+        }
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 newPlaceModel.setPlaceName(nameEditText.getText().toString());
                 newPlaceModel.setAddress(addressEditText.getText().toString());
-                newPlaceModel.setId(placeId);
+                newPlaceModel.setId(id);
                 newPlaceModel.setPrivate(true);
                 newPlaceModel.setLat(placeModel.getLat());
                 newPlaceModel.setLng(placeModel.getLng());
