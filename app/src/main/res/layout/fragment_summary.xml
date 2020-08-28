@@ -14,12 +14,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:layout_margin="10dp"
             android:text="@string/food_button"/>
         <Button
             android:id="@+id/summary_place_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:layout_margin="10dp"
             android:text="@string/place_button"/>
     </LinearLayout>
 

@@ -24,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -152,19 +151,6 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
                 linearLayoutPlace.setVisibility(View.GONE);
             }
         }
-
-        Button saveButton = findViewById(R.id.save_button);
-
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nullCheck();
-                if (!mNameEditText.getText().toString().equals("")) {
-                    saveFoodData();
-                    finish();
-                }
-            }
-        });
         refresh();
     }
 
