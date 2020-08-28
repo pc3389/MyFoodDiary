@@ -104,6 +104,14 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             showInMapButton.setVisibility(View.INVISIBLE);
             mPlaceLinearLayout.setVisibility(View.INVISIBLE);
         }
+        mPhotoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(food.getPhotoPath() != null) {
+                    //TODO Image click full screen
+                }
+            }
+        });
 
         loadPhoto();
         refresh();
@@ -216,19 +224,28 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                if (food.isValid() && food.getPlaceModel() != null) {
+                if (food.isValid()) {
                     mNameTextView.setText(food.getName());
                     mRatingTextView.setText(String.valueOf(food.getRating()));
                     mDateTextView.setText(food.getDate());
                     mTypeTextView.setText(food.getFoodType());
                     mDescriptionTextView.setText(food.getDescription());
-                    mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
-                    mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
+                    if(food.getPlaceModel() != null) {
+                        mPlaceLinearLayout.setVisibility(View.VISIBLE);
+                        mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
+                        mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
+                    }
                     mDateTextView.setText(food.getDate());
                     loadPhoto();
                 }
             }
         };
         realm.addChangeListener(realmChangeListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refresh();
     }
 }

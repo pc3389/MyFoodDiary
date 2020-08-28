@@ -27,7 +27,10 @@ public class PhotoUtil {
 
         @Override
         protected Bitmap doInBackground(Void... voids) {
-            return setPic();
+            if(currentPhotoPath != null) {
+                return setPic();
+            }
+            return null;
         }
 
         @Override

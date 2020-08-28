@@ -1,6 +1,7 @@
 package android.example.myfoodrecords.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
@@ -19,18 +20,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,11 +41,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 public class EditorActivity extends AppCompatActivity implements PhotoAsyncResponse, DatePickerDialog.OnDateSetListener {
 
     private Realm realm;
     private RealmHelper helper;
+    private RealmChangeListener realmChangeListener;
 
     private Food food;
     private PlaceModel placeModel;
@@ -57,7 +57,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     private EditText mDescriptionEditText;
     private TextView mDateTextView;
     private RatingBar mRatingBar;
-    private Spinner mLocationSpinner;
+    private TextView mLocationTextView;
     private ImageView mPhotoImageView;
     private TextView mPlaceNameTextView;
     private TextView mPlaceAddressTextView;
@@ -77,8 +77,9 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     private DatePickerDialog datePickerDialog;
     private int Year, Month, Day;
     private Calendar calendar;
+    private boolean isFavorite;
 
-    private String currentPhotoPath;
+    private String currentPhotoPath = null;
 
     int foodId = 0;
 
@@ -112,8 +113,13 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         mDescriptionEditText = findViewById(R.id.editor_description_edit);
         mDateTextView = findViewById(R.id.editor_date_edit);
         mRatingBar = findViewById(R.id.editor_rating_edit);
-        mLocationSpinner = findViewById(R.id.editor_location_spinner);
-        setupSpinner();
+        mLocationTextView = findViewById(R.id.editor_location_spinner);
+        mLocationTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setupDialog();
+            }
+        });
         mPhotoImageView = findViewById(R.id.editor_food_iv);
         mPlaceNameTextView = findViewById(R.id.editor_place_name_tv);
         mPlaceAddressTextView = findViewById(R.id.editor_place_address_tv);
@@ -133,6 +139,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             mDescriptionEditText.setText(food.getDescription());
             mRatingBar.setRating(food.getRating());
             currentPhotoPath = food.getPhotoPath();
+            isFavorite = food.getFavorite();
             if (currentPhotoPath != null) {
                 loadPhoto();
             }
@@ -158,6 +165,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
                 }
             }
         });
+        refresh();
     }
 
     private void datePickerSetUp() {
@@ -211,6 +219,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         food.setRating(mRatingBar.getRating());
         food.setPhotoPath(currentPhotoPath);
         food.setPlaceModel(placeModel);
+        food.setFavorite(isFavorite);
 
         helper.insertFood(food);
     }
@@ -244,20 +253,22 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             loadPhoto();
         } else if (requestCode == REQUEST_MAP && resultCode == RESULT_MAP) {
             placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PLACE_ID_KEY, 0)).findFirst();
+            linearLayoutPlace.setVisibility(View.VISIBLE);
             mPlaceNameTextView.setText(placeModel.getPlaceName());
             mPlaceAddressTextView.setText(placeModel.getAddress());
         } else if (requestCode == REQUEST_PRIVATE_PLACE && resultCode == PrivatePlaceAdapter.RESULT_PRIVATE_PLACE) {
             placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(PrivatePlaceAdapter.PUT_PLACE_ID, 0)).findFirst();
+            linearLayoutPlace.setVisibility(View.VISIBLE);
             mPlaceNameTextView.setText(placeModel.getPlaceName());
             mPlaceAddressTextView.setText(placeModel.getAddress());
         }
     }
 
     private void loadPhoto() {
-        new PhotoUtil(currentPhotoPath, false);
-        PhotoUtil.PhotoAsync photoAsync = new PhotoUtil.PhotoAsync();
-        photoAsync.delegate = this;
-        photoAsync.execute();
+            new PhotoUtil(currentPhotoPath, false);
+            PhotoUtil.PhotoAsync photoAsync = new PhotoUtil.PhotoAsync();
+            photoAsync.delegate = this;
+            photoAsync.execute();
     }
 
     private File createImageFile() throws IOException {
@@ -281,35 +292,31 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         mPhotoImageView.setImageBitmap(bitmap);
     }
 
-    private void setupSpinner() {
-
-        ArrayAdapter locationSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.array_location_options, android.R.layout.simple_spinner_item);
-        locationSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        mLocationSpinner.setAdapter(locationSpinnerAdapter);
-        mLocationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    private void setupDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Location");
+        String[] placeArray = {getResources().getString((R.string.location_private_place)), getResources().getString((R.string.location_select_from_map))};
+        builder.setItems(placeArray, new DialogInterface.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selection = (String) parent.getItemAtPosition(position);
-                if (!TextUtils.isEmpty(selection)) {
-                    if (selection.equals(getString(R.string.spinner_not_selected))) {
-
-                    } else if (selection.equals(getString(R.string.location_private_place))) {
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0: {
                         Intent intent = new Intent(EditorActivity.this, PrivatePlaceActivity.class);
                         startActivityForResult(intent, REQUEST_PRIVATE_PLACE);
-                    } else if (selection.equals(getString(R.string.location_select_from_map))) {
+                        break;
+                    }
+                    case 1: {
                         Intent intent = new Intent(EditorActivity.this, MapsActivity.class);
                         intent.putExtra(KEY_REQUEST_CODE, REQUEST_MAP);
                         intent.putExtra(KEY_EDITOR_FOOD_ID, foodId);
                         startActivityForResult(intent, REQUEST_MAP);
+                        break;
                     }
                 }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
         });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
@@ -317,6 +324,14 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         int id = item.getItemId();
         if (id == android.R.id.home) {
             finish();
+            return true;
+        }
+        if(id == R.id.edit_menu_save){
+            nullCheck();
+            if (!mNameEditText.getText().toString().equals("")) {
+                saveFoodData();
+                finish();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -361,8 +376,32 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mLocationSpinner.setSelection(0);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_edit, menu);
+        return true;
+    }
+
+    private void refresh() {
+        realmChangeListener = new RealmChangeListener() {
+            @Override
+            public void onChange(Object o) {
+                if (food.isValid()) {
+                    mNameEditText.setText(food.getName());
+                    mRatingBar.setRating(food.getRating());
+                    mDateTextView.setText(food.getDate());
+                    mTypeEditText.setText(food.getFoodType());
+                    mDescriptionEditText.setText(food.getDescription());
+                    currentPhotoPath = food.getPhotoPath();
+                    if(food.getPlaceModel() != null) {
+                        linearLayoutPlace.setVisibility(View.VISIBLE);
+                        mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
+                        mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
+                    }
+                    loadPhoto();
+                }
+            }
+        };
+        realm.addChangeListener(realmChangeListener);
     }
 }
