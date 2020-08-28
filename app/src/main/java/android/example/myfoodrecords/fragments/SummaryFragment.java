@@ -1,6 +1,7 @@
 package android.example.myfoodrecords.fragments;
 
 import android.example.myfoodrecords.R;
+import android.example.myfoodrecords.adapter.ItemViewAdapter;
 import android.example.myfoodrecords.adapter.SummaryAdapter;
 import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.model.SummaryItem;
@@ -102,6 +103,7 @@ public class SummaryFragment extends Fragment {
                 SummaryAdapter.foodOrPlace = typeString;
             }
         });
+        refresh();
     }
 
     private void setFoodSummaryItemList() {
@@ -249,6 +251,18 @@ public class SummaryFragment extends Fragment {
         summaryItem.setCount(count);
         summaryItem.setRating(rating / count);
         summaryItemList.add(summaryItem);
+    }
+    private void refresh() {
+        realmChangeListener = new RealmChangeListener() {
+            @Override
+            public void onChange(Object o) {
+                setFoodSummaryItemList();
+                SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
+                recyclerView.setAdapter(summaryAdapter);
+                SummaryAdapter.foodOrPlace = foodString;
+            }
+        };
+        realm.addChangeListener(realmChangeListener);
     }
 }
 

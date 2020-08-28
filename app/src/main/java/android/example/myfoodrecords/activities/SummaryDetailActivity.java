@@ -24,6 +24,7 @@ public class SummaryDetailActivity extends AppCompatActivity {
 
     private Realm realm;
     private RealmHelper helper;
+    private RealmChangeListener realmChangeListener;
 
     private RecyclerView recyclerView;
     private List<Food> foodList;
@@ -33,8 +34,11 @@ public class SummaryDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary_detail);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         setupRealm();
         setupUi();
+        refresh();
     }
 
     private void setupRealm() {
@@ -43,7 +47,7 @@ public class SummaryDetailActivity extends AppCompatActivity {
     }
 
     private void setupUi() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
         String valueFoodOrPlace = intent.getExtras().getString(SummaryAdapter.KEY_FOOD_OR_PLACE);
         String name = intent.getExtras().getString(SummaryAdapter.KEY_SUMMARY_NAME);
@@ -70,6 +74,18 @@ public class SummaryDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void refresh() {
+        realmChangeListener = new RealmChangeListener() {
+            @Override
+            public void onChange(Object o) {
+                setupUi();
+                if(foodList.isEmpty()) {
+                    finish();
+                }
+            }
+        };
+        realm.addChangeListener(realmChangeListener);
     }
 
 }

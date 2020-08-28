@@ -81,10 +81,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        if (id == R.id.settings_menu) {
-            return true;
-        }
-
         if(id == R.id.delete_all) {
             helper.deleteAllFood();
         }

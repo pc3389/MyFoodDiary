@@ -6,7 +6,9 @@ import android.example.myfoodrecords.activities.MainActivity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+
 import androidx.exifinterface.media.ExifInterface;
+
 import android.net.Uri;
 import android.os.AsyncTask;
 
@@ -27,7 +29,7 @@ public class PhotoUtil {
 
         @Override
         protected Bitmap doInBackground(Void... voids) {
-            if(currentPhotoPath != null) {
+            if (currentPhotoPath != null) {
                 return setPic();
             }
             return null;
@@ -43,7 +45,7 @@ public class PhotoUtil {
     public static Bitmap setPic() {
         int targetW;
         int targetH;
-        if(!isListView) {
+        if (!isListView) {
 
             targetW = (int) MainActivity.context.getResources().getDimension(R.dimen.image_width);
             targetH = (int) MainActivity.context.getResources().getDimension(R.dimen.image_height);
@@ -62,7 +64,7 @@ public class PhotoUtil {
         int photoH = bmOptions.outHeight;
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.max(1, Math.max(photoW/targetW, photoH/targetH));
+        int scaleFactor = Math.max(1, Math.max(photoW / targetW, photoH / targetH));
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
@@ -71,7 +73,7 @@ public class PhotoUtil {
         Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
         Bitmap rotated = null;
         try {
-            rotated =  rotateImageIfRequired(bitmap, currentPhotoPath);
+            rotated = rotateImageIfRequired(bitmap, currentPhotoPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
