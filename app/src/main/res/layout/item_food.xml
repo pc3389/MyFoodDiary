@@ -44,6 +44,7 @@
         android:id="@+id/food_type_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingEnd="20dp"
         tools:text="FoodType"
         android:gravity="end"
         android:textSize="15sp"

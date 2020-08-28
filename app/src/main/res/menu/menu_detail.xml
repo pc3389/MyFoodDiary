@@ -12,7 +12,7 @@
     <item
         android:id="@+id/edit_menu"
         android:title="@string/edit"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/delete_menu"
         android:title="@string/delete"

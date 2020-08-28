@@ -37,9 +37,11 @@ public class SummaryFragment extends Fragment {
     private RecyclerView recyclerView;
     private Button foodButton;
     private Button placeButton;
+    private Button typeButton;
 
     public static final String foodString = "food";
     public static final String placeString = "place";
+    public static final String typeString = "type";
 
     private List<SummaryItem> summaryItemList;
 
@@ -88,6 +90,16 @@ public class SummaryFragment extends Fragment {
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
                 SummaryAdapter.foodOrPlace = placeString;
+            }
+        });
+        typeButton = rootView.findViewById(R.id.summary_type_button);
+        typeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setTypeSummaryItemList();
+                SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
+                recyclerView.setAdapter(summaryAdapter);
+                SummaryAdapter.foodOrPlace = typeString;
             }
         });
     }
@@ -182,6 +194,46 @@ public class SummaryFragment extends Fragment {
                 }
             }
         }
+    }
+
+    private void setTypeSummaryItemList() {
+        summaryItemList = new ArrayList<>();
+        List<Food> sortedFoodList = helper.retrieveFoodWithTypeSorted();
+        if (sortedFoodList.size() > 0) {
+            int count = 0;
+            float rating = 0;
+
+            for (int i = 0; i < sortedFoodList.size() - 1; i++) {
+                rating += sortedFoodList.get(i).getRating();
+                count++;
+                if (!sortedFoodList.get(i).getFoodType().equals(sortedFoodList.get(i + 1).getFoodType())) {
+
+                    String foodType = sortedFoodList.get(i).getFoodType();
+                    addItemToSummayItemList(foodType, count, rating);
+                    count = 0;
+                    rating = 0;
+                }
+            }
+            if (sortedFoodList.size() == 1) {
+                int lastIndex = sortedFoodList.size() - 1;
+                String lastItemType = sortedFoodList.get(lastIndex).getFoodType();
+                float lastItemRating = sortedFoodList.get(lastIndex).getRating();
+                addItemToSummayItemList(lastItemType, 1, lastItemRating);
+
+            } else if (sortedFoodList.size() > 1) {
+                int lastIndex = sortedFoodList.size() - 1;
+                String lastItemType = sortedFoodList.get(lastIndex).getFoodType();
+                String secondLastType = sortedFoodList.get(lastIndex - 1).getFoodType();
+                float lastItemRating = sortedFoodList.get(lastIndex).getRating();
+
+                if (!lastItemType.equals(secondLastType)) {
+                    addItemToSummayItemList(lastItemType, 1, lastItemRating);
+                } else {
+                    addItemToSummayItemList(lastItemType, count + 1, rating + lastItemRating);
+                }
+            }
+        }
+
     }
 
     private static class FoodPlaceComparator implements Comparator<Food> {

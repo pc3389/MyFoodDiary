@@ -372,7 +372,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                if (food.isValid()) {
+                if (food != null) {
                     mNameEditText.setText(food.getName());
                     mRatingBar.setRating(food.getRating());
                     mDateTextView.setText(food.getDate());

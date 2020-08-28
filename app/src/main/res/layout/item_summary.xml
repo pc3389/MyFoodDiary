@@ -28,14 +28,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/summary_item_number_detail" />
+            android:text="@string/summary_item_number_detail"
+            android:textColor="@color/primary_text"/>
 
         <TextView
             android:id="@+id/item_summary_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            tools:text="5" />
+            tools:text="5"
+            android:textColor="@color/primary_text"/>
     </LinearLayout>
 
     <LinearLayout
@@ -46,13 +48,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/summary_average_rating" />
+            android:text="@string/summary_average_rating"
+            android:textColor="@color/primary_text"/>
 
         <TextView
             android:id="@+id/item_summary_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            tools:text="3.5" />
+            tools:text="3.5"
+            android:textColor="@color/primary_text"/>
     </LinearLayout>
 </LinearLayout>

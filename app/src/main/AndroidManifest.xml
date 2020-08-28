@@ -19,6 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".PhotoFullscreenActivity"></activity>
         <!--
              //TODO copy and paste api keys in local.property
              placeApiKey = YOUR_API_KEY
@@ -27,8 +28,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
-
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -39,7 +38,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        <activity android:name=".activities.SummaryDetailActivity"/>
+
+        <activity android:name=".activities.SummaryDetailActivity" />
         <activity android:name=".activities.PlaceDetailActivity" />
         <activity android:name=".activities.PrivatePlaceActivity" />
         <activity

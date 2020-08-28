@@ -50,7 +50,9 @@ public class SummaryDetailActivity extends AppCompatActivity {
 
         if(valueFoodOrPlace.equals(SummaryFragment.foodString)) {
             foodList = helper.retrieveFoodListWithName(name);
-        } else {
+        } else if(valueFoodOrPlace.equals(SummaryFragment.typeString)){
+            foodList = helper.retrieveFoodListWithType(name);
+        } else  {
             foodList = helper.retrieveFoodListWithPlaceName(name);
         }
 

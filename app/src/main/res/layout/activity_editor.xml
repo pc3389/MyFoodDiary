@@ -125,12 +125,11 @@
 
         <TextView
             android:id="@+id/editor_location_spinner"
-            android:background="@color/colorPrimary"
-            android:backgroundTint="@color/colorAccent"
+            android:background="@color/colorButton"
             android:text="Push to Edit Location"
             android:gravity="center"
             android:textSize="15sp"
-            android:backgroundTintMode="screen"
+            android:textColor="@color/primary_text"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="20dp"

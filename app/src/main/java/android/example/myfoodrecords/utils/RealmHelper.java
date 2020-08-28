@@ -112,6 +112,13 @@ public class RealmHelper {
                 .findAll();
         return new ArrayList<>(foodRealmResults);
     }
+    public List<Food> retrieveFoodWithTypeSorted() {
+        RealmResults<Food> foodRealmResults;
+        foodRealmResults = realm.where(Food.class)
+                .sort("foodType")
+                .findAll();
+        return new ArrayList<>(foodRealmResults);
+    }
 
     public Food retrieveFoodWithId(int foodId) {
         Food food;
@@ -128,6 +135,11 @@ public class RealmHelper {
     public List<Food> retrieveFoodListWithName(String foodName) {
         List<Food> food;
         food = realm.where(Food.class).equalTo("name", foodName).findAll();
+        return food;
+    }
+    public List<Food> retrieveFoodListWithType(String foodType) {
+        List<Food> food;
+        food = realm.where(Food.class).equalTo("foodType", foodType).findAll();
         return food;
     }
 

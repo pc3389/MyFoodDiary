@@ -6,6 +6,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Intent;
 import android.example.myfoodrecords.PhotoAsyncResponse;
+import android.example.myfoodrecords.PhotoFullscreenActivity;
 import android.example.myfoodrecords.utils.PhotoUtil;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.utils.RealmHelper;
@@ -39,6 +40,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
 
     private int foodId;
     public static int DETAIL_REQUEST = 0;
+    public static String KEY_FULL_SCREEN = "photoFull";
 
     private TextView mNameTextView;
     private TextView mRatingTextView;
@@ -108,7 +110,9 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             @Override
             public void onClick(View v) {
                 if(food.getPhotoPath() != null) {
-                    //TODO Image click full screen
+                    Intent intent = new Intent(DetailActivity.this, PhotoFullscreenActivity.class);
+                    intent.putExtra(KEY_FULL_SCREEN, food.getPhotoPath());
+                    startActivity(intent);
                 }
             }
         });
@@ -163,7 +167,6 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             intent.putExtra("id", food.getId());
             startActivity(intent);
         } else if (id == R.id.delete_menu) {
-            Food food = realm.where(Food.class).equalTo("id", foodId).findFirst();
             food.addChangeListener(new RealmChangeListener<RealmModel>() {
                 @Override
                 public void onChange(RealmModel realmModel) {

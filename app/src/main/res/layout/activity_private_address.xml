@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.PrivatePlaceActivity">
+    tools:context=".activities.PrivatePlaceActivity"
+    android:background="@color/colorBackGround">
     <Button
         android:id="@+id/add_place_button"
         android:layout_width="match_parent"

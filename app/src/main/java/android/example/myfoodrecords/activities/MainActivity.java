@@ -105,13 +105,6 @@ public class MainActivity extends AppCompatActivity {
                             new String[] { permission },
                             requestCode);
         }
-        else {
-            Toast
-                    .makeText(MainActivity.this,
-                            "Permission already granted",
-                            Toast.LENGTH_SHORT)
-                    .show();
-        }
     }
 
     @Override

@@ -7,6 +7,7 @@
     <color name="white">#FFFFFF</color>
 
     <color name="colorBackGround">#E4E1DA</color>
+    <color name="colorButton">#E6DBC2</color>
 
     <color name="primary_text">#000000</color>
     <color name="spinner">#000000</color>
