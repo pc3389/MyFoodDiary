@@ -4,10 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.example.myfoodrecords.PhotoAsyncResponse;
-import android.example.myfoodrecords.PhotoFullscreenActivity;
-import android.example.myfoodrecords.utils.PhotoUtil;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.adapter.ItemViewAdapter;
@@ -24,19 +23,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.jetbrains.annotations.NotNull;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmModel;
 
-public class DetailActivity extends AppCompatActivity implements PhotoAsyncResponse {
+public class DetailActivity extends AppCompatActivity {
 
     private Realm realm;
     private RealmHelper helper;
     private RealmChangeListener realmChangeListener;
 
     private Food food;
+    private final Context context = DetailActivity.this;
 
     private int foodId;
     public static int DETAIL_REQUEST = 0;
@@ -52,6 +54,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     private TextView mPlaceAddressTextView;
     private TextView mDescriptionTextView;
     private LinearLayout mPlaceLinearLayout;
+    private String currentPhotoPath = null;
 
     private boolean isFavorite;
 
@@ -77,6 +80,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     }
 
     private void setupUi() {
+        getSupportActionBar().setTitle("Detail");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         foodId = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
@@ -93,31 +97,32 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         mPlaceLinearLayout = findViewById(R.id.detail_linear_layout_place);
         showMapOnClick();
 
+
         mNameTextView.setText(food.getName());
         mRatingTextView.setText(String.valueOf(food.getRating()));
         mDateTextView.setText(food.getDate());
         mTypeTextView.setText(food.getFoodType());
         mDescriptionTextView.setText(food.getDescription());
         isFavorite = food.getFavorite();
-        if(food.getPlaceModel() != null) {
+        if (food.getPlaceModel() != null) {
             mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
             mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
         } else {
             showInMapButton.setVisibility(View.INVISIBLE);
             mPlaceLinearLayout.setVisibility(View.INVISIBLE);
         }
+        currentPhotoPath = food.getPhotoPath();
+        loadPhoto();
         mPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(food.getPhotoPath() != null) {
+                if (food.getPhotoPath() != null) {
                     Intent intent = new Intent(DetailActivity.this, PhotoFullscreenActivity.class);
                     intent.putExtra(KEY_FULL_SCREEN, food.getPhotoPath());
                     startActivity(intent);
                 }
             }
         });
-
-        loadPhoto();
         refresh();
 
     }
@@ -138,7 +143,7 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_detail, menu);
-        if(isFavorite) {
+        if (isFavorite) {
             menu.findItem(R.id.favorite_btn).setIcon(R.drawable.star_yellow);
         }
         return true;
@@ -150,11 +155,11 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
         int id = item.getItemId();
 
         if (id == R.id.favorite_btn) {
-            if(!isFavorite) {
-                item.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.star_yellow, getTheme()));
+            if (!isFavorite) {
+                item.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.star_yellow, getTheme()));
                 isFavorite = true;
             } else {
-                item.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.star_grey, getTheme()));
+                item.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.star_grey, getTheme()));
                 isFavorite = false;
             }
             saveFoodData();
@@ -167,6 +172,8 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
             intent.putExtra("id", food.getId());
             startActivity(intent);
         } else if (id == R.id.delete_menu) {
+
+            /*
             food.addChangeListener(new RealmChangeListener<RealmModel>() {
                 @Override
                 public void onChange(RealmModel realmModel) {
@@ -178,13 +185,16 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
                     });
                 }
             });
+
+             */
+
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(@NotNull Realm realm) {
                     if (food == null) {
                         Toast.makeText(DetailActivity.this, "Error", Toast.LENGTH_SHORT).show();
-                        finish();
                     } else {
+                        Toast.makeText(DetailActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
                         food.deleteFromRealm();
                     }
                 }
@@ -197,17 +207,17 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
     }
 
     private void loadPhoto() {
-        if(food.getPhotoPath() != null) {
-            new PhotoUtil(food.getPhotoPath(), false);
-            PhotoUtil.PhotoAsync photoAsync = new PhotoUtil.PhotoAsync();
-            photoAsync.delegate = this;
-            photoAsync.execute();
+        if (!isFinishing()) {
+            if (currentPhotoPath == null) {
+                Glide.with(context)
+                        .load(R.mipmap.ic_no_food)
+                        .into(mPhotoImageView);
+            } else {
+                Glide.with(context)
+                        .load(currentPhotoPath)
+                        .into(mPhotoImageView);
+            }
         }
-    }
-
-    @Override
-    public void processFinish(Bitmap bitmap) {
-        mPhotoImageView.setImageBitmap(bitmap);
     }
 
     private void saveFoodData() {
@@ -233,12 +243,13 @@ public class DetailActivity extends AppCompatActivity implements PhotoAsyncRespo
                     mDateTextView.setText(food.getDate());
                     mTypeTextView.setText(food.getFoodType());
                     mDescriptionTextView.setText(food.getDescription());
-                    if(food.getPlaceModel() != null) {
+                    if (food.getPlaceModel() != null) {
                         mPlaceLinearLayout.setVisibility(View.VISIBLE);
                         mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
                         mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
                     }
                     mDateTextView.setText(food.getDate());
+                    currentPhotoPath = food.getPhotoPath();
                     loadPhoto();
                 }
             }

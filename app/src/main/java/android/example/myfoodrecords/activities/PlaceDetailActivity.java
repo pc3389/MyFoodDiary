@@ -43,10 +43,10 @@ public class PlaceDetailActivity extends AppCompatActivity {
     }
 
     private void setupUi() {
+        getSupportActionBar().setTitle("Place Detail");
         nameEditText = findViewById(R.id.place_detail_name_et);
         addressEditText = findViewById(R.id.place_detail_address_et);
         saveButton = findViewById(R.id.place_save_button);
-        deleteButton = findViewById(R.id.place_delete_button);
 
         final PlaceModel placeModel = helper.retrievePlaceWithId(placeId);
         nameEditText.setText(placeModel.getPlaceName());
@@ -66,13 +66,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
                 newPlaceModel.setLat(placeModel.getLat());
                 newPlaceModel.setLng(placeModel.getLng());
                 helper.insertPlace(newPlaceModel);
-                finish();
-            }
-        });
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                helper.deletePlace(placeModel.getId());
                 finish();
             }
         });

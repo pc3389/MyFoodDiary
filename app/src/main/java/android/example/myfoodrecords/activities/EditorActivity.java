@@ -5,11 +5,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.accessibilityservice.AccessibilityService;
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.example.myfoodrecords.BuildConfig;
 import android.example.myfoodrecords.PhotoAsyncResponse;
-import android.example.myfoodrecords.utils.PhotoUtil;
 import android.example.myfoodrecords.adapter.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.utils.RealmHelper;
@@ -24,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,6 +34,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.io.File;
@@ -42,7 +46,7 @@ import java.util.Date;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 
-public class EditorActivity extends AppCompatActivity implements PhotoAsyncResponse, DatePickerDialog.OnDateSetListener {
+public class EditorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private Realm realm;
     private RealmHelper helper;
@@ -50,6 +54,8 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
 
     private Food food;
     private PlaceModel placeModel;
+
+    private final Context context = EditorActivity.this;
 
     private EditText mNameEditText;
     private EditText mTypeEditText;
@@ -79,8 +85,10 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     private boolean isFavorite;
 
     private String currentPhotoPath = null;
+    private String previousPhotoPath;
 
-    int foodId = 0;
+    private int foodId = 0;
+    private File photoFile;
 
 
     @Override
@@ -105,6 +113,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     }
 
     private void setupUi() {
+        getSupportActionBar().setTitle("Edit");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mNameEditText = findViewById(R.id.editor_food_name_edit);
@@ -138,10 +147,8 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             mDescriptionEditText.setText(food.getDescription());
             mRatingBar.setRating(food.getRating());
             currentPhotoPath = food.getPhotoPath();
+            previousPhotoPath = currentPhotoPath;
             isFavorite = food.getFavorite();
-            if (currentPhotoPath != null) {
-                loadPhoto();
-            }
             placeModel = food.getPlaceModel();
             if (placeModel != null) {
                 linearLayoutPlace.setVisibility(View.VISIBLE);
@@ -151,6 +158,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
                 linearLayoutPlace.setVisibility(View.GONE);
             }
         }
+        loadPhoto();
         refresh();
     }
 
@@ -237,6 +245,10 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             loadPhoto();
+            previousPhotoPath = currentPhotoPath;
+        } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_CANCELED) {
+            currentPhotoPath = previousPhotoPath;
+            loadPhoto();
         } else if (requestCode == REQUEST_MAP && resultCode == RESULT_MAP) {
             placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PLACE_ID_KEY, 0)).findFirst();
             linearLayoutPlace.setVisibility(View.VISIBLE);
@@ -250,11 +262,19 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         }
     }
 
+
     private void loadPhoto() {
-            new PhotoUtil(currentPhotoPath, false);
-            PhotoUtil.PhotoAsync photoAsync = new PhotoUtil.PhotoAsync();
-            photoAsync.delegate = this;
-            photoAsync.execute();
+        if (!isFinishing()) {
+            if (currentPhotoPath == null) {
+                Glide.with(context)
+                        .load(R.mipmap.ic_no_food)
+                        .into(mPhotoImageView);
+            } else {
+                Glide.with(context)
+                        .load(currentPhotoPath)
+                        .into(mPhotoImageView);
+            }
+        }
     }
 
     private File createImageFile() throws IOException {
@@ -262,20 +282,15 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
+        photoFile = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    @Override
-    public void processFinish(Bitmap bitmap) {
-        mPhotoImageView.setImageBitmap(bitmap);
+        currentPhotoPath = photoFile.getAbsolutePath();
+        return photoFile;
     }
 
     private void setupDialog() {
@@ -308,11 +323,14 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+
         if (id == android.R.id.home) {
+            hideKeyboard();
             finish();
             return true;
         }
-        if(id == R.id.edit_menu_save){
+        if (id == R.id.edit_menu_save) {
+            hideKeyboard();
             nullCheck();
             if (!mNameEditText.getText().toString().equals("")) {
                 saveFoodData();
@@ -325,16 +343,16 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        if(currentPhotoPath != null) {
+        if (currentPhotoPath != null) {
             outState.putString(KEY_INSTANCE_PHOTO, currentPhotoPath);
         }
-        if(mPlaceAddressTextView.getText() != null) {
+        if (mPlaceAddressTextView.getText() != null) {
             outState.putString(KEY_INSTANCE_ADDRESS, mPlaceAddressTextView.getText().toString());
         }
-        if(mPlaceNameTextView.getText() != null) {
+        if (mPlaceNameTextView.getText() != null) {
             outState.putString(KEY_INSTANCE_NAME, mPlaceNameTextView.getText().toString());
         }
-        if(mDateTextView.getText() != null) {
+        if (mDateTextView.getText() != null) {
             outState.putString(KEY_INSTANCE_DATE, mDateTextView.getText().toString());
         }
         super.onSaveInstanceState(outState);
@@ -344,19 +362,17 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         currentPhotoPath = savedInstanceState.getString(KEY_INSTANCE_PHOTO);
-        if(currentPhotoPath != null) {
-            loadPhoto();
-        }
+        loadPhoto();
         String address = savedInstanceState.getString(KEY_INSTANCE_ADDRESS);
         String placeName = savedInstanceState.getString(KEY_INSTANCE_NAME);
         String date = savedInstanceState.getString(KEY_INSTANCE_DATE);
-        if(address != null) {
+        if (address != null) {
             mPlaceAddressTextView.setText(address);
         }
-        if(placeName != null) {
+        if (placeName != null) {
             mPlaceNameTextView.setText(placeName);
         }
-        if(date != null) {
+        if (date != null) {
             mDateTextView.setText(date);
         }
     }
@@ -379,7 +395,7 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
                     mTypeEditText.setText(food.getFoodType());
                     mDescriptionEditText.setText(food.getDescription());
                     currentPhotoPath = food.getPhotoPath();
-                    if(food.getPlaceModel() != null) {
+                    if (food.getPlaceModel() != null) {
                         linearLayoutPlace.setVisibility(View.VISIBLE);
                         mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
                         mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
@@ -389,5 +405,14 @@ public class EditorActivity extends AppCompatActivity implements PhotoAsyncRespo
             }
         };
         realm.addChangeListener(realmChangeListener);
+    }
+
+    private void hideKeyboard() {
+        Activity activity = EditorActivity.this;
+        InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (activity.getCurrentFocus() != null && inputManager != null) {
+            inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+            inputManager.hideSoftInputFromInputMethod(activity.getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

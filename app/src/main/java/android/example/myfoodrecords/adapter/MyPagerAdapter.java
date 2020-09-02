@@ -1,5 +1,6 @@
 package android.example.myfoodrecords.adapter;
 
+import android.example.myfoodrecords.activities.MainActivity;
 import android.example.myfoodrecords.fragments.SummaryFragment;
 import android.example.myfoodrecords.fragments.FavoriteFragment;
 import android.example.myfoodrecords.fragments.ItemViewFragment;

@@ -10,12 +10,14 @@
         android:id="@+id/food_pic_iv"
         android:layout_width="@dimen/image_width_list"
         android:layout_height="@dimen/image_height_list"
+        android:maxHeight="@dimen/image_height_list"
         android:src="@mipmap/ic_no_food"
-        android:scaleType="center" />
+        android:scaleType="fitCenter" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/image_height_list"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingStart="10dp">
 

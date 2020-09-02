@@ -44,6 +44,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
     }
 
     private void setupUi() {
+        getSupportActionBar().setTitle("Private Place");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         addButton = findViewById(R.id.add_place_button);
         addButton.setOnClickListener(new View.OnClickListener() {

@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PhotoFullscreenActivity"
+    tools:context=".activities.PhotoFullscreenActivity"
     android:background="@color/colorBackGround">
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photo_full_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupUi() {
 
+        getSupportActionBar().setTitle("Foods");
         // Get the ViewPager and apply the PagerAdapter
         mFragmentAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.viewpager);

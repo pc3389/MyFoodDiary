@@ -37,7 +37,9 @@ public class PhotoUtil {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            delegate.processFinish(bitmap);
+            if(bitmap != null) {
+                delegate.processFinish(bitmap);
+            }
         }
     }
 

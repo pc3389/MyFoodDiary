@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
@@ -62,8 +64,13 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         holder.foodDateTextView.setText(food.getDate());
         holder.foodRatingTextView.setText(String.valueOf(food.getRating()));
         if(food.getPhotoPath() != null) {
-            new PhotoUtil(food.getPhotoPath(), true);
-            holder.foodImageView.setImageBitmap(PhotoUtil.setPic());
+            Glide.with(context)
+                    .load(food.getPhotoPath())
+                    .into(holder.foodImageView);
+        } else {
+            Glide.with(context)
+                    .load(R.mipmap.ic_no_food)
+                    .into(holder.foodImageView);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
