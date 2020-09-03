@@ -174,21 +174,11 @@ public class RealmHelper {
     }
 
     public void deleteAllPlaces() {
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 RealmResults<PlaceModel> results = realm.where(PlaceModel.class).findAll();
                 results.deleteAllFromRealm();
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(MainActivity.context, "Successfully deleted the data", Toast.LENGTH_SHORT).show();
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                Toast.makeText(MainActivity.context, "Failed to delete the data", Toast.LENGTH_SHORT).show();
             }
         });
     }

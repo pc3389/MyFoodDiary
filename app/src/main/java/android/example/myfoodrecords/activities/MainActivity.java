@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(id == R.id.delete_all) {
             new AlertDialog.Builder(context)
-                    .setTitle("Delete entry")
-                    .setMessage("Are you sure you want to delete this entry?")
+                    .setTitle("Delete All Food Items")
+                    .setMessage("Are you sure you want to delete All Food Items?")
 
                     // Specifying a listener allows you to take an action before dismissing the dialog.
                     // The dialog is automatically dismissed when a dialog button is clicked.

@@ -1,10 +1,12 @@
 package android.example.myfoodrecords.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.example.myfoodrecords.PhotoAsyncResponse;
 import android.example.myfoodrecords.R;
@@ -183,8 +185,23 @@ public class DetailActivity extends AppCompatActivity {
                     if (food == null) {
                         Toast.makeText(DetailActivity.this, "Error", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(DetailActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
-                        food.deleteFromRealm();
+                        new AlertDialog.Builder(context)
+                                .setTitle("Delete All Food Items")
+                                .setMessage("Are you sure you want to delete All Food Items?")
+
+                                // Specifying a listener allows you to take an action before dismissing the dialog.
+                                // The dialog is automatically dismissed when a dialog button is clicked.
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Continue with delete operation
+                                        food.deleteFromRealm();
+                                    }
+                                })
+
+                                // A null listener allows the button to dismiss the dialog and take no further action.
+                                .setNegativeButton(android.R.string.no, null)
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
                     }
                 }
             });

@@ -206,24 +206,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             placeModel = foodRealm.where(PlaceModel.class)
                     .equalTo("id", placeId)
                     .findFirst();
-            if (placeModel != null) {
-                latLng = new LatLng(placeModel.getLat(), placeModel.getLng());
-                placeName = placeModel.getPlaceName();
-                placeAddress = placeModel.getAddress();
-            }
-
         } else {
             food = foodRealm.where(Food.class)
                     .equalTo("id", foodId)
                     .findFirst();
             if (food != null) {
                 placeModel = food.getPlaceModel();
-                if (placeModel != null) {
-                    latLng = new LatLng(placeModel.getLat(), placeModel.getLng());
-                    placeName = placeModel.getPlaceName();
-                    placeAddress = placeModel.getAddress();
-                }
             }
+        }
+        if (placeModel != null) {
+            latLng = new LatLng(placeModel.getLat(), placeModel.getLng());
+            placeName = placeModel.getPlaceName();
+            placeAddress = placeModel.getAddress();
+            newPlaceModel.setId(placeModel.getId());
+            newPlaceModel.setPlaceId(placeModel.getPlaceId());
+            newPlaceModel.setPlaceName(placeModel.getPlaceName());
+            newPlaceModel.setLat(placeModel.getLat());
+            newPlaceModel.setLng(placeModel.getLng());
+            newPlaceModel.setAddress(placeModel.getAddress());
+            newPlaceModel.setPlaceRating(placeModel.getPlaceRating());
         }
     }
 
@@ -296,10 +297,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 case PrivatePlaceActivity.REQUSET_PRIVATE_PLACE:
                     newPlaceModel.setPrivate(true);
-                    if (food == null) {
+                    if (placeModel == null) {
                         newPlaceModel.setId(0);
                     } else {
-                        newPlaceModel.setId(food.getPlaceModel().getId());
+                        newPlaceModel.setId(placeModel.getId());
                     }
                     savePlace();
                     Intent intent2 = new Intent(MapsActivity.this, PlaceDetailActivity.class);
