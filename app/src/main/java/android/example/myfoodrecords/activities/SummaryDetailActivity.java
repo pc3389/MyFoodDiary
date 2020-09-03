@@ -34,7 +34,7 @@ public class SummaryDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary_detail);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         setupRealm();
         setupUi();
@@ -47,16 +47,20 @@ public class SummaryDetailActivity extends AppCompatActivity {
     }
 
     private void setupUi() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         String valueFoodOrPlace = intent.getExtras().getString(SummaryAdapter.KEY_FOOD_OR_PLACE);
         String name = intent.getExtras().getString(SummaryAdapter.KEY_SUMMARY_NAME);
 
         if(valueFoodOrPlace.equals(SummaryFragment.foodString)) {
+            getSupportActionBar().setTitle("Foods");
             foodList = helper.retrieveFoodListWithName(name);
         } else if(valueFoodOrPlace.equals(SummaryFragment.typeString)){
+            getSupportActionBar().setTitle("Types");
             foodList = helper.retrieveFoodListWithType(name);
         } else  {
+            getSupportActionBar().setTitle("Locations");
             foodList = helper.retrieveFoodListWithPlaceName(name);
         }
 

@@ -7,7 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp">
 
         <Button
             android:id="@+id/summary_food_button"
@@ -15,7 +16,7 @@
             android:layout_height="30dp"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
-            android:layout_margin="5dp"
+            android:layout_margin="8dp"
             android:text="@string/food_button"/>
         <Button
             android:id="@+id/summary_place_button"
@@ -23,15 +24,15 @@
             android:layout_height="30dp"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
-            android:layout_margin="5dp"
-            android:text="@string/place_button"/>
+            android:layout_margin="8dp"
+            android:text="@string/location_button"/>
         <Button
             android:id="@+id/summary_type_button"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
-            android:layout_margin="5dp"
+            android:layout_margin="8dp"
             android:text="@string/type_button"/>
     </LinearLayout>
 

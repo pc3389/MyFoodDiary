@@ -290,7 +290,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 case EditorActivity.REQUEST_MAP:
                     newPlaceModel.setPrivate(false);
                     savePlace();
-                    intent.putExtra(PLACE_ID_KEY, food.getPlaceModel().getId());
+                    intent.putExtra(PLACE_ID_KEY, newPlaceModel.getId());
                     setResult(EditorActivity.RESULT_MAP, intent);
                     break;
 

@@ -98,21 +98,8 @@ public class DetailActivity extends AppCompatActivity {
         showMapOnClick();
 
 
-        mNameTextView.setText(food.getName());
-        mRatingTextView.setText(String.valueOf(food.getRating()));
-        mDateTextView.setText(food.getDate());
-        mTypeTextView.setText(food.getFoodType());
-        mDescriptionTextView.setText(food.getDescription());
         isFavorite = food.getFavorite();
-        if (food.getPlaceModel() != null) {
-            mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
-            mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
-        } else {
-            showInMapButton.setVisibility(View.INVISIBLE);
-            mPlaceLinearLayout.setVisibility(View.INVISIBLE);
-        }
-        currentPhotoPath = food.getPhotoPath();
-        loadPhoto();
+        loadData();
         mPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,8 +110,26 @@ public class DetailActivity extends AppCompatActivity {
                 }
             }
         });
-        refresh();
+    }
 
+    private void loadData() {
+        mNameTextView.setText(food.getName());
+        mRatingTextView.setText(String.valueOf(food.getRating()));
+        mDateTextView.setText(food.getDate());
+        mTypeTextView.setText(food.getFoodType());
+        mDescriptionTextView.setText(food.getDescription());
+
+        if (food.getPlaceModel() != null) {
+            showInMapButton.setVisibility(View.VISIBLE);
+            mPlaceLinearLayout.setVisibility(View.VISIBLE);
+            mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
+            mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
+        } else {
+            showInMapButton.setVisibility(View.INVISIBLE);
+            mPlaceLinearLayout.setVisibility(View.INVISIBLE);
+        }
+        currentPhotoPath = food.getPhotoPath();
+        loadPhoto();
     }
 
     private void showMapOnClick() {
@@ -172,22 +177,6 @@ public class DetailActivity extends AppCompatActivity {
             intent.putExtra("id", food.getId());
             startActivity(intent);
         } else if (id == R.id.delete_menu) {
-
-            /*
-            food.addChangeListener(new RealmChangeListener<RealmModel>() {
-                @Override
-                public void onChange(RealmModel realmModel) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(DetailActivity.this, "Delete Successful", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            });
-
-             */
-
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(@NotNull Realm realm) {
@@ -208,6 +197,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void loadPhoto() {
         if (!isFinishing()) {
+
             if (currentPhotoPath == null) {
                 Glide.with(context)
                         .load(R.mipmap.ic_no_food)
@@ -220,6 +210,12 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        realm.removeAllChangeListeners();
+        super.onSaveInstanceState(outState);
+    }
+
     private void saveFoodData() {
         Food newfood = new Food();
         newfood.setId(food.getId());
@@ -230,6 +226,7 @@ public class DetailActivity extends AppCompatActivity {
         newfood.setPhotoPath(food.getPhotoPath());
         newfood.setFavorite(isFavorite);
         newfood.setDescription(food.getDescription());
+        newfood.setPlaceModel(food.getPlaceModel());
         helper.insertFood(newfood);
     }
 
@@ -238,19 +235,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onChange(Object o) {
                 if (food.isValid()) {
-                    mNameTextView.setText(food.getName());
-                    mRatingTextView.setText(String.valueOf(food.getRating()));
-                    mDateTextView.setText(food.getDate());
-                    mTypeTextView.setText(food.getFoodType());
-                    mDescriptionTextView.setText(food.getDescription());
-                    if (food.getPlaceModel() != null) {
-                        mPlaceLinearLayout.setVisibility(View.VISIBLE);
-                        mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
-                        mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
-                    }
-                    mDateTextView.setText(food.getDate());
-                    currentPhotoPath = food.getPhotoPath();
-                    loadPhoto();
+                    loadData();
                 }
             }
         };
@@ -262,4 +247,5 @@ public class DetailActivity extends AppCompatActivity {
         super.onResume();
         refresh();
     }
+
 }
