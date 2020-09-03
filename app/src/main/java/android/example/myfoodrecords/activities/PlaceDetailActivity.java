@@ -28,7 +28,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
     private int placeId;
     private EditText nameEditText;
     private EditText addressEditText;
-    private int id = 0;
 
     private PlaceModel newPlaceModel = new PlaceModel();
     private PlaceModel placeModel;
@@ -57,7 +56,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
         placeModel = helper.retrievePlaceWithId(placeId);
         nameEditText.setText(placeModel.getPlaceName());
         addressEditText.setText(placeModel.getAddress());
-        id = placeModel.getId();
     }
 
     @Override
@@ -76,7 +74,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
             if (!nameEditText.getText().toString().equals("")) {
                 newPlaceModel.setPlaceName(nameEditText.getText().toString());
                 newPlaceModel.setAddress(addressEditText.getText().toString());
-                newPlaceModel.setId(id);
+                newPlaceModel.setId(placeModel.getId());
                 newPlaceModel.setPrivate(true);
                 newPlaceModel.setLat(placeModel.getLat());
                 newPlaceModel.setLng(placeModel.getLng());

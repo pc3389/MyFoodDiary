@@ -149,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingVertical="5dp">
+                android:paddingVertical="8dp">
 
                 <TextView
                     style="@style/DetailMediumText"
@@ -171,7 +171,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingVertical="5dp">
+                android:paddingVertical="8dp">
 
                 <TextView
                     style="@style/DetailMediumText"

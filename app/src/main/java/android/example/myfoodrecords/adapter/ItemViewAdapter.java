@@ -2,6 +2,7 @@ package android.example.myfoodrecords.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.example.myfoodrecords.activities.EditorActivity;
 import android.example.myfoodrecords.utils.PhotoUtil;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.activities.DetailActivity;
@@ -60,7 +61,9 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         final Food food = foodList.get(position);
 
         holder.foodNameTextView.setText(food.getName());
-        holder.foodTypeTextView.setText(food.getFoodType());
+        if(!food.getFoodType().equals(EditorActivity.NO_TYPE)) {
+            holder.foodTypeTextView.setText(food.getFoodType());
+        }
         holder.foodDateTextView.setText(food.getDate());
         holder.foodRatingTextView.setText(String.valueOf(food.getRating()));
         if(food.getPhotoPath() != null) {

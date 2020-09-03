@@ -78,11 +78,13 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     public static final int REQUEST_MAP = 2;
     public static final int RESULT_MAP = 3;
     public static final int REQUEST_PRIVATE_PLACE = 4;
+    public static final String NO_TYPE = "No Type";
 
     private DatePickerDialog datePickerDialog;
     private int Year, Month, Day;
     private Calendar calendar;
     private boolean isFavorite;
+    private String date;
 
     private String currentPhotoPath = null;
     private String previousPhotoPath;
@@ -115,11 +117,13 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private void setupUi() {
         getSupportActionBar().setTitle("Edit");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        todayDate();
 
         mNameEditText = findViewById(R.id.editor_food_name_edit);
         mTypeEditText = findViewById(R.id.editor_food_type_edit);
         mDescriptionEditText = findViewById(R.id.editor_description_edit);
         mDateTextView = findViewById(R.id.editor_date_edit);
+        mDateTextView.setText(date);
         mRatingBar = findViewById(R.id.editor_rating_edit);
         mLocationTextView = findViewById(R.id.editor_location_spinner);
         mLocationTextView.setOnClickListener(new View.OnClickListener() {
@@ -166,10 +170,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         mDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calendar = Calendar.getInstance();
-                Year = calendar.get(Calendar.YEAR);
-                Month = calendar.get(Calendar.MONTH);
-                Day = calendar.get(Calendar.DAY_OF_MONTH);
+                todayDate();
                 datePickerDialog = DatePickerDialog.newInstance(EditorActivity.this, Year, Month, Day);
                 datePickerDialog.setThemeDark(false);
                 datePickerDialog.showYearPickerFirst(false);
@@ -189,9 +190,16 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         });
     }
 
+    private void todayDate() {
+        calendar = Calendar.getInstance();
+        Year = calendar.get(Calendar.YEAR);
+        Month = calendar.get(Calendar.MONTH);
+        Day = calendar.get(Calendar.DAY_OF_MONTH);
+        date = Day + "/" + (Month + 1) + "/" + Year;
+    }
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+        date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
         Toast.makeText(EditorActivity.this, date, Toast.LENGTH_LONG).show();
         mDateTextView.setText(date);
     }
@@ -208,6 +216,9 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         food.setId(foodId);
         food.setName(mNameEditText.getText().toString());
         food.setFoodType(mTypeEditText.getText().toString());
+        if(mTypeEditText.getText().toString().matches("")) {
+            food.setFoodType(NO_TYPE);
+        }
         food.setDescription(mDescriptionEditText.getText().toString());
         food.setDate(mDateTextView.getText().toString());
         food.setRating(mRatingBar.getRating());
