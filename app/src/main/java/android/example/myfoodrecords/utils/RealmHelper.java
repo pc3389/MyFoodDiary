@@ -14,6 +14,7 @@ import io.realm.RealmResults;
 public class RealmHelper {
 
     private Realm realm;
+
     private RealmResults<Food> foodRealmResults;
     private RealmResults<PlaceModel> placeRealmResults;
 
@@ -21,33 +22,18 @@ public class RealmHelper {
         this.realm = realm;
     }
 
-    public void selectFoodFromDb() {
+    public void selectAllFoodsFromDb() {
         foodRealmResults = realm.where(Food.class).findAll();
     }
-
-    public void selectPlaceFromDb() {
-        placeRealmResults = realm.where(PlaceModel.class).findAll();
-    }
-
-    /**
-     *
-     */
-    public void selectPrivatePlaceFromDb() {
-        placeRealmResults = realm.where(PlaceModel.class)
-                .equalTo("isPrivate", true)
-                .findAll();
-    }
-
-    public void selectFavoriteFromDb() {
+    public void selectAllFavoriteFoodsFromDb() {
         foodRealmResults = realm.where(Food.class)
                 .equalTo("isFavorite", true)
                 .findAll();
     }
 
+
     /**
-     *
      * @param food
-     *
      */
     public void insertFood(final Food food) {
         realm.executeTransaction(new Realm.Transaction() {
@@ -93,14 +79,17 @@ public class RealmHelper {
      * Read Food data from Realm. Used to update the RecyclerView
      *
      * @return
-     *
      */
-    public List<Food> retrieveFoodAll() {
+    public List<Food> retrieveAllFoodFromSelectedDb() {
         List<Food> foodList = new ArrayList<>(foodRealmResults);
         return foodList;
     }
 
-    public List<PlaceModel> retrievePlaceAll() {
+
+    public List<PlaceModel> retrievePrivatePlaceAll() {
+        RealmResults<PlaceModel> placeRealmResults = realm.where(PlaceModel.class)
+                .equalTo("isPrivate", true)
+                .findAll();
         List<PlaceModel> placeList = new ArrayList<>(placeRealmResults);
         return placeList;
     }
@@ -112,6 +101,7 @@ public class RealmHelper {
                 .findAll();
         return new ArrayList<>(foodRealmResults);
     }
+
     public List<Food> retrieveFoodWithTypeSorted() {
         RealmResults<Food> foodRealmResults;
         foodRealmResults = realm.where(Food.class)
@@ -137,6 +127,7 @@ public class RealmHelper {
         food = realm.where(Food.class).equalTo("name", foodName).findAll();
         return food;
     }
+
     public List<Food> retrieveFoodListWithType(String foodType) {
         List<Food> food;
         food = realm.where(Food.class).equalTo("foodType", foodType).findAll();
@@ -184,7 +175,6 @@ public class RealmHelper {
     }
 
     /**
-     *
      * @param id
      */
     public void deleteFood(final int id) {

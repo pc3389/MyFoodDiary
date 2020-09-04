@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectFoodFromDb();
     }
 
     private void setupUi() {

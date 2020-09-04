@@ -45,7 +45,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectPrivatePlaceFromDb();
     }
 
     private void setupUi() {
@@ -75,7 +74,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
                 newPlaceModel.setPlaceName(nameEditText.getText().toString());
                 newPlaceModel.setAddress(addressEditText.getText().toString());
                 newPlaceModel.setId(placeModel.getId());
-                newPlaceModel.setPrivate(true);
+                newPlaceModel.setPrivate(placeModel.isPrivate());
                 newPlaceModel.setLat(placeModel.getLat());
                 newPlaceModel.setLng(placeModel.getLng());
                 helper.insertPlace(newPlaceModel);

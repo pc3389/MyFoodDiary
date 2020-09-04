@@ -44,13 +44,13 @@ public class FavoriteFragment extends Fragment {
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectFavoriteFromDb();
+        helper.selectAllFavoriteFoodsFromDb();
     }
 
     private void setupUi() {
         recyclerView = rootView.findViewById(R.id.favorite_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        ItemViewAdapter itemViewAdapter = new ItemViewAdapter(helper.retrieveFoodAll(), getActivity());
+        ItemViewAdapter itemViewAdapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
         recyclerView.setAdapter(itemViewAdapter);
         refresh();
     }
@@ -59,8 +59,7 @@ public class FavoriteFragment extends Fragment {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                helper.selectFavoriteFromDb();
-                ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveFoodAll(), getActivity());
+                ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
                 recyclerView.setAdapter(adapter);
             }
         };

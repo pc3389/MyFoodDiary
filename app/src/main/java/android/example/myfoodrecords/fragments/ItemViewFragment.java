@@ -1,6 +1,7 @@
 package android.example.myfoodrecords.fragments;
 
 import android.example.myfoodrecords.R;
+import android.example.myfoodrecords.activities.MainActivity;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.adapter.ItemViewAdapter;
 import android.os.Bundle;
@@ -49,26 +50,25 @@ public class ItemViewFragment extends Fragment {
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectFoodFromDb();
+        helper.selectAllFoodsFromDb();
+        refresh();
     }
 
     private void setupUi() {
         recyclerView = rootView.findViewById(R.id.item_view_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        ItemViewAdapter itemViewAdapter = new ItemViewAdapter(helper.retrieveFoodAll(), getActivity());
+        ItemViewAdapter itemViewAdapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
         recyclerView.setAdapter(itemViewAdapter);
-        refresh();
     }
 
     private void refresh() {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveFoodAll(), getActivity());
+                ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
                 recyclerView.setAdapter(adapter);
             }
         };
         realm.addChangeListener(realmChangeListener);
     }
-
 }

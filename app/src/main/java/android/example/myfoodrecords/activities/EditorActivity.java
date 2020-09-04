@@ -76,6 +76,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private static final String KEY_INSTANCE_TYPE = "keyType";
     private static final String KEY_INSTANCE_RATING = "keyRating";
     private static final String KEY_INSTANCE_DESCRIPTION = "keyDescription";
+    public static final String KEY_INSTANCE_DIALOG = "keyDialog";
     public static final int REQUEST_MAP = 2;
     public static final int RESULT_MAP = 3;
     public static final int REQUEST_PRIVATE_PLACE = 4;
@@ -89,6 +90,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
 
     private String currentPhotoPath = null;
     private String previousPhotoPath;
+    private AlertDialog dialog;
 
     private int foodId = 0;
     private File photoFile;
@@ -144,26 +146,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 dispatchTakePictureIntent();
             }
         });
-
-        if (foodId != 0) {
-            mNameEditText.setText(food.getName());
-            mTypeEditText.setText(food.getFoodType());
-            mDateTextView.setText(food.getDate());
-            mDescriptionEditText.setText(food.getDescription());
-            mRatingBar.setRating(food.getRating());
-            currentPhotoPath = food.getPhotoPath();
-            previousPhotoPath = currentPhotoPath;
-            isFavorite = food.getFavorite();
-            placeModel = food.getPlaceModel();
-            if (placeModel != null) {
-                linearLayoutPlace.setVisibility(View.VISIBLE);
-                mPlaceNameTextView.setText(placeModel.getPlaceName());
-                mPlaceAddressTextView.setText(placeModel.getAddress());
-            } else {
-                linearLayoutPlace.setVisibility(View.GONE);
-            }
-        }
-        loadPhoto();
+        loadData();
         refresh();
     }
 
@@ -171,24 +154,28 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         mDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                todayDate();
-                datePickerDialog = DatePickerDialog.newInstance(EditorActivity.this, Year, Month, Day);
-                datePickerDialog.setThemeDark(false);
-                datePickerDialog.showYearPickerFirst(false);
-                datePickerDialog.setTitle("Date Picker");
-
-                datePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-
-                    @Override
-                    public void onCancel(DialogInterface dialogInterface) {
-
-                        Toast.makeText(EditorActivity.this, "Datepicker Canceled", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                datePickerDialog.show(getSupportFragmentManager(), "DatePickerDialog");
+                setupDatePickerDialog();
             }
         });
+    }
+
+    private void setupDatePickerDialog() {
+        todayDate();
+        datePickerDialog = DatePickerDialog.newInstance(EditorActivity.this, Year, Month, Day);
+        datePickerDialog.setThemeDark(false);
+        datePickerDialog.showYearPickerFirst(false);
+        datePickerDialog.setTitle("Date Picker");
+
+        datePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+
+                Toast.makeText(EditorActivity.this, "Datepicker Canceled", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        datePickerDialog.show(getSupportFragmentManager(), "DatePickerDialog");
     }
 
     private void todayDate() {
@@ -204,12 +191,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
         Toast.makeText(EditorActivity.this, date, Toast.LENGTH_LONG).show();
         mDateTextView.setText(date);
-    }
-
-    private void nullCheck() {
-        if (mNameEditText.getText().toString().equals("")) {
-            Toast.makeText(this, "Please enter the Food Name", Toast.LENGTH_SHORT).show();
-        }
     }
 
     // Saves the data model to Realm database
@@ -264,18 +245,24 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             loadPhoto();
         } else if (requestCode == REQUEST_MAP && resultCode == RESULT_MAP) {
             placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(MapsActivity.PLACE_ID_KEY, 0)).findFirst();
-            mPlaceNameTextView.setText(placeModel.getPlaceName());
-            mPlaceAddressTextView.setText(placeModel.getAddress());
+            if (placeModel != null) {
+                linearLayoutPlace.setVisibility(View.VISIBLE);
+                mPlaceNameTextView.setText(placeModel.getPlaceName());
+                mPlaceAddressTextView.setText(placeModel.getAddress());
+            }
         } else if (requestCode == REQUEST_PRIVATE_PLACE && resultCode == PrivatePlaceAdapter.RESULT_PRIVATE_PLACE) {
             placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(PrivatePlaceAdapter.PUT_PLACE_ID, 0)).findFirst();
-            mPlaceNameTextView.setText(placeModel.getPlaceName());
-            mPlaceAddressTextView.setText(placeModel.getAddress());
+            if (placeModel != null) {
+                linearLayoutPlace.setVisibility(View.VISIBLE);
+                mPlaceNameTextView.setText(placeModel.getPlaceName());
+                mPlaceAddressTextView.setText(placeModel.getAddress());
+            }
         }
     }
 
 
     private void loadPhoto() {
-        if (!isFinishing()) {
+        if (!isFinishing() && !isDestroyed()) {
             if (currentPhotoPath == null) {
                 Glide.with(context)
                         .load(R.mipmap.ic_no_food)
@@ -327,7 +314,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 }
             }
         });
-        AlertDialog dialog = builder.create();
+        dialog = builder.create();
         dialog.show();
     }
 
@@ -342,12 +329,15 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         }
         if (id == R.id.edit_menu_save) {
             hideKeyboard();
-            nullCheck();
-            if (!mNameEditText.getText().toString().equals("")) {
-                realm.removeAllChangeListeners();
+
+            if (mNameEditText.getText().toString().equals("")) {
+                Toast.makeText(this, "Please enter the Food Name", Toast.LENGTH_SHORT).show();
+            } else {
                 saveFoodData();
+                realm.removeChangeListener(realmChangeListener);
                 finish();
             }
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -377,6 +367,18 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         if (mPlaceNameTextView.getText() != null) {
             outState.putString(KEY_INSTANCE_PLACE_NAME, mPlaceNameTextView.getText().toString());
         }
+        if (dialog != null) {
+            if (dialog.isShowing()) {
+                outState.putInt(KEY_INSTANCE_DIALOG, 1);
+                dialog.hide();
+            }
+        }
+        if (datePickerDialog != null) {
+            if (datePickerDialog.isVisible()) {
+                outState.putInt(KEY_INSTANCE_DIALOG, 2);
+                datePickerDialog.dismiss();
+            }
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -391,10 +393,10 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         String placeName = savedInstanceState.getString(KEY_INSTANCE_PLACE_NAME);
         String address = savedInstanceState.getString(KEY_INSTANCE_ADDRESS);
 
-        if(name != null) {
+        if (name != null) {
             mNameEditText.setText(name);
         }
-        if(type != null) {
+        if (type != null) {
             mTypeEditText.setText(type);
         }
         mRatingBar.setRating(rating);
@@ -407,6 +409,13 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         if (address != null) {
             mPlaceAddressTextView.setText(address);
         }
+        if (savedInstanceState.getInt(KEY_INSTANCE_DIALOG) == 1) {
+            setupDialog();
+        }
+        if (savedInstanceState.getInt(KEY_INSTANCE_DIALOG) == 2) {
+            setupDatePickerDialog();
+        }
+        loadPhoto();
     }
 
     @Override
@@ -420,20 +429,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                if (food != null) {
-                    mNameEditText.setText(food.getName());
-                    mRatingBar.setRating(food.getRating());
-                    mDateTextView.setText(food.getDate());
-                    mTypeEditText.setText(food.getFoodType());
-                    mDescriptionEditText.setText(food.getDescription());
-                    currentPhotoPath = food.getPhotoPath();
-                    if (food.getPlaceModel() != null) {
-                        linearLayoutPlace.setVisibility(View.VISIBLE);
-                        mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
-                        mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
-                    }
-                    loadPhoto();
-                }
+                loadData();
             }
         };
         realm.addChangeListener(realmChangeListener);
@@ -446,5 +442,27 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
             inputManager.hideSoftInputFromInputMethod(activity.getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    private void loadData() {
+        if (foodId != 0) {
+            mNameEditText.setText(food.getName());
+            mTypeEditText.setText(food.getFoodType());
+            mDateTextView.setText(food.getDate());
+            mDescriptionEditText.setText(food.getDescription());
+            mRatingBar.setRating(food.getRating());
+            currentPhotoPath = food.getPhotoPath();
+            previousPhotoPath = currentPhotoPath;
+            isFavorite = food.getFavorite();
+            placeModel = food.getPlaceModel();
+            if (placeModel != null) {
+                linearLayoutPlace.setVisibility(View.VISIBLE);
+                mPlaceNameTextView.setText(placeModel.getPlaceName());
+                mPlaceAddressTextView.setText(placeModel.getAddress());
+            } else {
+                linearLayoutPlace.setVisibility(View.GONE);
+            }
+        }
+        loadPhoto();
     }
 }

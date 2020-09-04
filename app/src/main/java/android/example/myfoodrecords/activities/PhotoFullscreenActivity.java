@@ -34,7 +34,7 @@ public class PhotoFullscreenActivity extends AppCompatActivity implements PhotoA
     }
 
     private void loadPhoto() {
-        if (!isFinishing()) {
+        if (!isFinishing() && !isDestroyed()) {
             Glide.with(context)
                     .load(photoPath)
                     .into(fullScreenImageView);

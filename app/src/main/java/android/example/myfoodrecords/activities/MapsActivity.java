@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
@@ -58,7 +59,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button saveButton;
     private boolean locationPermissionGranted;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 8;
-    public static final int RESULT_PRIVATE_PLACE = 3;
     private static final String TAG = "MapsActivityTag";
     public static final String PLACE_ID_KEY = "placePrimaryKey";
 
@@ -76,7 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        latLng = new LatLng(43, -79);
+        latLng = new LatLng(43.765, -79.419);
 
         setupRealm();
         setupUI();
@@ -215,7 +215,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         if (placeModel != null) {
-            latLng = new LatLng(placeModel.getLat(), placeModel.getLng());
+            if(placeModel.getLat() != 0 && placeModel.getLng() != 0) {
+                latLng = new LatLng(placeModel.getLat(), placeModel.getLng());
+            }
             placeName = placeModel.getPlaceName();
             placeAddress = placeModel.getAddress();
             newPlaceModel.setId(placeModel.getId());
@@ -290,9 +292,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             switch (requestCode) {
                 case EditorActivity.REQUEST_MAP:
                     newPlaceModel.setPrivate(false);
+                    if(newPlaceModel.getPlaceName() == null) {
+                        Toast.makeText(MapsActivity.this, "Please select the location", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     savePlace();
                     intent.putExtra(PLACE_ID_KEY, newPlaceModel.getId());
                     setResult(EditorActivity.RESULT_MAP, intent);
+                    finish();
                     break;
 
                 case PrivatePlaceActivity.REQUSET_PRIVATE_PLACE:
@@ -302,13 +309,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     } else {
                         newPlaceModel.setId(placeModel.getId());
                     }
+                    if(newPlaceModel.getPlaceName() == null) {
+                        Toast.makeText(MapsActivity.this, "Please select the location", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     savePlace();
                     Intent intent2 = new Intent(MapsActivity.this, PlaceDetailActivity.class);
                     intent2.putExtra(PLACE_ID_KEY, newPlaceModel.getId());
                     startActivity(intent2);
+                    finish();
                     break;
             }
-            finish();
+
         }
     }
 
@@ -358,7 +370,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void savePlace() {
         if (newPlaceModel != null) {
-            foodHelper.insertPlace(newPlaceModel);
+            if(newPlaceModel.getPlaceName() != null) {
+                foodHelper.insertPlace(newPlaceModel);
+            }
         }
     }
 

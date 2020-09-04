@@ -31,13 +31,15 @@ import io.realm.Realm;
 public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapter.PlaceViewHolder> {
 
     private List<PlaceModel> placeModelList;
-    private Context context;
+    private static Context context;
 
     public static final String PRIVATE_PLACE_KEY = "PrivatePlace";
     public static final String PUT_PLACE_ID = "placeKey";
     public static final int RESULT_PRIVATE_PLACE = 13;
-    private Activity mActivity;
-    private PlaceModel placeModel;
+    private static Activity mActivity;
+    private static PlaceModel placeModel;
+    public static AlertDialog dialog;
+    public static AlertDialog deleteDialog;
 
 
     public class PlaceViewHolder extends RecyclerView.ViewHolder {
@@ -84,10 +86,10 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
         return placeModelList.size();
     }
 
-    private void setupDialog() {
+    public static void setupDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Location");
-        String[] placeArray = {context.getResources().getString(R.string.set) , context.getResources().getString(R.string.edit), context.getResources().getString(R.string.delete)};
+        String[] placeArray = {context.getResources().getString(R.string.set), context.getResources().getString(R.string.edit), context.getResources().getString(R.string.delete)};
         builder.setItems(placeArray, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -107,34 +109,38 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
                         break;
                     }
                     case 2: {
-                        int placeId = placeModel.getId();
-                        Realm realm = Realm.getDefaultInstance();
-                        RealmHelper helper = new RealmHelper(realm);
-
-                        new AlertDialog.Builder(context)
-                                .setTitle("Delete Location")
-                                .setMessage("Are you sure you want to delete this Location?")
-
-                                // Specifying a listener allows you to take an action before dismissing the dialog.
-                                // The dialog is automatically dismissed when a dialog button is clicked.
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // Continue with delete operation
-                                        helper.deletePlace(placeId);
-                                    }
-                                })
-
-                                // A null listener allows the button to dismiss the dialog and take no further action.
-                                .setNegativeButton(android.R.string.no, null)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
+                        setupDeleteDialog();
                         break;
                     }
                 }
             }
         });
-        AlertDialog dialog = builder.create();
+        dialog = builder.create();
         dialog.show();
     }
 
+    public static void setupDeleteDialog() {
+        Realm realm = Realm.getDefaultInstance();
+        RealmHelper helper = new RealmHelper(realm);
+        int placeId = placeModel.getId();
+
+        AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(context);
+        deleteBuilder.setTitle("Delete Location")
+                .setMessage("Are you sure you want to delete this Location?")
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Continue with delete operation
+                        helper.deletePlace(placeId);
+                    }
+                })
+
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert);
+        deleteDialog = deleteBuilder.create();
+        deleteDialog.show();
+    }
 }

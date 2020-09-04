@@ -67,25 +67,20 @@ public class DetailActivity extends AppCompatActivity {
 
         setupRealm();
         setupUi();
+        refresh();
     }
 
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectFoodFromDb();
 
         foodId = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
-
-        food = realm.where(Food.class)
-                .equalTo("id", foodId)
-                .findFirst();
+        food = helper.retrieveFoodWithId(foodId);
     }
 
     private void setupUi() {
         getSupportActionBar().setTitle("Detail");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        foodId = getIntent().getIntExtra(ItemViewAdapter.KEY_ITEM_FOOD_ID, 0);
 
         mNameTextView = findViewById(R.id.detail_food_name_tv);
         mRatingTextView = findViewById(R.id.detail_rating_tv);
@@ -120,6 +115,7 @@ public class DetailActivity extends AppCompatActivity {
         mDateTextView.setText(food.getDate());
         mTypeTextView.setText(food.getFoodType());
         mDescriptionTextView.setText(food.getDescription());
+        isFavorite = food.getFavorite();
 
         if (food.getPlaceModel() != null) {
             showInMapButton.setVisibility(View.VISIBLE);
@@ -194,7 +190,7 @@ public class DetailActivity extends AppCompatActivity {
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // Continue with delete operation
-                                        food.deleteFromRealm();
+                                        helper.deleteFood(food.getId());
                                     }
                                 })
 
@@ -213,8 +209,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void loadPhoto() {
-        if (!isFinishing()) {
-
+        if (!isFinishing() && !isDestroyed()) {
             if (currentPhotoPath == null) {
                 Glide.with(context)
                         .load(R.mipmap.ic_no_food)
@@ -225,12 +220,6 @@ public class DetailActivity extends AppCompatActivity {
                         .into(mPhotoImageView);
             }
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        realm.removeAllChangeListeners();
-        super.onSaveInstanceState(outState);
     }
 
     private void saveFoodData() {
@@ -258,11 +247,4 @@ public class DetailActivity extends AppCompatActivity {
         };
         realm.addChangeListener(realmChangeListener);
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refresh();
-    }
-
 }

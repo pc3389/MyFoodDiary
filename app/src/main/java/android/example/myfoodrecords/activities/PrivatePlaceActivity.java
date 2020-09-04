@@ -16,8 +16,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -45,7 +43,6 @@ public class PrivatePlaceActivity extends AppCompatActivity {
     private void setupRealm() {
         realm = Realm.getDefaultInstance();
         helper = new RealmHelper(realm);
-        helper.selectPrivatePlaceFromDb();
     }
 
     private void setupUi() {
@@ -54,7 +51,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.private_address_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retrievePlaceAll(), this, this);
+        PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retrievePrivatePlaceAll(), this, this);
         recyclerView.setAdapter(privatePlaceAdapter);
         refresh();
     }
@@ -63,7 +60,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retrievePlaceAll(), PrivatePlaceActivity.this, PrivatePlaceActivity.this);
+                PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retrievePrivatePlaceAll(), PrivatePlaceActivity.this, PrivatePlaceActivity.this);
                 recyclerView.setAdapter(privatePlaceAdapter);
             }
         };
@@ -83,7 +80,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        if(id == R.id.delete_all_place) {
+        if (id == R.id.delete_all_place) {
             new AlertDialog.Builder(context)
                     .setTitle("Delete All Locations")
                     .setMessage("Are you sure you want to delete All Location Details?")
@@ -110,5 +107,33 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_private_place, menu);
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (PrivatePlaceAdapter.dialog != null) {
+            if (PrivatePlaceAdapter.dialog.isShowing()) {
+                outState.putInt(EditorActivity.KEY_INSTANCE_DIALOG, 1);
+            }
+            PrivatePlaceAdapter.dialog.hide();
+        }
+        if (PrivatePlaceAdapter.deleteDialog != null) {
+            if (PrivatePlaceAdapter.deleteDialog.isShowing()) {
+                outState.putInt(EditorActivity.KEY_INSTANCE_DIALOG, 2);
+            }
+            PrivatePlaceAdapter.deleteDialog.hide();
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.getInt(EditorActivity.KEY_INSTANCE_DIALOG) == 1) {
+            PrivatePlaceAdapter.setupDialog();
+        }
+        if (savedInstanceState.getInt(EditorActivity.KEY_INSTANCE_DIALOG) == 2) {
+            PrivatePlaceAdapter.setupDeleteDialog();
+        }
     }
 }
