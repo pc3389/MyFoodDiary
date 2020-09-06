@@ -38,9 +38,12 @@ public class SummaryFragment extends Fragment {
     private Button placeButton;
     private Button typeButton;
 
-    public static final String foodString = "food";
-    public static final String placeString = "place";
-    public static final String typeString = "type";
+    public static final String FOOD_STRING = "food";
+    public static final String PLACE_STRING = "place";
+    public static final String TYPE_STRING = "type";
+
+    private static final String KEY_INDICATOR = "keyIndicator";
+    private static int indicator = 0;
 
     private List<SummaryItem> summaryItemList;
 
@@ -65,43 +68,57 @@ public class SummaryFragment extends Fragment {
     }
 
     private void setupUi() {
-        setFoodSummaryItemList();
         recyclerView = rootView.findViewById(R.id.summary_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
-        recyclerView.setAdapter(summaryAdapter);
+
+        updateUi();
 
         foodButton = rootView.findViewById(R.id.summary_food_button);
         foodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                indicator = 0;
                 setFoodSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
-                SummaryAdapter.foodOrPlace = foodString;
+                SummaryAdapter.foodOrPlace = FOOD_STRING;
             }
         });
         placeButton = rootView.findViewById(R.id.summary_place_button);
         placeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                indicator = 1;
                 setPlaceSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
-                SummaryAdapter.foodOrPlace = placeString;
+                SummaryAdapter.foodOrPlace = PLACE_STRING;
             }
         });
         typeButton = rootView.findViewById(R.id.summary_type_button);
         typeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                indicator = 2;
                 setTypeSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
-                SummaryAdapter.foodOrPlace = typeString;
+                SummaryAdapter.foodOrPlace = TYPE_STRING;
             }
         });
         refresh();
+    }
+
+    private void updateUi() {
+        if (indicator == 2) {
+            setTypeSummaryItemList();
+        } else if (indicator == 1) {
+            setPlaceSummaryItemList();
+        } else {
+            setFoodSummaryItemList();
+        }
+        SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
+        recyclerView.setAdapter(summaryAdapter);
     }
 
     private void setFoodSummaryItemList() {
@@ -176,7 +193,7 @@ public class SummaryFragment extends Fragment {
                 }
             }
 
-            if(sortedFoodList.size() == 1) {
+            if (sortedFoodList.size() == 1) {
                 int lastIndex = sortedFoodList.size() - 1;
                 String lastItemName = sortedFoodList.get(lastIndex).getPlaceModel().getPlaceName();
                 float lastItemRating = sortedFoodList.get(lastIndex).getRating();
@@ -258,10 +275,26 @@ public class SummaryFragment extends Fragment {
                 setFoodSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
-                SummaryAdapter.foodOrPlace = foodString;
+                SummaryAdapter.foodOrPlace = FOOD_STRING;
             }
         };
         realm.addChangeListener(realmChangeListener);
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_INDICATOR, indicator);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            indicator = savedInstanceState.getInt(KEY_INDICATOR);
+            updateUi();
+        }
+    }
+
 }
 

@@ -3,17 +3,16 @@ package android.example.myfoodrecords.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.example.myfoodrecords.PhotoAsyncResponse;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.adapter.ItemViewAdapter;
 import android.example.myfoodrecords.model.Food;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmModel;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -55,7 +52,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView mPlaceNameTextView;
     private TextView mPlaceAddressTextView;
     private TextView mDescriptionTextView;
-    private LinearLayout mPlaceLinearLayout;
+    private ConstraintLayout mPlaceConstraintLayout;
     private String currentPhotoPath = null;
 
     private boolean isFavorite;
@@ -91,7 +88,7 @@ public class DetailActivity extends AppCompatActivity {
         mPlaceNameTextView = findViewById(R.id.detail_place_name_tv);
         mPlaceAddressTextView = findViewById(R.id.detail_place_address_tv);
         mDescriptionTextView = findViewById(R.id.detail_description_tv);
-        mPlaceLinearLayout = findViewById(R.id.detail_linear_layout_place);
+        mPlaceConstraintLayout = findViewById(R.id.detail_linear_layout_place);
         showMapOnClick();
 
 
@@ -119,12 +116,12 @@ public class DetailActivity extends AppCompatActivity {
 
         if (food.getPlaceModel() != null) {
             showInMapButton.setVisibility(View.VISIBLE);
-            mPlaceLinearLayout.setVisibility(View.VISIBLE);
+            mPlaceConstraintLayout.setVisibility(View.VISIBLE);
             mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
             mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
         } else {
             showInMapButton.setVisibility(View.INVISIBLE);
-            mPlaceLinearLayout.setVisibility(View.INVISIBLE);
+            mPlaceConstraintLayout.setVisibility(View.INVISIBLE);
         }
         currentPhotoPath = food.getPhotoPath();
         loadPhoto();
@@ -191,6 +188,7 @@ public class DetailActivity extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // Continue with delete operation
                                         helper.deleteFood(food.getId());
+                                        finish();
                                     }
                                 })
 
@@ -201,8 +199,6 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
             });
-
-            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

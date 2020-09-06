@@ -68,7 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String KEY_INSTANCE_PLACE_NAME = "keyPlaceName";
     private static final String KEY_INSTANCE_ADDRESS = "keyAddress";
     private static final String KEY_INSTANCE_PLACE_ID = "keyPlaceId";
-    private static final String KEY_INSTANCE_PLACE_RATING = "keyPlaceRating";
+    private static final String KEY_INSTANCE_PRIVATE = "keyPrivate";
     private static final String KEY_INSTANCE_ID = "keyId";
     private static final String KEY_INSTANCE_LAT = "keyLat";
     private static final String KEY_INSTANCE_LNG = "keyLng";
@@ -82,7 +82,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String mPlaceId;
     private String placeName;
     private String placeAddress;
-    private float placeRating;
     private double lat;
     private double lng;
 
@@ -173,7 +172,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mPlaceId = place.getId();
                 lat = place.getLatLng().latitude;
                 lng = place.getLatLng().longitude;
-                placeRating = place.getRating().floatValue();
             }
 
             @Override
@@ -198,7 +196,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mPlaceId = place.getId();
                 lat = place.getLatLng().latitude;
                 lng = place.getLatLng().longitude;
-                placeRating = place.getRating().floatValue();
 
                 marker = map.addMarker(new MarkerOptions().position(place.getLatLng()).title(placeName).snippet(placeAddress));
                 marker.showInfoWindow();
@@ -239,7 +236,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 lng = placeModel.getLng();
                 latLng = new LatLng(lat, lng);
             }
-            placeRating = placeModel.getPlaceRating();
         }
     }
 
@@ -406,8 +402,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bundle.putString(KEY_INSTANCE_PLACE_ID, mPlaceId);
         bundle.putDouble(KEY_INSTANCE_LAT, lat);
         bundle.putDouble(KEY_INSTANCE_LNG, lng);
-        bundle.putFloat(KEY_INSTANCE_PLACE_RATING, placeRating);
-        bundle.putBoolean(KEY_INSTANCE_PLACE_RATING, isPrivatePlace);
+        bundle.putBoolean(KEY_INSTANCE_PRIVATE, isPrivatePlace);
         outState.putBundle(KEY_INSTANCE_BUNDLE, bundle);
     }
 
@@ -421,8 +416,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mPlaceId = bundle.getString(KEY_INSTANCE_PLACE_ID);
         lat = bundle.getDouble(KEY_INSTANCE_LAT);
         lng = bundle.getDouble(KEY_INSTANCE_LNG);
-        placeRating = bundle.getFloat(KEY_INSTANCE_PLACE_RATING);
-        isPrivatePlace = bundle.getBoolean(KEY_INSTANCE_PLACE_RATING);
+        isPrivatePlace = bundle.getBoolean(KEY_INSTANCE_PRIVATE);
         if (lat != 0 && lng != 0) {
             latLng = new LatLng(lat, lng);
         }

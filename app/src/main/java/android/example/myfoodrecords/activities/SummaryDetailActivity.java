@@ -51,10 +51,10 @@ public class SummaryDetailActivity extends AppCompatActivity {
         String valueFoodOrPlace = intent.getExtras().getString(SummaryAdapter.KEY_FOOD_OR_PLACE);
         String name = intent.getExtras().getString(SummaryAdapter.KEY_SUMMARY_NAME);
 
-        if(valueFoodOrPlace.equals(SummaryFragment.foodString)) {
+        if(valueFoodOrPlace.equals(SummaryFragment.FOOD_STRING)) {
             getSupportActionBar().setTitle("Foods");
             foodList = helper.retrieveFoodListWithName(name);
-        } else if(valueFoodOrPlace.equals(SummaryFragment.typeString)){
+        } else if(valueFoodOrPlace.equals(SummaryFragment.TYPE_STRING)){
             getSupportActionBar().setTitle("Types");
             foodList = helper.retrieveFoodListWithType(name);
         } else  {

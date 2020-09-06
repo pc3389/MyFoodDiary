@@ -3,6 +3,7 @@ package android.example.myfoodrecords.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 
 import android.app.Activity;
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.example.myfoodrecords.BuildConfig;
+import android.example.myfoodrecords.MyEditText;
 import android.example.myfoodrecords.adapter.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.utils.RealmHelper;
@@ -54,16 +56,17 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
 
     private final Context context = EditorActivity.this;
 
-    private EditText mNameEditText;
-    private EditText mTypeEditText;
-    private EditText mDescriptionEditText;
+    private MyEditText mNameEditText;
+    private MyEditText mTypeEditText;
+    private MyEditText mDescriptionEditText;
     private TextView mDateTextView;
+    private ImageView mCalenderImageView;
     private RatingBar mRatingBar;
     private TextView mLocationTextView;
     private ImageView mPhotoImageView;
     private TextView mPlaceNameTextView;
     private TextView mPlaceAddressTextView;
-    private LinearLayout linearLayoutPlace;
+    private ConstraintLayout linearLayoutPlace;
 
     static final int REQUEST_TAKE_PHOTO = 1;
     public static final String KEY_REQUEST_CODE = "requestCode";
@@ -127,6 +130,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         mDescriptionEditText = findViewById(R.id.editor_description_edit);
         mDateTextView = findViewById(R.id.editor_date_edit);
         mDateTextView.setText(date);
+        mCalenderImageView = findViewById(R.id.calender_iv);
         mRatingBar = findViewById(R.id.editor_rating_edit);
         mLocationTextView = findViewById(R.id.push_to_edit_image);
         mLocationTextView.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +142,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         mPhotoImageView = findViewById(R.id.editor_food_iv);
         mPlaceNameTextView = findViewById(R.id.editor_place_name_tv);
         mPlaceAddressTextView = findViewById(R.id.editor_place_address_tv);
-        linearLayoutPlace = findViewById(R.id.linear_layout_place);
+        linearLayoutPlace = findViewById(R.id.location_layout);
 
         mPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,6 +156,12 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
 
     private void datePickerSetUp() {
         mDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setupDatePickerDialog();
+            }
+        });
+        mCalenderImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setupDatePickerDialog();
@@ -386,6 +396,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
 
         if (name != null) {
             mNameEditText.setText(name);
+            mNameEditText.setSelection(mNameEditText.getText().length());
         }
         if (type != null) {
             mTypeEditText.setText(type);
