@@ -34,8 +34,6 @@ public class SummaryDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary_detail);
 
-
-
         setupRealm();
         setupUi();
         refresh();

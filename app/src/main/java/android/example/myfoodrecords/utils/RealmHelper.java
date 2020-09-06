@@ -1,9 +1,7 @@
 package android.example.myfoodrecords.utils;
 
-import android.example.myfoodrecords.activities.MainActivity;
 import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.model.PlaceModel;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +110,7 @@ public class RealmHelper {
 
     public Food retrieveFoodWithId(int foodId) {
         Food food;
-        food = realm.where(Food.class).equalTo("id", foodId).findFirst();
+        food = realm.where(Food.class).equalTo(Constants.REALM_ID, foodId).findFirst();
         return food;
     }
 
@@ -145,21 +143,11 @@ public class RealmHelper {
      *
      */
     public void deleteAllFood() {
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 RealmResults<Food> results = realm.where(Food.class).findAll();
                 results.deleteAllFromRealm();
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(MainActivity.context, "Successfully deleted the data", Toast.LENGTH_SHORT).show();
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                Toast.makeText(MainActivity.context, "Failed to delete the data", Toast.LENGTH_SHORT).show();
             }
         });
     }

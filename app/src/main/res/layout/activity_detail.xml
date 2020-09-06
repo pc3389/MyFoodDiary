@@ -16,37 +16,38 @@
 
         <ImageView
             android:id="@+id/detail_food_iv"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:minHeight="250dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:src="@mipmap/ic_no_food"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/detail_linear_layout_ui"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp"
             android:paddingVertical="5dp"
-            app:layout_constraintTop_toBottomOf="@id/detail_food_iv">
+            app:layout_constraintTop_toBottomOf="@id/detail_food_iv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout style="@style/LinearLayoutVertical10dp">
 
                 <TextView
-                    android:textStyle="bold"
-                    style="@style/DetailLargeText"
+                    style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:text="Name: " />
 
                 <TextView
                     android:id="@+id/detail_food_name_tv"
-                    style="@style/DetailLargeText"
+                    style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     tools:text="Food Name" />
@@ -55,7 +56,6 @@
             <LinearLayout style="@style/LinearLayoutVertical10dp">
 
                 <TextView
-                    android:textStyle="bold"
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -72,7 +72,6 @@
             <LinearLayout style="@style/LinearLayoutVertical10dp">
 
                 <TextView
-                    android:textStyle="bold"
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -89,7 +88,6 @@
             <LinearLayout style="@style/LinearLayoutVertical10dp">
 
                 <TextView
-                    android:textStyle="bold"
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -105,7 +103,6 @@
         <LinearLayout style="@style/LinearLayoutVertical10dp">
             <TextView
                 android:text="@string/description"
-                android:textStyle="bold"
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
                 android:layout_weight="1" />
@@ -133,7 +130,6 @@
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:textStyle="bold"
                     android:text="Location: " />
 
                 <TextView
@@ -150,7 +146,6 @@
                     style="@style/DetailMediumText"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:textStyle="bold"
                     android:text="Address: " />
 
                 <TextView
@@ -170,9 +165,6 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/detail_linear_layout_place" />
         </LinearLayout>
-
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

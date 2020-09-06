@@ -83,7 +83,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         if (id == R.id.delete_all_place) {
             new AlertDialog.Builder(context)
                     .setTitle("Delete All Locations")
-                    .setMessage("Are you sure you want to delete All Location Details?")
+                    .setMessage("Are you sure you want to delete all location details?")
 
                     // Specifying a listener allows you to take an action before dismissing the dialog.
                     // The dialog is automatically dismissed when a dialog button is clicked.

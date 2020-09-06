@@ -166,15 +166,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         datePickerDialog.showYearPickerFirst(false);
         datePickerDialog.setTitle("Date Picker");
 
-        datePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-
-                Toast.makeText(EditorActivity.this, "Datepicker Canceled", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         datePickerDialog.show(getSupportFragmentManager(), "DatePickerDialog");
     }
 
@@ -447,7 +438,9 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private void loadData() {
         if (foodId != 0) {
             mNameEditText.setText(food.getName());
+            mNameEditText.setSelection(mNameEditText.getText().length());
             mTypeEditText.setText(food.getFoodType());
+            mTypeEditText.setSelection(mTypeEditText.getText().length());
             mDateTextView.setText(food.getDate());
             mDescriptionEditText.setText(food.getDescription());
             mRatingBar.setRating(food.getRating());

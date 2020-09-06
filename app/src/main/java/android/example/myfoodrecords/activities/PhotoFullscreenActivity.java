@@ -6,12 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.example.myfoodrecords.PhotoAsyncResponse;
 import android.example.myfoodrecords.R;
-import android.example.myfoodrecords.activities.DetailActivity;
-import android.example.myfoodrecords.utils.PhotoUtil;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;

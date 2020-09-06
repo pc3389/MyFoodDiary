@@ -1,5 +1,7 @@
 package android.example.myfoodrecords.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -11,6 +13,7 @@ public class Food extends RealmObject {
 
     private String name;
     private float rating;
+
     private String date;
     private String foodType;
     private String photoPath;

@@ -3,7 +3,6 @@ package android.example.myfoodrecords.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.example.myfoodrecords.activities.EditorActivity;
-import android.example.myfoodrecords.utils.PhotoUtil;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.activities.DetailActivity;
 import android.example.myfoodrecords.model.Food;

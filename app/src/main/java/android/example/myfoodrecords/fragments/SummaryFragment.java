@@ -1,7 +1,6 @@
 package android.example.myfoodrecords.fragments;
 
 import android.example.myfoodrecords.R;
-import android.example.myfoodrecords.adapter.ItemViewAdapter;
 import android.example.myfoodrecords.adapter.SummaryAdapter;
 import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.model.SummaryItem;
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -252,6 +250,7 @@ public class SummaryFragment extends Fragment {
         summaryItem.setRating(rating / count);
         summaryItemList.add(summaryItem);
     }
+
     private void refresh() {
         realmChangeListener = new RealmChangeListener() {
             @Override

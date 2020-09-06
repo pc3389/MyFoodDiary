@@ -8,12 +8,6 @@ public class SummaryItem {
     public SummaryItem() {
     }
 
-    public SummaryItem(String name, float rating, int count) {
-        this.name = name;
-        this.rating = rating;
-        this.count = count;
-    }
-
     public String getName() {
         return name;
     }
