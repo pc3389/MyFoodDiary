@@ -274,6 +274,9 @@ public class SummaryFragment extends Fragment {
             public void onChange(Object o) {
                 setFoodSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
+                if(recyclerView == null) {
+                    recyclerView = rootView.findViewById(R.id.summary_rc);
+                }
                 recyclerView.setAdapter(summaryAdapter);
                 SummaryAdapter.foodOrPlace = FOOD_STRING;
             }

@@ -59,6 +59,9 @@ public class FavoriteFragment extends Fragment {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
+                if(recyclerView == null) {
+                    recyclerView = rootView.findViewById(R.id.favorite_rc);
+                }
                 ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
                 recyclerView.setAdapter(adapter);
             }

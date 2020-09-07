@@ -29,7 +29,6 @@ public class ItemViewFragment extends Fragment {
     private RecyclerView recyclerView;
 
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,10 +64,20 @@ public class ItemViewFragment extends Fragment {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
+                if(recyclerView == null) {
+                    recyclerView = rootView.findViewById(R.id.item_view_rc);
+                }
                 ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
                 recyclerView.setAdapter(adapter);
             }
         };
         realm.addChangeListener(realmChangeListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.removeChangeListener(realmChangeListener);
+        realm.close();
     }
 }

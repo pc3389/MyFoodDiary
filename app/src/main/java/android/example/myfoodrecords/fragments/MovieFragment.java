@@ -43,13 +43,6 @@ public class MovieFragment extends Fragment {
 
     private List<Movie> movieList = new ArrayList<>();
 
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setupRealm();
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,31 +75,11 @@ public class MovieFragment extends Fragment {
         });
     }
 
-    private void setupRealm() {
-        realm = Realm.getDefaultInstance();
-        helper = new RealmHelper(realm);
-//        refresh();
-    }
-
     private void setupUi() {
         recyclerView = rootView.findViewById(R.id.movie_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         movieAdapter = new MovieAdapter(movieList, getContext());
         recyclerView.setAdapter(movieAdapter);
     }
-
-    //TODO Movie Recycler
-    /*
-    private void refresh() {
-        realmChangeListener = new RealmChangeListener() {
-            @Override
-            public void onChange(Object o) {
-                ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
-                recyclerView.setAdapter(adapter);
-            }
-        };
-        realm.addChangeListener(realmChangeListener);
-    }
-     */
 
 }

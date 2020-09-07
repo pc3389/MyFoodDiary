@@ -72,14 +72,13 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     public static final String KEY_EDITOR_FOOD_ID = "foodId2";
     private static final String KEY_INSTANCE_PHOTO = "savein";
     private static final String KEY_INSTANCE_PREVIOUS_PHOTO = "keyPreviouos";
-    private static final String KEY_INSTANCE_ADDRESS = "keyAddress";
-    private static final String KEY_INSTANCE_PLACE_NAME = "keyPlaceName";
     private static final String KEY_INSTANCE_DATE = "keyDate";
     private static final String KEY_INSTANCE_NAME = "keyName";
     private static final String KEY_INSTANCE_TYPE = "keyType";
     private static final String KEY_INSTANCE_RATING = "keyRating";
     private static final String KEY_INSTANCE_DESCRIPTION = "keyDescription";
     public static final String KEY_INSTANCE_DIALOG = "keyDialog";
+    private static final String KEY_INSTANCE_PLACE = "keyPlace";
     public static final int REQUEST_MAP = 2;
     public static final int RESULT_MAP = 3;
     public static final int REQUEST_PRIVATE_PLACE = 4;
@@ -375,13 +374,10 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         if (mDescriptionEditText.getText() != null) {
             outState.putString(KEY_INSTANCE_DESCRIPTION, mDescriptionEditText.getText().toString());
         }
+        if (placeModel != null) {
+            outState.putParcelable(KEY_INSTANCE_PLACE, placeModel);
+        }
 
-        if (!mPlaceAddressTextView.getText().equals("")) {
-            outState.putString(KEY_INSTANCE_ADDRESS, mPlaceAddressTextView.getText().toString());
-        }
-        if (!mPlaceNameTextView.getText().equals("")) {
-            outState.putString(KEY_INSTANCE_PLACE_NAME, mPlaceNameTextView.getText().toString());
-        }
         if (dialog != null) {
             if (dialog.isShowing()) {
                 outState.putInt(KEY_INSTANCE_DIALOG, 1);
@@ -406,8 +402,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         String type = savedInstanceState.getString(KEY_INSTANCE_TYPE);
         float rating = savedInstanceState.getFloat(KEY_INSTANCE_RATING);
         String date = savedInstanceState.getString(KEY_INSTANCE_DATE);
-        String placeName = savedInstanceState.getString(KEY_INSTANCE_PLACE_NAME);
-        String address = savedInstanceState.getString(KEY_INSTANCE_ADDRESS);
+        placeModel = savedInstanceState.getParcelable(KEY_INSTANCE_PLACE);
 
         if (name != null) {
             mNameEditText.setText(name);
@@ -420,14 +415,12 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         if (date != null) {
             mDateTextView.setText(date);
         }
-        if (placeName != null) {
-            mPlaceNameTextView.setText(placeName);
-            mPlaceNameTextView.setVisibility(View.VISIBLE);
+        if (placeModel != null) {
+            linearLayoutPlace.setVisibility(View.VISIBLE);
+            mPlaceNameTextView.setText(placeModel.getPlaceName());
+            mPlaceAddressTextView.setText(placeModel.getAddress());
         }
-        if (address != null) {
-            mPlaceAddressTextView.setText(address);
-            mPlaceAddressTextView.setVisibility(View.VISIBLE);
-        }
+
         if (savedInstanceState.getInt(KEY_INSTANCE_DIALOG) == 1) {
             setupDialog();
         }
@@ -501,6 +494,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        realm.removeChangeListener(realmChangeListener);
         realm.close();
     }
 

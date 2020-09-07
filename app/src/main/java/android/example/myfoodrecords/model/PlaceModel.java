@@ -1,9 +1,12 @@
 package android.example.myfoodrecords.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class PlaceModel extends RealmObject {
+public class PlaceModel extends RealmObject implements Parcelable {
 
     @PrimaryKey
     private int id;
@@ -91,4 +94,47 @@ public class PlaceModel extends RealmObject {
     public void setPrivate(boolean aPrivate) {
         isPrivate = aPrivate;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public PlaceModel(Parcel in) {
+        String[] data = new String[9];
+
+        in.readStringArray(data);
+
+        this.id = Integer.parseInt(data[0]);
+        this.foodId = Integer.parseInt(data[1]);
+        this.placeId = data[2];
+        this.lat = Double.parseDouble(data[3]);
+        this.lng = Double.parseDouble(data[4]);
+        this.placeName = data[5];
+        this.address = data[6];
+        this.placeRating = Float.parseFloat(data[7]);
+        this.isPrivate = Boolean.parseBoolean(data[8]);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringArray(new String[]{String.valueOf(this.id),
+                String.valueOf(this.foodId),
+                this.placeId,
+                String.valueOf(this.lat),
+                String.valueOf(this.lng),
+                this.placeName,
+                this.address,
+                String.valueOf(this.placeRating),
+                String.valueOf(this.isPrivate)});
+    }
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public PlaceModel createFromParcel(Parcel in) {
+            return new PlaceModel(in);
+        }
+
+        public PlaceModel[] newArray(int size) {
+            return new PlaceModel[size];
+        }
+    };
 }
