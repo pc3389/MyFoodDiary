@@ -29,6 +29,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
 
     public static final int REQUSET_PRIVATE_PLACE = 11;
 
+    private AlertDialog deleteAllDialog;
     private RecyclerView recyclerView;
 
     @Override
@@ -81,23 +82,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         }
 
         if (id == R.id.delete_all_place) {
-            new AlertDialog.Builder(context)
-                    .setTitle("Delete All Locations")
-                    .setMessage("Are you sure you want to delete all location details?")
-
-                    // Specifying a listener allows you to take an action before dismissing the dialog.
-                    // The dialog is automatically dismissed when a dialog button is clicked.
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Continue with delete operation
-                            helper.deleteAllPlaces();
-                        }
-                    })
-
-                    // A null listener allows the button to dismiss the dialog and take no further action.
-                    .setNegativeButton(android.R.string.no, null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
+            setupDeleteAllDialog();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -124,6 +109,11 @@ public class PrivatePlaceActivity extends AppCompatActivity {
             }
             PrivatePlaceAdapter.deleteDialog.hide();
         }
+        if(deleteAllDialog != null) {
+            if(deleteAllDialog.isShowing()) {
+                outState.putInt(EditorActivity.KEY_INSTANCE_DIALOG, 3);
+            }
+        }
     }
 
     @Override
@@ -135,5 +125,35 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         if (savedInstanceState.getInt(EditorActivity.KEY_INSTANCE_DIALOG) == 2) {
             PrivatePlaceAdapter.setupDeleteDialog();
         }
+        if(savedInstanceState.getInt(EditorActivity.KEY_INSTANCE_DIALOG) == 3) {
+            setupDeleteAllDialog();
+        }
+    }
+
+    private void setupDeleteAllDialog() {
+        AlertDialog.Builder deleteAllBuilder = new AlertDialog.Builder(context);
+        deleteAllBuilder.setTitle("Delete All Locations")
+                .setMessage("Are you sure you want to delete all location details?")
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Continue with delete operation
+                        helper.deleteAllPlaces();
+                    }
+                })
+
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert);
+        deleteAllDialog = deleteAllBuilder.create();
+        deleteAllDialog.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }

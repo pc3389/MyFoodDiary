@@ -26,16 +26,10 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/editor_food_iv">
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guide4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.04" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guide30"
@@ -44,20 +38,13 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.3" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guide96"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.96" />
-
             <TextView
                 style="@style/DetailMediumText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Name: "
                 app:layout_constraintBottom_toBottomOf="@id/editor_food_name_edit"
-                app:layout_constraintStart_toStartOf="@id/guide4"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/editor_food_name_edit" />
 
             <android.example.myfoodrecords.MyEditText
@@ -68,7 +55,7 @@
                 android:hint="@string/food_name"
                 android:inputType="text"
                 android:maxLines="1"
-                app:layout_constraintEnd_toEndOf="@id/guide96"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/guide30"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -78,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:text="Type: "
                 app:layout_constraintBottom_toBottomOf="@id/editor_food_type_edit"
-                app:layout_constraintStart_toStartOf="@id/guide4"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/editor_food_type_edit" />
 
             <android.example.myfoodrecords.MyEditText
@@ -87,12 +74,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/food_type"
-                android:minWidth="200dp"
-                app:layout_constraintEnd_toEndOf="@id/guide96"
-                app:layout_constraintStart_toStartOf="@id/guide30"
-                app:layout_constraintTop_toBottomOf="@id/editor_food_name_edit"
                 android:inputType="text"
-                android:maxLines="1"/>
+                android:maxLines="1"
+                android:minWidth="200dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/guide30"
+                app:layout_constraintTop_toBottomOf="@id/editor_food_name_edit" />
 
 
             <TextView
@@ -102,7 +89,7 @@
                 android:layout_weight="1"
                 android:text="Date: "
                 app:layout_constraintBottom_toBottomOf="@id/editor_date_edit"
-                app:layout_constraintStart_toStartOf="@id/guide4"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/editor_date_edit" />
 
             <TextView
@@ -111,10 +98,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:paddingStart="1dp"
                 android:hint="Click to add Date"
                 android:minWidth="200dp"
                 android:paddingVertical="8dp"
+                android:paddingStart="1dp"
                 app:layout_constraintEnd_toStartOf="@id/calender_iv"
                 app:layout_constraintStart_toStartOf="@id/guide30"
                 app:layout_constraintTop_toBottomOf="@id/editor_food_type_edit" />
@@ -127,7 +114,7 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/calender"
                 app:layout_constraintBottom_toBottomOf="@id/editor_date_edit"
-                app:layout_constraintEnd_toEndOf="@id/guide96"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/editor_date_edit" />
 
 
@@ -135,7 +122,7 @@
                 android:id="@+id/editor_rating_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                app:layout_constraintStart_toStartOf="@id/guide4"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/editor_date_edit" />
 
             <TextView
@@ -144,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/description"
                 app:layout_constraintBottom_toBottomOf="@id/editor_description_edit"
-                app:layout_constraintStart_toStartOf="@id/guide4"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/editor_description_edit" />
 
             <android.example.myfoodrecords.MyEditText
@@ -153,7 +140,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="Description"
-                app:layout_constraintEnd_toEndOf="@id/guide96"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/guide30"
                 app:layout_constraintTop_toBottomOf="@id/editor_rating_edit" />
 
@@ -161,8 +148,8 @@
             <TextView
                 android:id="@+id/push_to_edit_image"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="15dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="30dp"
                 android:background="@color/colorButton"
                 android:gravity="center"
@@ -176,14 +163,8 @@
                 android:id="@+id/location_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/push_to_edit_image">
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guide42"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.04" />
+                app:layout_constraintTop_toBottomOf="@id/push_to_edit_image">
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guide302"
@@ -192,20 +173,13 @@
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent="0.3" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guide962"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.96" />
-
                 <TextView
                     style="@style/DetailMediumText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Location: "
                     app:layout_constraintBottom_toBottomOf="@id/editor_place_name_tv"
-                    app:layout_constraintStart_toStartOf="@id/guide42"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/editor_place_name_tv" />
 
                 <TextView
@@ -215,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Place Name"
                     android:paddingVertical="8dp"
-                    app:layout_constraintEnd_toEndOf="@id/guide962"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/guide302"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -225,7 +199,7 @@
                     android:layout_height="wrap_content"
                     android:text="Address: "
                     app:layout_constraintBottom_toBottomOf="@id/editor_place_address_tv"
-                    app:layout_constraintStart_toStartOf="@id/guide42"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/editor_place_address_tv" />
 
                 <TextView
@@ -235,11 +209,11 @@
                     android:layout_height="wrap_content"
                     android:hint="Place Address"
                     android:paddingVertical="8dp"
-                    app:layout_constraintEnd_toEndOf="@id/guide962"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/guide302"
                     app:layout_constraintTop_toBottomOf="@id/editor_place_name_tv" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -21,14 +21,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,10 +67,11 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private TextView mPlaceAddressTextView;
     private ConstraintLayout linearLayoutPlace;
 
-    static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int REQUEST_TAKE_PHOTO = 1;
     public static final String KEY_REQUEST_CODE = "requestCode";
     public static final String KEY_EDITOR_FOOD_ID = "foodId2";
     private static final String KEY_INSTANCE_PHOTO = "savein";
+    private static final String KEY_INSTANCE_PREVIOUS_PHOTO = "keyPreviouos";
     private static final String KEY_INSTANCE_ADDRESS = "keyAddress";
     private static final String KEY_INSTANCE_PLACE_NAME = "keyPlaceName";
     private static final String KEY_INSTANCE_DATE = "keyDate";
@@ -84,6 +84,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     public static final int RESULT_MAP = 3;
     public static final int REQUEST_PRIVATE_PLACE = 4;
     public static final String NO_TYPE = "No Type";
+    public static final String TAG_DELETE_LOG = "LogDelete";
 
     private DatePickerDialog datePickerDialog;
     private int Year, Month, Day;
@@ -96,7 +97,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private AlertDialog dialog;
 
     private int foodId = 0;
-    private File photoFile;
+    private boolean hasPhoto = false;
 
 
     @Override
@@ -151,6 +152,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             }
         });
         loadData();
+        hasPhoto = false;
         refresh();
     }
 
@@ -190,7 +192,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
-        Toast.makeText(EditorActivity.this, date, Toast.LENGTH_LONG).show();
         mDateTextView.setText(date);
     }
 
@@ -239,6 +240,9 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            if(hasPhoto && previousPhotoPath != null) {
+                deletePhotoFile(previousPhotoPath);
+            }
             loadPhoto();
             previousPhotoPath = currentPhotoPath;
         } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_CANCELED) {
@@ -268,10 +272,13 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 Glide.with(context)
                         .load(R.mipmap.ic_no_food)
                         .into(mPhotoImageView);
+                hasPhoto = false;
             } else {
                 Glide.with(context)
                         .load(currentPhotoPath)
+                        .override(1000)
                         .into(mPhotoImageView);
+                hasPhoto = true;
             }
         }
     }
@@ -281,7 +288,10 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        photoFile = File.createTempFile(
+        /* prefix */
+        /* suffix */
+        /* directory */
+        File photoFile = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
@@ -349,6 +359,9 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         if (currentPhotoPath != null) {
             outState.putString(KEY_INSTANCE_PHOTO, currentPhotoPath);
         }
+        if(previousPhotoPath != null) {
+            outState.putString(KEY_INSTANCE_PREVIOUS_PHOTO, previousPhotoPath);
+        }
         if (mNameEditText.getText() != null) {
             outState.putString(KEY_INSTANCE_NAME, mNameEditText.getText().toString());
         }
@@ -362,10 +375,11 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         if (mDescriptionEditText.getText() != null) {
             outState.putString(KEY_INSTANCE_DESCRIPTION, mDescriptionEditText.getText().toString());
         }
-        if (mPlaceAddressTextView.getText() != null) {
+
+        if (!mPlaceAddressTextView.getText().equals("")) {
             outState.putString(KEY_INSTANCE_ADDRESS, mPlaceAddressTextView.getText().toString());
         }
-        if (mPlaceNameTextView.getText() != null) {
+        if (!mPlaceNameTextView.getText().equals("")) {
             outState.putString(KEY_INSTANCE_PLACE_NAME, mPlaceNameTextView.getText().toString());
         }
         if (dialog != null) {
@@ -387,6 +401,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         currentPhotoPath = savedInstanceState.getString(KEY_INSTANCE_PHOTO);
+        previousPhotoPath = savedInstanceState.getString(KEY_INSTANCE_PREVIOUS_PHOTO);
         String name = savedInstanceState.getString(KEY_INSTANCE_NAME);
         String type = savedInstanceState.getString(KEY_INSTANCE_TYPE);
         float rating = savedInstanceState.getFloat(KEY_INSTANCE_RATING);
@@ -407,9 +422,11 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         }
         if (placeName != null) {
             mPlaceNameTextView.setText(placeName);
+            mPlaceNameTextView.setVisibility(View.VISIBLE);
         }
         if (address != null) {
             mPlaceAddressTextView.setText(address);
+            mPlaceAddressTextView.setVisibility(View.VISIBLE);
         }
         if (savedInstanceState.getInt(KEY_INSTANCE_DIALOG) == 1) {
             setupDialog();
@@ -447,6 +464,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     }
 
     private void loadData() {
+        linearLayoutPlace.setVisibility(View.GONE);
         if (foodId != 0) {
             mNameEditText.setText(food.getName());
             mNameEditText.setSelection(mNameEditText.getText().length());
@@ -468,5 +486,29 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             }
         }
         loadPhoto();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(hasPhoto) {
+            deletePhotoFile(currentPhotoPath);
+        }
+        realm.removeChangeListener(realmChangeListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
+
+    private void deletePhotoFile(String photoPath) {
+            boolean deleteSuccessful = new File(photoPath).delete();
+            if(!deleteSuccessful) {
+                Toast.makeText(context, "Error occuled. Delete failure", Toast.LENGTH_SHORT).show();
+                Log.d(TAG_DELETE_LOG, "Delete failed");
+            }
     }
 }

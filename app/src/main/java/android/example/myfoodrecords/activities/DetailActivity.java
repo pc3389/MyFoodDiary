@@ -14,6 +14,7 @@ import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.adapter.ItemViewAdapter;
 import android.example.myfoodrecords.model.Food;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,6 +27,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -120,8 +123,8 @@ public class DetailActivity extends AppCompatActivity {
             mPlaceNameTextView.setText(food.getPlaceModel().getPlaceName());
             mPlaceAddressTextView.setText(food.getPlaceModel().getAddress());
         } else {
-            showInMapButton.setVisibility(View.INVISIBLE);
-            mPlaceConstraintLayout.setVisibility(View.INVISIBLE);
+            showInMapButton.setVisibility(View.GONE);
+            mPlaceConstraintLayout.setVisibility(View.GONE);
         }
         currentPhotoPath = food.getPhotoPath();
         loadPhoto();
@@ -172,33 +175,38 @@ public class DetailActivity extends AppCompatActivity {
             intent.putExtra("id", food.getId());
             startActivity(intent);
         } else if (id == R.id.delete_menu) {
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(@NotNull Realm realm) {
-                    if (food == null) {
-                        Toast.makeText(DetailActivity.this, "Error", Toast.LENGTH_SHORT).show();
-                    } else {
-                        new AlertDialog.Builder(context)
-                                .setTitle("Delete All Food Items")
-                                .setMessage("Are you sure you want to delete All Food Items?")
+            if (food == null) {
+                Toast.makeText(DetailActivity.this, "Error", Toast.LENGTH_SHORT).show();
+            } else {
+                new AlertDialog.Builder(context)
+                        .setTitle("Delete Food Item")
+                        .setMessage("Are you sure you want to delete this food item?")
 
-                                // Specifying a listener allows you to take an action before dismissing the dialog.
-                                // The dialog is automatically dismissed when a dialog button is clicked.
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // Continue with delete operation
-                                        helper.deleteFood(food.getId());
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Continue with delete operation
+                                if (food.getPhotoPath() == null) {
+                                    helper.deleteFood();
+                                    finish();
+                                } else {
+                                    boolean deleteSuccessful = new File(food.getPhotoPath()).delete();
+                                    if (!deleteSuccessful) {
+                                        Toast.makeText(context, "Error occuled. Deleted failure", Toast.LENGTH_SHORT).show();
+                                        Log.d(EditorActivity.TAG_DELETE_LOG, "Delete failed");
+                                    } else {
+                                        helper.deleteFood();
                                         finish();
                                     }
-                                })
-
-                                // A null listener allows the button to dismiss the dialog and take no further action.
-                                .setNegativeButton(android.R.string.no, null)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-                    }
-                }
-            });
+                                }
+                            }
+                        })
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -15,6 +15,7 @@ public class RealmHelper {
 
     private RealmResults<Food> foodRealmResults;
     private RealmResults<PlaceModel> placeRealmResults;
+    private Food food;
 
     public RealmHelper(Realm realm) {
         this.realm = realm;
@@ -109,7 +110,6 @@ public class RealmHelper {
     }
 
     public Food retrieveFoodWithId(int foodId) {
-        Food food;
         food = realm.where(Food.class).equalTo(Constants.REALM_ID, foodId).findFirst();
         return food;
     }
@@ -147,7 +147,9 @@ public class RealmHelper {
             @Override
             public void execute(Realm realm) {
                 RealmResults<Food> results = realm.where(Food.class).findAll();
-                results.deleteAllFromRealm();
+                if(!results.isEmpty()) {
+                    results.deleteAllFromRealm();
+                }
             }
         });
     }
@@ -157,7 +159,9 @@ public class RealmHelper {
             @Override
             public void execute(Realm realm) {
                 RealmResults<PlaceModel> results = realm.where(PlaceModel.class).findAll();
-                results.deleteAllFromRealm();
+                if(!results.isEmpty()) {
+                    results.deleteAllFromRealm();
+                }
             }
         });
     }
@@ -170,7 +174,20 @@ public class RealmHelper {
             @Override
             public void execute(Realm realm) {
                 Food result = realm.where(Food.class).equalTo("id", id).findFirst();
-                result.deleteFromRealm();
+                if(result != null) {
+                    result.deleteFromRealm();
+                }
+            }
+        });
+    }
+
+    public void deleteFood() {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                if(food != null) {
+                    food.deleteFromRealm();
+                }
             }
         });
     }
@@ -180,7 +197,9 @@ public class RealmHelper {
             @Override
             public void execute(Realm realm) {
                 PlaceModel result = realm.where(PlaceModel.class).equalTo("id", id).findFirst();
-                result.deleteFromRealm();
+                if(result != null) {
+                    result.deleteFromRealm();
+                }
             }
         });
     }

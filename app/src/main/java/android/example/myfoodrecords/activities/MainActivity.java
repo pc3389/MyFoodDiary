@@ -3,25 +3,26 @@ package android.example.myfoodrecords.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.example.myfoodrecords.adapter.MyPagerAdapter;
 import android.example.myfoodrecords.R;
+import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
+
+import java.io.File;
+import java.util.List;
 
 import io.realm.Realm;
 
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        if(id == R.id.delete_all) {
+        if (id == R.id.delete_all) {
             setupDialog();
         }
         return false;
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Continue with delete operation
+                        deleteAllPhotoFiles();
                         helper.deleteAllFood();
                     }
                 })
@@ -128,5 +130,20 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    private void deleteAllPhotoFiles() {
+        helper.selectAllFoodsFromDb();
+        List<Food> foodList = helper.retrieveAllFoodFromSelectedDb();
+        for (int i = 0; i < foodList.size(); i++) {
+            String photoPath = foodList.get(i).getPhotoPath();
+            if (photoPath != null) {
+                boolean deleteSuccessful = new File(photoPath).delete();
+                if (!deleteSuccessful) {
+                    Toast.makeText(context, "Error occuled. Deleted failure", Toast.LENGTH_SHORT).show();
+                    Log.d(EditorActivity.TAG_DELETE_LOG, "Delete failed");
+                }
+            }
+        }
     }
 }

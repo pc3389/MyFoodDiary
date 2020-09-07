@@ -1,6 +1,7 @@
 package android.example.myfoodrecords.adapter;
 
 import android.example.myfoodrecords.activities.MainActivity;
+import android.example.myfoodrecords.fragments.MovieFragment;
 import android.example.myfoodrecords.fragments.SummaryFragment;
 import android.example.myfoodrecords.fragments.FavoriteFragment;
 import android.example.myfoodrecords.fragments.ItemViewFragment;
@@ -28,6 +29,9 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
             case 2:
                 return new SummaryFragment();
 
+            case 3:
+                return new MovieFragment();
+
             default:
                 return null;
         }
@@ -46,6 +50,9 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
             case 2:
                 return "Summary";
 
+            case 3:
+                return "Movie";
+
             default:
                 return null;
         }
@@ -54,6 +61,6 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
     // Returns total number of pages
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 }

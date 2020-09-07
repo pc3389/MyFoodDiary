@@ -21,5 +21,6 @@
     <string name="description">Description:</string>
     <string name="type_button">Type</string>
     <string name="set">Set</string>
+    <string name="overview_label"><u>Overview</u></string>
 
 </resources>
