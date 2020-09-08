@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SummaryDetailActivity"
+    tools:context="bo.young.myfoodrecords.activities.SummaryDetailActivity"
     android:background="@color/colorBackGround">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/summary_detail_rc"

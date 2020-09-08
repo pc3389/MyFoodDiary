@@ -7,14 +7,14 @@
     android:padding="10dp"
     android:background="@color/colorBackGround">
 
-    <android.example.myfoodrecords.MyEditText
+    <bo.young.myfoodrecords.MyEditText
         android:id="@+id/place_detail_name_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/DetailLargeText"
         tools:text="Place Name" />
 
-    <android.example.myfoodrecords.MyEditText
+    <bo.young.myfoodrecords.MyEditText
         android:id="@+id/place_detail_address_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

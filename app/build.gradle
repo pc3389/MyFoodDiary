@@ -9,7 +9,7 @@ android {
     buildToolsVersion "30.0.1"
 
     defaultConfig {
-        applicationId "android.example.myfoodrecords"
+        applicationId "bo.young.myfoodrecords"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
@@ -24,9 +24,13 @@ android {
             resValue("string", "google_maps_key", localProperties['mapApiKey'])
             resValue("string", "tmdb_api_key", localProperties['tmdbApiKey'])
         }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue("string", "google_place_key", localProperties['placeApiKey'])
+            resValue("string", "google_maps_key", localProperties['mapApiKey'])
+            resValue("string", "tmdb_api_key", localProperties['tmdbApiKey'])
         }
     }
     compileOptions {

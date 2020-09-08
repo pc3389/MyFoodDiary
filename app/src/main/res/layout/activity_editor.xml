@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".activities.EditorActivity">
+        tools:context="bo.young.myfoodrecords.activities.EditorActivity">
 
         <ImageView
             android:id="@+id/editor_food_iv"
@@ -47,7 +47,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/editor_food_name_edit" />
 
-            <android.example.myfoodrecords.MyEditText
+            <bo.young.myfoodrecords.MyEditText
                 android:id="@+id/editor_food_name_edit"
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
@@ -68,7 +68,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/editor_food_type_edit" />
 
-            <android.example.myfoodrecords.MyEditText
+            <bo.young.myfoodrecords.MyEditText
                 android:id="@+id/editor_food_type_edit"
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
@@ -134,7 +134,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/editor_description_edit" />
 
-            <android.example.myfoodrecords.MyEditText
+            <bo.young.myfoodrecords.MyEditText
                 android:id="@+id/editor_description_edit"
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
