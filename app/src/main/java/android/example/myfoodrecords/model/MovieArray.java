@@ -4,17 +4,12 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+/**
+ * Movie Array from TMDB website
+ */
 public class MovieArray {
     @SerializedName("results")
     private List<Movie> results;
-
-    public MovieArray(List<Movie> results) {
-        this.results = results;
-    }
-
-    public MovieArray() {
-
-    }
 
     public List<Movie> getResults() {
         return results;

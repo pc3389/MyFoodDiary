@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.example.myfoodrecords.PhotoAsyncResponse;
 import android.example.myfoodrecords.R;
+import android.example.myfoodrecords.utils.Constants;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -22,7 +23,7 @@ public class PhotoFullscreenActivity extends AppCompatActivity implements PhotoA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_fullscreen);
-        photoPath = getIntent().getStringExtra(DetailActivity.KEY_FULL_SCREEN);
+        photoPath = getIntent().getStringExtra(Constants.KEY_FULL_SCREEN);
         fullScreenImageView = findViewById(R.id.photo_full_screen);
 
         hideActionAndStatusBar();
@@ -38,14 +39,13 @@ public class PhotoFullscreenActivity extends AppCompatActivity implements PhotoA
         }
     }
 
+    /**
+     * Hide the action bar and status bar
+     */
     private void hideActionAndStatusBar() {
         View decorView = getWindow().getDecorView();
-        // Hide the status bar.
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
-
-        // Remember that you should never show the action bar if the
-        // status bar is hidden, so hide that too if necessary.
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
     }

@@ -4,6 +4,7 @@ import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.adapter.SummaryAdapter;
 import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.model.SummaryItem;
+import android.example.myfoodrecords.utils.Constants;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -38,9 +39,6 @@ public class SummaryFragment extends Fragment {
     private Button placeButton;
     private Button typeButton;
 
-    public static final String FOOD_STRING = "food";
-    public static final String PLACE_STRING = "place";
-    public static final String TYPE_STRING = "type";
 
     private static final String KEY_INDICATOR = "keyIndicator";
     private static int indicator = 0;
@@ -81,7 +79,7 @@ public class SummaryFragment extends Fragment {
                 setFoodSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
-                SummaryAdapter.foodOrPlace = FOOD_STRING;
+                SummaryAdapter.foodOrPlace = Constants.FOOD_STRING;
             }
         });
         placeButton = rootView.findViewById(R.id.summary_place_button);
@@ -92,7 +90,7 @@ public class SummaryFragment extends Fragment {
                 setPlaceSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
-                SummaryAdapter.foodOrPlace = PLACE_STRING;
+                SummaryAdapter.foodOrPlace = Constants.PLACE_STRING;
             }
         });
         typeButton = rootView.findViewById(R.id.summary_type_button);
@@ -103,24 +101,33 @@ public class SummaryFragment extends Fragment {
                 setTypeSummaryItemList();
                 SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
                 recyclerView.setAdapter(summaryAdapter);
-                SummaryAdapter.foodOrPlace = TYPE_STRING;
+                SummaryAdapter.foodOrPlace = Constants.TYPE_STRING;
             }
         });
         refresh();
     }
 
+    /**
+     * variable 'indicator' is used to identify which Fragment is shown in the Activity.
+     * Updates UI accordingly
+     */
     private void updateUi() {
         if (indicator == 2) {
             setTypeSummaryItemList();
         } else if (indicator == 1) {
             setPlaceSummaryItemList();
-        } else {
+        } else if (indicator == 0) {
             setFoodSummaryItemList();
         }
         SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
         recyclerView.setAdapter(summaryAdapter);
     }
 
+    /**
+     * Update the UI by ascending order of food item's name
+     * Each item in recyclerview will show:
+     * "Food Name", "Average Rating", "Item Count"
+     */
     private void setFoodSummaryItemList() {
         summaryItemList = new ArrayList<>();
         List<Food> sortedFoodList = helper.retrieveFoodWithNameSorted();
@@ -158,9 +165,13 @@ public class SummaryFragment extends Fragment {
                 }
             }
         }
-
     }
 
+    /**
+     * Update the UI by the name of place model that each food is having
+     * Each item in recyclerview will show:
+     * "Place Name", "Average Rating", "Item Count"
+     */
     private void setPlaceSummaryItemList() {
         summaryItemList = new ArrayList<>();
         List<Food> sortedFoodList = helper.retrieveFoodWithNameSorted();
@@ -213,6 +224,11 @@ public class SummaryFragment extends Fragment {
         }
     }
 
+    /**
+     * Update the UI by the type of the food
+     * Each item in recyclerview will show:
+     * "Food Type", "Average Rating", "Item Count"
+     */
     private void setTypeSummaryItemList() {
         summaryItemList = new ArrayList<>();
         List<Food> sortedFoodList = helper.retrieveFoodWithTypeSorted();
@@ -253,6 +269,9 @@ public class SummaryFragment extends Fragment {
 
     }
 
+    /**
+     * Comparator is used to sort the data in ascending order
+     */
     private static class FoodPlaceComparator implements Comparator<Food> {
         @Override
         public int compare(Food o1, Food o2) {
@@ -268,17 +287,26 @@ public class SummaryFragment extends Fragment {
         summaryItemList.add(summaryItem);
     }
 
+    /**
+     * Add a realm change listener for automatic UI updates
+     */
     private void refresh() {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                setFoodSummaryItemList();
-                SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
-                if(recyclerView == null) {
-                    recyclerView = rootView.findViewById(R.id.summary_rc);
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setFoodSummaryItemList();
+                            SummaryAdapter summaryAdapter = new SummaryAdapter(summaryItemList, getActivity());
+                            if (recyclerView != null) {
+                                recyclerView.setAdapter(summaryAdapter);
+                                SummaryAdapter.foodOrPlace = Constants.FOOD_STRING;
+                            }
+                        }
+                    });
                 }
-                recyclerView.setAdapter(summaryAdapter);
-                SummaryAdapter.foodOrPlace = FOOD_STRING;
             }
         };
         realm.addChangeListener(realmChangeListener);
@@ -299,5 +327,13 @@ public class SummaryFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (realm != null && realmChangeListener != null) {
+            realm.removeChangeListener(realmChangeListener);
+            realm.close();
+        }
+    }
 }
 

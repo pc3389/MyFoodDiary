@@ -5,7 +5,6 @@ import android.example.myfoodrecords.adapter.MovieAdapter;
 import android.example.myfoodrecords.model.Movie;
 import android.example.myfoodrecords.model.MovieArray;
 import android.example.myfoodrecords.utils.GetInterface;
-import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.utils.RetrofitHelper;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,23 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MovieFragment extends Fragment {
 
-    private Realm realm;
-    private RealmHelper helper;
-    private RealmChangeListener realmChangeListener;
-
-    private String url;
-
     private View rootView;
 
-    private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
 
     private List<Movie> movieList = new ArrayList<>();
@@ -55,10 +45,13 @@ public class MovieFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Fetch movie data from TMDB website and update UI
+     */
     private void getMovieData() {
-        url = RetrofitHelper.getMovieDataUrl();
+        String url = RetrofitHelper.getMovieDataUrl();
         GetInterface getData = RetrofitHelper.getRetrofitInstance(url).create(GetInterface.class);
-        Call<MovieArray> call = getData.listMovie();
+        Call<MovieArray> call = getData.listMovie(getString(R.string.tmdb_api_key), "en-US", 1);
         call.enqueue(new Callback<MovieArray>() {
             @Override
             public void onResponse(Call<MovieArray> call, Response<MovieArray> response) {
@@ -76,7 +69,7 @@ public class MovieFragment extends Fragment {
     }
 
     private void setupUi() {
-        recyclerView = rootView.findViewById(R.id.movie_rc);
+        RecyclerView recyclerView = rootView.findViewById(R.id.movie_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         movieAdapter = new MovieAdapter(movieList, getContext());
         recyclerView.setAdapter(movieAdapter);

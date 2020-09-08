@@ -22,6 +22,7 @@ android {
         debug {
             resValue("string", "google_place_key", localProperties['placeApiKey'])
             resValue("string", "google_maps_key", localProperties['mapApiKey'])
+            resValue("string", "tmdb_api_key", localProperties['tmdbApiKey'])
         }
         release {
             minifyEnabled false

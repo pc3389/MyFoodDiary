@@ -4,11 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/temp111"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="10dp">
 
         <ImageView
@@ -17,34 +16,43 @@
             android:layout_height="@dimen/image_height_list"
             android:maxHeight="@dimen/image_height_list"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_no_food" />
+            android:src="@mipmap/ic_no_food"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="@dimen/image_height_list"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:paddingStart="10dp">
+            android:paddingHorizontal="10dp"
+            android:layout_toEndOf="@id/food_pic_iv"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@id/food_type_tv"
+            >
 
             <TextView
                 android:id="@+id/food_name_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary_text"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                tools:text="Name" />
+                tools:text="Name"
+                android:maxLines="1"
+                android:ellipsize="end"
+                />
 
             <TextView
                 android:id="@+id/food_rating_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary_text"
                 tools:text="Rating" />
 
             <TextView
                 android:id="@+id/food_date_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary_text"
                 tools:text="2019/03/05" />
@@ -52,15 +60,17 @@
 
         <TextView
             android:id="@+id/food_type_tv"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:paddingTop="10dp"
             android:paddingEnd="20dp"
             android:textColor="@color/primary_text"
             android:textSize="15sp"
-            tools:text="FoodType" />
-    </LinearLayout>
+            tools:text="FoodType"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"

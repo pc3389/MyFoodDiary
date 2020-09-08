@@ -2,10 +2,10 @@ package android.example.myfoodrecords.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.example.myfoodrecords.activities.EditorActivity;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.activities.DetailActivity;
 import android.example.myfoodrecords.model.Food;
+import android.example.myfoodrecords.utils.Constants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +23,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     private List<Food> foodList;
     private Context context;
-    public static final String KEY_ITEM_FOOD_ID = "foodId1";
+
 
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -60,7 +60,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         final Food food = foodList.get(position);
 
         holder.foodNameTextView.setText(food.getName());
-        if(!food.getFoodType().equals(EditorActivity.NO_TYPE)) {
+        if(!food.getFoodType().equals(Constants.NO_TYPE)) {
             holder.foodTypeTextView.setText(food.getFoodType());
         }
         holder.foodDateTextView.setText(food.getDate());
@@ -80,7 +80,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra(KEY_ITEM_FOOD_ID, food.getId());
+                intent.putExtra(Constants.KEY_ITEM_FOOD_ID, food.getId());
                 context.startActivity(intent);
             }
         });
@@ -88,7 +88,11 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     @Override
     public int getItemCount() {
-        return foodList.size();
+        if (foodList == null) {
+            return 0;
+        } else {
+            return foodList.size();
+        }
     }
 
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.example.myfoodrecords.R;
 import android.example.myfoodrecords.activities.SummaryDetailActivity;
-import android.example.myfoodrecords.model.PlaceModel;
 import android.example.myfoodrecords.model.SummaryItem;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +67,11 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
 
     @Override
     public int getItemCount() {
-        return summaryItemList.size();
+        if (summaryItemList == null) {
+            return 0;
+        } else {
+            return summaryItemList.size();
+        }
     }
 
 

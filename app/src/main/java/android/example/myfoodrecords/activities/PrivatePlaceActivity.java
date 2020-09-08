@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.example.myfoodrecords.adapter.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
+import android.example.myfoodrecords.utils.Constants;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.os.Bundle;
 import android.view.Menu;
@@ -52,17 +53,28 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.private_address_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retrievePrivatePlaceAll(), this, this);
+        PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.selectAndRetrieveAllPlaces(), this, this);
         recyclerView.setAdapter(privatePlaceAdapter);
         refresh();
     }
 
+    /**
+     * Add a realm change listener for automatic UI updates
+     */
     private void refresh() {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.retrievePrivatePlaceAll(), PrivatePlaceActivity.this, PrivatePlaceActivity.this);
-                recyclerView.setAdapter(privatePlaceAdapter);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(recyclerView != null) {
+                            PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.selectAndRetrieveAllPlaces(), PrivatePlaceActivity.this, PrivatePlaceActivity.this);
+                            recyclerView.setAdapter(privatePlaceAdapter);
+                        }
+                    }
+                });
+
             }
         };
         realm.addChangeListener(realmChangeListener);
@@ -77,7 +89,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         }
         if (id == R.id.add_place_menu) {
             Intent intent = new Intent(PrivatePlaceActivity.this, MapsActivity.class);
-            intent.putExtra(EditorActivity.KEY_REQUEST_CODE, REQUSET_PRIVATE_PLACE);
+            intent.putExtra(Constants.KEY_REQUEST_CODE, REQUSET_PRIVATE_PLACE);
             startActivity(intent);
         }
 
@@ -99,19 +111,19 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         if (PrivatePlaceAdapter.dialog != null) {
             if (PrivatePlaceAdapter.dialog.isShowing()) {
-                outState.putInt(EditorActivity.KEY_INSTANCE_DIALOG, 1);
+                outState.putInt(Constants.KEY_INSTANCE_DIALOG, 1);
             }
             PrivatePlaceAdapter.dialog.hide();
         }
         if (PrivatePlaceAdapter.deleteDialog != null) {
             if (PrivatePlaceAdapter.deleteDialog.isShowing()) {
-                outState.putInt(EditorActivity.KEY_INSTANCE_DIALOG, 2);
+                outState.putInt(Constants.KEY_INSTANCE_DIALOG, 2);
             }
             PrivatePlaceAdapter.deleteDialog.hide();
         }
         if(deleteAllDialog != null) {
             if(deleteAllDialog.isShowing()) {
-                outState.putInt(EditorActivity.KEY_INSTANCE_DIALOG, 3);
+                outState.putInt(Constants.KEY_INSTANCE_DIALOG, 3);
             }
         }
     }
@@ -119,13 +131,13 @@ public class PrivatePlaceActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.getInt(EditorActivity.KEY_INSTANCE_DIALOG) == 1) {
+        if (savedInstanceState.getInt(Constants.KEY_INSTANCE_DIALOG) == 1) {
             PrivatePlaceAdapter.setupDialog();
         }
-        if (savedInstanceState.getInt(EditorActivity.KEY_INSTANCE_DIALOG) == 2) {
+        if (savedInstanceState.getInt(Constants.KEY_INSTANCE_DIALOG) == 2) {
             PrivatePlaceAdapter.setupDeleteDialog();
         }
-        if(savedInstanceState.getInt(EditorActivity.KEY_INSTANCE_DIALOG) == 3) {
+        if(savedInstanceState.getInt(Constants.KEY_INSTANCE_DIALOG) == 3) {
             setupDeleteAllDialog();
         }
     }
@@ -154,6 +166,9 @@ public class PrivatePlaceActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        realm.close();
+        if (realm != null && realmChangeListener != null) {
+            realm.removeChangeListener(realmChangeListener);
+            realm.close();
+        }
     }
 }

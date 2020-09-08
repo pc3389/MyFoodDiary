@@ -5,24 +5,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.example.myfoodrecords.R;
-import android.example.myfoodrecords.activities.DetailActivity;
-import android.example.myfoodrecords.activities.EditorActivity;
 import android.example.myfoodrecords.activities.MapsActivity;
 import android.example.myfoodrecords.activities.PrivatePlaceActivity;
-import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.model.PlaceModel;
+import android.example.myfoodrecords.utils.Constants;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -83,17 +78,26 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
 
     @Override
     public int getItemCount() {
-        return placeModelList.size();
+        if (placeModelList == null) {
+            return 0;
+        } else {
+            return placeModelList.size();
+        }
     }
 
+    /**
+     * Setups the dialog showing the list (Set, Edit, Delete)
+     * each items has ClickEvents accordingly
+     */
     public static void setupDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Location");
-        String[] placeArray = {context.getResources().getString(R.string.set), context.getResources().getString(R.string.edit), context.getResources().getString(R.string.delete)};
+        String[] placeArray = {context.getResources().getString(R.string.select), context.getResources().getString(R.string.edit), context.getResources().getString(R.string.delete)};
         builder.setItems(placeArray, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
+                    // Select the place detail and pass the placeId
                     case 0: {
                         Intent intent = new Intent();
                         intent.putExtra(PUT_PLACE_ID, placeModel.getId());
@@ -101,13 +105,15 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
                         mActivity.finish();
                         break;
                     }
+                    //Edit the place detail in MapsActivity
                     case 1: {
                         Intent intent = new Intent(context, MapsActivity.class);
                         intent.putExtra(PRIVATE_PLACE_KEY, placeModel.getId());
-                        intent.putExtra(EditorActivity.KEY_REQUEST_CODE, PrivatePlaceActivity.REQUSET_PRIVATE_PLACE);
+                        intent.putExtra(Constants.KEY_REQUEST_CODE, PrivatePlaceActivity.REQUSET_PRIVATE_PLACE);
                         context.startActivity(intent);
                         break;
                     }
+                    //Delete the data from Realm Database
                     case 2: {
                         setupDeleteDialog();
                         break;
@@ -119,6 +125,10 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
         dialog.show();
     }
 
+    /**
+     * Opens the dialog asking if the user still wants to delete the file
+     * Implemented to prevent the mis-click, and to make sure the user really wants to delete the data
+     */
     public static void setupDeleteDialog() {
         Realm realm = Realm.getDefaultInstance();
         RealmHelper helper = new RealmHelper(realm);

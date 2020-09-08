@@ -1,11 +1,11 @@
 package android.example.myfoodrecords.model;
 
-import com.google.gson.annotations.SerializedName;
-
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
+/**
+ * Realm Object for Food Model
+ */
 public class Food extends RealmObject {
 
     @PrimaryKey

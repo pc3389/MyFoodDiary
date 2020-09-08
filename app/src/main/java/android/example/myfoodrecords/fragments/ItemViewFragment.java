@@ -1,7 +1,6 @@
 package android.example.myfoodrecords.fragments;
 
 import android.example.myfoodrecords.R;
-import android.example.myfoodrecords.activities.MainActivity;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.adapter.ItemViewAdapter;
 import android.os.Bundle;
@@ -22,7 +21,7 @@ public class ItemViewFragment extends Fragment {
 
     private Realm realm;
     private RealmHelper helper;
-    private RealmChangeListener realmChangeListener;
+    private RealmChangeListener<Realm> realmChangeListener;
 
     private View rootView;
 
@@ -60,15 +59,22 @@ public class ItemViewFragment extends Fragment {
         recyclerView.setAdapter(itemViewAdapter);
     }
 
+    /**
+     * Add a realm change listener for automatic UI updates
+     */
     private void refresh() {
-        realmChangeListener = new RealmChangeListener() {
+        realmChangeListener = new RealmChangeListener<Realm>() {
             @Override
-            public void onChange(Object o) {
-                if(recyclerView == null) {
-                    recyclerView = rootView.findViewById(R.id.item_view_rc);
-                }
-                ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
-                recyclerView.setAdapter(adapter);
+            public void onChange(Realm realm) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(recyclerView != null) {
+                            ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
+                            recyclerView.setAdapter(adapter);
+                        }
+                    }
+                });
             }
         };
         realm.addChangeListener(realmChangeListener);
@@ -77,7 +83,9 @@ public class ItemViewFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        realm.removeChangeListener(realmChangeListener);
-        realm.close();
+        if (realm != null && realmChangeListener != null) {
+            realm.removeChangeListener(realmChangeListener);
+            realm.close();
+        }
     }
 }

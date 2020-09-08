@@ -6,15 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.example.myfoodrecords.R;
+import android.example.myfoodrecords.utils.Constants;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.model.PlaceModel;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -37,7 +36,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_detail);
 
-        placeId = getIntent().getExtras().getInt(MapsActivity.PLACE_ID_KEY);
+        placeId = getIntent().getExtras().getInt(Constants.KEY_PLACE_ID);
         setupRealm();
         setupUi();
     }
@@ -69,7 +68,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.edit_menu_save) {
             hideKeyboard();
-            nullCheck();
+            // Save the data to Realm and finish
             if (!nameEditText.getText().toString().equals("")) {
                 newPlaceModel.setPlaceName(nameEditText.getText().toString());
                 newPlaceModel.setAddress(addressEditText.getText().toString());
@@ -79,12 +78,17 @@ public class PlaceDetailActivity extends AppCompatActivity {
                 newPlaceModel.setLng(placeModel.getLng());
                 helper.insertPlace(newPlaceModel);
                 finish();
+            } else {
+                Toast.makeText(this, "Please enter the Food Name", Toast.LENGTH_SHORT).show();
             }
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * hide the keyboard when finished
+     */
     private void hideKeyboard() {
         Activity activity = PlaceDetailActivity.this;
         InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -93,9 +97,12 @@ public class PlaceDetailActivity extends AppCompatActivity {
             inputManager.hideSoftInputFromInputMethod(activity.getCurrentFocus().getWindowToken(), 0);
         }
     }
-    private void nullCheck() {
-        if (nameEditText.getText().toString().equals("")) {
-            Toast.makeText(this, "Please enter the Food Name", Toast.LENGTH_SHORT).show();
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (realm != null) {
+            realm.close();
         }
     }
 }

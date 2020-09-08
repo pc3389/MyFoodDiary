@@ -65,10 +65,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     @Override
     public int getItemCount() {
-        return movieList.size();
+        if (movieList == null) {
+            return 0;
+        } else {
+            return movieList.size();
+        }
     }
 
+    /**
+     * @param movieList Receives the movie data after fetching and update the UI
+     */
     public void setMovieList(List<Movie> movieList) {
+
         this.movieList = movieList;
         notifyDataSetChanged();
     }

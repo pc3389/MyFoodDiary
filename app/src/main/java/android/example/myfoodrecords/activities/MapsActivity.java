@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.example.myfoodrecords.adapter.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
+import android.example.myfoodrecords.utils.Constants;
 import android.example.myfoodrecords.utils.RealmHelper;
 import android.example.myfoodrecords.model.Food;
 import android.example.myfoodrecords.model.PlaceModel;
@@ -49,8 +50,8 @@ import io.realm.Realm;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPoiClickListener {
 
     private GoogleMap map;
-    private Realm foodRealm;
-    private RealmHelper foodHelper;
+    private Realm realm;
+    private RealmHelper helper;
     private Food food;
 
     private PlaceModel placeModel = new PlaceModel();
@@ -63,8 +64,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean locationPermissionGranted;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 8;
     private static final String TAG = "MapsActivityTag";
-    public static final String PLACE_ID_KEY = "placePrimaryKey";
-
     private static final String KEY_INSTANCE_PLACE_NAME = "keyPlaceName";
     private static final String KEY_INSTANCE_ADDRESS = "keyAddress";
     private static final String KEY_INSTANCE_PLACE_ID = "keyPlaceId";
@@ -99,15 +98,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setupRealm() {
-        foodRealm = Realm.getDefaultInstance();
-        foodHelper = new RealmHelper(foodRealm);
+        realm = Realm.getDefaultInstance();
+        helper = new RealmHelper(realm);
     }
 
     private void setupUI() {
         saveButton = findViewById(R.id.map_save_button);
-        requestCode = getIntent().getExtras().getInt(EditorActivity.KEY_REQUEST_CODE);
-        foodId = getIntent().getExtras().getInt(EditorActivity.KEY_EDITOR_FOOD_ID);
+        // Indicates from where the activity is come from
+        requestCode = getIntent().getExtras().getInt(Constants.KEY_REQUEST_CODE);
+        foodId = getIntent().getExtras().getInt(Constants.KEY_EDITOR_FOOD_ID);
 
+        //If the user wants private place, set isPrivatePlace to true
         if (requestCode == PrivatePlaceActivity.REQUSET_PRIVATE_PLACE) {
             isPrivatePlace = true;
             id = getIntent().getExtras().getInt(PrivatePlaceAdapter.PRIVATE_PLACE_KEY);
@@ -118,12 +119,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Initialize the SDK
         Places.initialize(getApplicationContext(), getString(R.string.google_place_key));
 
-        // Create a new PlacesClient instance
         placesClient = Places.createClient(this);
 
         setupAutoComplete();
 
-        if (requestCode == DetailActivity.DETAIL_REQUEST) {
+        //If it is from DetailActivity, set saveButton and autocompleteFragment to be gone
+        if (requestCode == Constants.DETAIL_REQUEST) {
             saveButton.setVisibility(View.GONE);
             autocompleteFragment.getView().setVisibility(View.GONE);
         }
@@ -143,16 +144,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getLocationPermission();
         marker = map.addMarker(new MarkerOptions().position(latLng).title(placeName).snippet(placeAddress));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
-        if (requestCode != DetailActivity.DETAIL_REQUEST) {
-            map.setOnPoiClickListener(this);
+
+        //if the activity is not started from DetailActivity, set clickListeners on GoogleMap
+        if (requestCode != Constants.DETAIL_REQUEST) {
             setMapClickListener();
-            setMyLocationListener();
         } else {
+            //hide edit or save features and only shows the location with detail
             marker.showInfoWindow();
         }
         updateLocationUI();
     }
 
+    /**
+     * Autocomplete feature
+     * User can search the place using keyboard input
+     */
     private void setupAutoComplete() {
         // Initialize the AutocompleteSupportFragment.
         autocompleteFragment = (AutocompleteSupportFragment)
@@ -161,7 +167,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.TYPES, Place.Field.ADDRESS, Place.Field.RATING));
 
-        // Set up a PlaceSelectionListener to handle the response.
+        // when place is selected, receives the data from Place Fields
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NotNull final Place place) {
@@ -185,8 +191,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onPoiClick(PointOfInterest poi) {
         map.clear();
         String placeId = poi.placeId;
+
+        // types of place data
         List<Place.Field> placeField = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.TYPES, Place.Field.ADDRESS, Place.Field.RATING);
         final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeField);
+
+        //when Poi is clicked, fetch the data and update
         placesClient.fetchPlace(request).addOnSuccessListener(new OnSuccessListener<FetchPlaceResponse>() {
             @Override
             public void onSuccess(FetchPlaceResponse response) {
@@ -210,16 +220,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-
     }
 
+    /**
+     * If the activity is started from PrivatePlaceActivity, select placeModel from Realm
+     * else, look for Food from Realm.
+     * Update the data accordingly
+     */
     private void loadMapLocationFromRealm() {
         if (isPrivatePlace && id != 0) {
-            placeModel = foodRealm.where(PlaceModel.class)
+            placeModel = realm.where(PlaceModel.class)
                     .equalTo("id", id)
                     .findFirst();
         } else {
-            food = foodRealm.where(Food.class)
+            food = realm.where(Food.class)
                     .equalTo("id", foodId)
                     .findFirst();
             if (food != null) {
@@ -254,7 +268,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         updateLocationUI();
     }
 
+    /**
+     * Five different ClickListeners
+     * Poi, Marker, Map, MyLocation
+     */
     private void setMapClickListener() {
+        map.setOnPoiClickListener(this);
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -275,9 +294,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 map.clear();
             }
         });
-    }
-
-    private void setMyLocationListener() {
         map.setOnMyLocationClickListener(new GoogleMap.OnMyLocationClickListener() {
             @Override
             public void onMyLocationClick(@NonNull Location location) {
@@ -287,6 +303,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    /**
+     * @param latLng Add Marker and move Camera to given latLng position
+     */
     private void addMarkerAndMoveCamera(LatLng latLng) {
         map.clear();
         marker = map.addMarker(new MarkerOptions().position(latLng).title(placeName).snippet(placeAddress));
@@ -296,24 +315,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
+    /**
+     * Saves the data and set the result according to where the activity has been started
+     */
     private void getLocation() {
         if (requestCode != 0) {
             Intent intent = new Intent();
             switch (requestCode) {
-                case EditorActivity.REQUEST_MAP:
+                //From EditorActivity, by clicking "Select From Map"
+                case Constants.REQUEST_MAP:
                     isPrivatePlace = false;
                     if (placeName == null) {
                         Toast.makeText(MapsActivity.this, "Please select the location", Toast.LENGTH_SHORT).show();
                         break;
                     }
+                    id = 0;
                     savePlace();
-                    intent.putExtra(PLACE_ID_KEY, newPlaceModel.getId());
-                    setResult(EditorActivity.RESULT_MAP, intent);
+                    //passes placeModel's ID data (Primary Key) using intent
+                    intent.putExtra(Constants.KEY_PLACE_ID, newPlaceModel.getId());
+                    setResult(Constants.RESULT_MAP, intent);
                     finish();
                     break;
 
+                //From PrivatePlaceActivity, adding the private place details
                 case PrivatePlaceActivity.REQUSET_PRIVATE_PLACE:
                     isPrivatePlace = true;
+                    //as placeModel is the realm object, use newPlaceModel to avoid unwanted Realm transactions
                     if (placeModel == null) {
                         newPlaceModel.setId(0);
                     } else {
@@ -324,8 +351,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         break;
                     }
                     savePlace();
+                    //passes placeModel's ID data (Primary Key) using intent
                     Intent intent2 = new Intent(MapsActivity.this, PlaceDetailActivity.class);
-                    intent2.putExtra(PLACE_ID_KEY, newPlaceModel.getId());
+                    intent2.putExtra(Constants.KEY_PLACE_ID, newPlaceModel.getId());
                     startActivity(intent2);
                     finish();
                     break;
@@ -360,7 +388,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    // MyLocation button and Mylocation enable
+    /**
+     * MyLocation button and Mylocation enable
+     */
+
     private void updateLocationUI() {
         if (map == null) {
             return;
@@ -378,6 +409,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    /**
+     * saves the data in Realm database.
+     * as placeModel is the realm object, use newPlaceModel to avoid unwanted Realm transactions.
+     */
     private void savePlace() {
         if (placeName != null) {
             newPlaceModel.setPlaceName(placeName);
@@ -387,7 +422,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             newPlaceModel.setLng(lng);
             newPlaceModel.setLat(lat);
             newPlaceModel.setPrivate(isPrivatePlace);
-            foodHelper.insertPlace(newPlaceModel);
+            helper.insertPlace(newPlaceModel);
         }
 
     }
@@ -419,6 +454,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         isPrivatePlace = bundle.getBoolean(KEY_INSTANCE_PRIVATE);
         if (lat != 0 && lng != 0) {
             latLng = new LatLng(lat, lng);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (realm != null) {
+            realm.close();
         }
     }
 }

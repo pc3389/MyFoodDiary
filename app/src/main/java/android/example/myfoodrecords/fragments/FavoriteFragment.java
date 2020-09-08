@@ -35,7 +35,7 @@ public class FavoriteFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView =  inflater.inflate(R.layout.fragment_favorite, container, false);
+        rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
 
         setupUi();
         return rootView;
@@ -55,18 +55,33 @@ public class FavoriteFragment extends Fragment {
         refresh();
     }
 
+    /**
+     * Add a realm change listener for automatic UI updates
+     */
     private void refresh() {
         realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object o) {
-                if(recyclerView == null) {
-                    recyclerView = rootView.findViewById(R.id.favorite_rc);
-                }
-                ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
-                recyclerView.setAdapter(adapter);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(recyclerView != null) {
+                            ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
+                            recyclerView.setAdapter(adapter);
+                        }
+                    }
+                });
             }
         };
         realm.addChangeListener(realmChangeListener);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (realm != null && realmChangeListener != null) {
+            realm.removeChangeListener(realmChangeListener);
+            realm.close();
+        }
+    }
 }

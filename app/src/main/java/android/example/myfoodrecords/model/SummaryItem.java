@@ -1,5 +1,8 @@
 package android.example.myfoodrecords.model;
 
+/**
+ * Summary Item model to update the data in Summay Fragments
+ */
 public class SummaryItem {
     private String name;
     private float rating;

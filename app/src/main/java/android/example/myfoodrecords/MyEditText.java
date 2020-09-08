@@ -2,11 +2,13 @@ package android.example.myfoodrecords;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * Custom EditText to place a cursor at the end of the text
+ */
 public class MyEditText extends androidx.appcompat.widget.AppCompatEditText {
     public MyEditText(@NonNull Context context) {
         super(context);

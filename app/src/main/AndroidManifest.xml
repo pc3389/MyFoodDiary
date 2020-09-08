@@ -23,6 +23,7 @@
              //TODO copy and paste api keys in local.property
              placeApiKey = YOUR_API_KEY
              mapApiKey = YOUR_API_KEY
+             tmdbApiKey = YOUR_API_KEY
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"

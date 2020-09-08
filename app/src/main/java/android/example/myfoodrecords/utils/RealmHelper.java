@@ -14,8 +14,8 @@ public class RealmHelper {
     private Realm realm;
 
     private RealmResults<Food> foodRealmResults;
-    private RealmResults<PlaceModel> placeRealmResults;
     private Food food;
+    private List<Food> foodList;
 
     public RealmHelper(Realm realm) {
         this.realm = realm;
@@ -24,6 +24,7 @@ public class RealmHelper {
     public void selectAllFoodsFromDb() {
         foodRealmResults = realm.where(Food.class).findAll();
     }
+
     public void selectAllFavoriteFoodsFromDb() {
         foodRealmResults = realm.where(Food.class)
                 .equalTo("isFavorite", true)
@@ -35,43 +36,47 @@ public class RealmHelper {
      * @param food
      */
     public void insertFood(final Food food) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                int newKey = 0;
-                Number maxId = realm.where(Food.class).max("id");
-                if (food.getId() < 1) {
-                    if (maxId == null) {
-                        newKey = 1;
-                    } else {
-                        newKey = maxId.intValue() + 1;
-                    }
-                } else newKey = food.getId();
-                food.setId(newKey);
+        try (Realm realm = Realm.getDefaultInstance()) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    int newKey = 0;
+                    Number maxId = realm.where(Food.class).max("id");
+                    if (food.getId() < 1) {
+                        if (maxId == null) {
+                            newKey = 1;
+                        } else {
+                            newKey = maxId.intValue() + 1;
+                        }
+                    } else newKey = food.getId();
+                    food.setId(newKey);
 
-                realm.insertOrUpdate(food);
-            }
-        });
+                    realm.insertOrUpdate(food);
+                }
+            });
+        }
     }
 
     public void insertPlace(final PlaceModel place) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                int newKey = 0;
-                Number maxId = realm.where(PlaceModel.class).max("id");
-                if (place.getId() < 1) {
-                    if (maxId == null) {
-                        newKey = 1;
-                    } else {
-                        newKey = maxId.intValue() + 1;
-                    }
-                } else newKey = place.getId();
-                place.setId(newKey);
+        try(Realm realm = Realm.getDefaultInstance()) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    int newKey = 0;
+                    Number maxId = realm.where(PlaceModel.class).max("id");
+                    if (place.getId() < 1) {
+                        if (maxId == null) {
+                            newKey = 1;
+                        } else {
+                            newKey = maxId.intValue() + 1;
+                        }
+                    } else newKey = place.getId();
+                    place.setId(newKey);
 
-                realm.copyToRealmOrUpdate(place);
-            }
-        });
+                    realm.copyToRealmOrUpdate(place);
+                }
+            });
+        }
     }
 
     /**
@@ -80,12 +85,12 @@ public class RealmHelper {
      * @return
      */
     public List<Food> retrieveAllFoodFromSelectedDb() {
-        List<Food> foodList = new ArrayList<>(foodRealmResults);
+        foodList = new ArrayList<>(foodRealmResults);
         return foodList;
     }
 
 
-    public List<PlaceModel> retrievePrivatePlaceAll() {
+    public List<PlaceModel> selectAndRetrieveAllPlaces() {
         RealmResults<PlaceModel> placeRealmResults = realm.where(PlaceModel.class)
                 .equalTo("isPrivate", true)
                 .findAll();
@@ -94,7 +99,6 @@ public class RealmHelper {
     }
 
     public List<Food> retrieveFoodWithNameSorted() {
-        RealmResults<Food> foodRealmResults;
         foodRealmResults = realm.where(Food.class)
                 .sort("name")
                 .findAll();
@@ -102,7 +106,6 @@ public class RealmHelper {
     }
 
     public List<Food> retrieveFoodWithTypeSorted() {
-        RealmResults<Food> foodRealmResults;
         foodRealmResults = realm.where(Food.class)
                 .sort("foodType")
                 .findAll();
@@ -115,27 +118,23 @@ public class RealmHelper {
     }
 
     public PlaceModel retrievePlaceWithId(int placeId) {
-        PlaceModel placeModel;
-        placeModel = realm.where(PlaceModel.class).equalTo("id", placeId).findFirst();
+        PlaceModel placeModel = realm.where(PlaceModel.class).equalTo("id", placeId).findFirst();
         return placeModel;
     }
 
     public List<Food> retrieveFoodListWithName(String foodName) {
-        List<Food> food;
-        food = realm.where(Food.class).equalTo("name", foodName).findAll();
-        return food;
+        foodList = realm.where(Food.class).equalTo("name", foodName).findAll();
+        return foodList;
     }
 
     public List<Food> retrieveFoodListWithType(String foodType) {
-        List<Food> food;
-        food = realm.where(Food.class).equalTo("foodType", foodType).findAll();
-        return food;
+        foodList = realm.where(Food.class).equalTo("foodType", foodType).findAll();
+        return foodList;
     }
 
     public List<Food> retrieveFoodListWithPlaceName(String placeName) {
-        List<Food> food;
-        food = realm.where(Food.class).equalTo("placeModel.placeName", placeName).findAll();
-        return food;
+        foodList = realm.where(Food.class).equalTo("placeModel.placeName", placeName).findAll();
+        return foodList;
     }
 
 
@@ -143,65 +142,75 @@ public class RealmHelper {
      *
      */
     public void deleteAllFood() {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<Food> results = realm.where(Food.class).findAll();
-                if(!results.isEmpty()) {
-                    results.deleteAllFromRealm();
+        try (Realm realm = Realm.getDefaultInstance()) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    RealmResults<Food> results = realm.where(Food.class).findAll();
+                    if (!results.isEmpty()) {
+                        results.deleteAllFromRealm();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void deleteAllPlaces() {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<PlaceModel> results = realm.where(PlaceModel.class).findAll();
-                if(!results.isEmpty()) {
-                    results.deleteAllFromRealm();
+        try (Realm realm = Realm.getDefaultInstance()) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    RealmResults<PlaceModel> results = realm.where(PlaceModel.class).findAll();
+                    if (!results.isEmpty()) {
+                        results.deleteAllFromRealm();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
      * @param id
      */
     public void deleteFood(final int id) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                Food result = realm.where(Food.class).equalTo("id", id).findFirst();
-                if(result != null) {
-                    result.deleteFromRealm();
+        try (Realm realm = Realm.getDefaultInstance()) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    Food result = realm.where(Food.class).equalTo("id", id).findFirst();
+                    if (result != null) {
+                        result.deleteFromRealm();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void deleteFood() {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                if(food != null) {
-                    food.deleteFromRealm();
+        try (Realm realm = Realm.getDefaultInstance()) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    if (food != null) {
+                        food.deleteFromRealm();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void deletePlace(final int id) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                PlaceModel result = realm.where(PlaceModel.class).equalTo("id", id).findFirst();
-                if(result != null) {
-                    result.deleteFromRealm();
+        try (Realm realm = Realm.getDefaultInstance()) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    PlaceModel result = realm.where(PlaceModel.class).equalTo("id", id).findFirst();
+                    if (result != null) {
+                        result.deleteFromRealm();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
 }

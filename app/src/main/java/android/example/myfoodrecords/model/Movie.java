@@ -2,6 +2,9 @@ package android.example.myfoodrecords.model;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Movie Model from TMDB website
+ */
 public class Movie {
 
     @SerializedName("title")

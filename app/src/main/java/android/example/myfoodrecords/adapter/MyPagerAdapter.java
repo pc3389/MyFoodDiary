@@ -1,6 +1,5 @@
 package android.example.myfoodrecords.adapter;
 
-import android.example.myfoodrecords.activities.MainActivity;
 import android.example.myfoodrecords.fragments.MovieFragment;
 import android.example.myfoodrecords.fragments.SummaryFragment;
 import android.example.myfoodrecords.fragments.FavoriteFragment;
@@ -37,7 +36,7 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    // Will be displayed as the tab's label
+    // Tab's label
     @Override
     public CharSequence getPageTitle(int position) {
         switch(position) {
@@ -58,7 +57,7 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    // Returns total number of pages
+    // Total number of pages
     @Override
     public int getCount() {
         return 4;

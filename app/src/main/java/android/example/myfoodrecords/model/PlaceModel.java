@@ -6,6 +6,9 @@ import android.os.Parcelable;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
+/**
+ * Realm Object for Place Model
+ */
 public class PlaceModel extends RealmObject implements Parcelable {
 
     @PrimaryKey
