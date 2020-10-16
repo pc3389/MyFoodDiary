@@ -15,7 +15,6 @@ import android.example.myfoodrecords.BuildConfig;
 import bo.young.myfoodrecords.MyEditText;
 import bo.young.myfoodrecords.model.Food;
 import bo.young.myfoodrecords.model.PlaceModel;
-import bo.young.myfoodrecords.adapter.PrivatePlaceAdapter;
 import android.example.myfoodrecords.R;
 import bo.young.myfoodrecords.utils.Constants;
 import bo.young.myfoodrecords.utils.RealmHelper;
@@ -68,17 +67,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private TextView placeNameTextView;
     private TextView placeAddressTextView;
     private ConstraintLayout placeConstraintLayout;
-
-    private static final int REQUEST_TAKE_PHOTO = 1;
-    private static final String KEY_INSTANCE_PHOTO = "savein";
-    private static final String KEY_INSTANCE_PREVIOUS_PHOTO = "keyPreviouos";
-    private static final String KEY_INSTANCE_DATE = "keyDate";
-    private static final String KEY_INSTANCE_NAME = "keyName";
-    private static final String KEY_INSTANCE_TYPE = "keyType";
-    private static final String KEY_INSTANCE_RATING = "keyRating";
-    private static final String KEY_INSTANCE_DESCRIPTION = "keyDescription";
-    private static final String KEY_INSTANCE_PLACE = "keyPlace";
-    private static final int REQUEST_PRIVATE_PLACE = 4;
 
     private DatePickerDialog datePickerDialog;
     private int year, month, day;
@@ -248,7 +236,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                         BuildConfig.APPLICATION_ID + ".fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                startActivityForResult(takePictureIntent, Constants.REQUEST_TAKE_PHOTO);
             }
         }
     }
@@ -268,20 +256,20 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+        if (requestCode == Constants.REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             if (hasPhoto && previousPhotoPath != null) {
                 deletePhotoFile(previousPhotoPath);
             }
             loadPhoto();
             previousPhotoPath = currentPhotoPath;
-        } else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == Constants.REQUEST_TAKE_PHOTO && resultCode == RESULT_CANCELED) {
             currentPhotoPath = previousPhotoPath;
             loadPhoto();
         } else if (requestCode == Constants.REQUEST_MAP && resultCode == Constants.RESULT_MAP) {
             placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(Constants.KEY_PLACE_ID, 0)).findFirst();
             showPlaceDetails();
-        } else if (requestCode == REQUEST_PRIVATE_PLACE && resultCode == PrivatePlaceAdapter.RESULT_PRIVATE_PLACE) {
-            placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(PrivatePlaceAdapter.PUT_PLACE_ID, 0)).findFirst();
+        } else if (requestCode == Constants.REQUEST_PRIVATE_PLACE && resultCode == Constants.RESULT_PRIVATE_PLACE) {
+            placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(Constants.PUT_PLACE_ID, 0)).findFirst();
             showPlaceDetails();
         }
     }
@@ -357,7 +345,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 switch (which) {
                     case 0: {
                         Intent intent = new Intent(EditorActivity.this, PrivatePlaceActivity.class);
-                        startActivityForResult(intent, REQUEST_PRIVATE_PLACE);
+                        startActivityForResult(intent, Constants.REQUEST_PRIVATE_PLACE);
                         break;
                     }
                     case 1: {
@@ -414,26 +402,26 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         if (currentPhotoPath != null) {
-            outState.putString(KEY_INSTANCE_PHOTO, currentPhotoPath);
+            outState.putString(Constants.KEY_INSTANCE_PHOTO, currentPhotoPath);
         }
         if (previousPhotoPath != null) {
-            outState.putString(KEY_INSTANCE_PREVIOUS_PHOTO, previousPhotoPath);
+            outState.putString(Constants.KEY_INSTANCE_PREVIOUS_PHOTO, previousPhotoPath);
         }
         if (nameEditText.getText() != null) {
-            outState.putString(KEY_INSTANCE_NAME, nameEditText.getText().toString());
+            outState.putString(Constants.KEY_INSTANCE_NAME, nameEditText.getText().toString());
         }
         if (typeEditText.getText() != null) {
-            outState.putString(KEY_INSTANCE_TYPE, typeEditText.getText().toString());
+            outState.putString(Constants.KEY_INSTANCE_TYPE, typeEditText.getText().toString());
         }
-        outState.putFloat(KEY_INSTANCE_RATING, ratingBar.getRating());
+        outState.putFloat(Constants.KEY_INSTANCE_RATING, ratingBar.getRating());
         if (dateTextView.getText() != null) {
-            outState.putString(KEY_INSTANCE_DATE, dateTextView.getText().toString());
+            outState.putString(Constants.KEY_INSTANCE_DATE, dateTextView.getText().toString());
         }
         if (descriptionEditText.getText() != null) {
-            outState.putString(KEY_INSTANCE_DESCRIPTION, descriptionEditText.getText().toString());
+            outState.putString(Constants.KEY_INSTANCE_DESCRIPTION, descriptionEditText.getText().toString());
         }
         if (placeModel != null) {
-            outState.putParcelable(KEY_INSTANCE_PLACE, placeModel);
+            outState.putParcelable(Constants.KEY_INSTANCE_PLACE, placeModel);
         }
 
         if (dialog != null) {
@@ -459,13 +447,13 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        currentPhotoPath = savedInstanceState.getString(KEY_INSTANCE_PHOTO);
-        previousPhotoPath = savedInstanceState.getString(KEY_INSTANCE_PREVIOUS_PHOTO);
-        String name = savedInstanceState.getString(KEY_INSTANCE_NAME);
-        String type = savedInstanceState.getString(KEY_INSTANCE_TYPE);
-        float rating = savedInstanceState.getFloat(KEY_INSTANCE_RATING);
-        String date = savedInstanceState.getString(KEY_INSTANCE_DATE);
-        placeModel = savedInstanceState.getParcelable(KEY_INSTANCE_PLACE);
+        currentPhotoPath = savedInstanceState.getString(Constants.KEY_INSTANCE_PHOTO);
+        previousPhotoPath = savedInstanceState.getString(Constants.KEY_INSTANCE_PREVIOUS_PHOTO);
+        String name = savedInstanceState.getString(Constants.KEY_INSTANCE_NAME);
+        String type = savedInstanceState.getString(Constants.KEY_INSTANCE_TYPE);
+        float rating = savedInstanceState.getFloat(Constants.KEY_INSTANCE_RATING);
+        String date = savedInstanceState.getString(Constants.KEY_INSTANCE_DATE);
+        placeModel = savedInstanceState.getParcelable(Constants.KEY_INSTANCE_PLACE);
 
         if (name != null) {
             nameEditText.setText(name);

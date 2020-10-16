@@ -22,5 +22,18 @@
     <string name="type_button">Type</string>
     <string name="select">Select</string>
     <string name="overview_label"><u>Overview</u></string>
+    <string name="delete_food_item">Delete Food Item</string>
+    <string name="date">Date:</string>
+    <string name="click_to_add_date">Click to add Date</string>
+    <string name="push_to_edit_location">Push to Edit Location</string>
+    <string name="location">Location:</string>
+    <string name="location_name">Location Name</string>
+    <string name="address">Address:</string>
+    <string name="name">Name:</string>
+    <string name="type">Type:</string>
+    <string name="food_type_not_entered">Food Type not entered</string>
+    <string name="rating">Rating:</string>
+    <string name="rating_not_entered">Rating not entered</string>
+    <string name="location_address">Location Address</string>
 
 </resources>

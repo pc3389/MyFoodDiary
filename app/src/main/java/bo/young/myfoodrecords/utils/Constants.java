@@ -22,4 +22,22 @@ public class Constants {
     public static final int REQUEST_MAP = 2;
     public static final int RESULT_MAP = 3;
 
+    public static final int REQUEST_TAKE_PHOTO = 1;
+    public static final String KEY_INSTANCE_PHOTO = "savein";
+    public static final String KEY_INSTANCE_PREVIOUS_PHOTO = "keyPreviouos";
+    public static final String KEY_INSTANCE_DATE = "keyDate";
+    public static final String KEY_INSTANCE_NAME = "keyName";
+    public static final String KEY_INSTANCE_TYPE = "keyType";
+    public static final String KEY_INSTANCE_RATING = "keyRating";
+    public static final String KEY_INSTANCE_DESCRIPTION = "keyDescription";
+    public static final String KEY_INSTANCE_PLACE = "keyPlace";
+    public static final int REQUEST_PRIVATE_PLACE = 4;
+
+    public static final String PRIVATE_PLACE_KEY = "PrivatePlace";
+    public static final String PUT_PLACE_ID = "placeKey";
+    public static final int RESULT_PRIVATE_PLACE = 13;
+
+    public static final String KEY_SUMMARY_NAME = "summaryName";
+    public static final String KEY_FOOD_OR_PLACE = "foodOrPlace";
+
 }

@@ -26,8 +26,6 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
     private List<Food> foodList;
     private Context context;
 
-
-
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         private ImageView foodImageView;
         private TextView foodNameTextView;

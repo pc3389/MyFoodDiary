@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My Food Records</string>
+    <string name="add_item">추가</string>
+    <string name="setting">설정</string>
+    <string name="edit">수정</string>
+    <string name="delete">삭제</string>
+    <string name="save">저장</string>
+    <string name="show_in_map_btn">맵에서 보기</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="location_private_place">개인 장소</string>
+    <string name="location_select_from_map">맵에서 선택</string>
+    <string name="location_set_current_address">Set Current Home Address</string>
+    <string name="spinner_not_selected">Click to Edit Location</string>
+    <string name="delete_all_items">모두 삭제</string>
+    <string name="location_button">장소</string>
+    <string name="food_button">음식</string>
+    <string name="summary_item_number_detail">수량:</string>
+    <string name="summary_average_rating">평점:</string>
+    <string name="food_name">이름</string>
+    <string name="food_type">종류</string>
+    <string name="description">내용:</string>
+    <string name="type_button">종류</string>
+    <string name="select">선택</string>
+    <string name="overview_label"><u>Overview</u></string>
+    <string name="delete_food_item">삭제</string>
+    <string name="date">날짜:</string>
+    <string name="click_to_add_date"> 년 / 월 / 일</string>
+    <string name="push_to_edit_location">장소 변경</string>
+    <string name="location">장소 이름:</string>
+    <string name="location_name">장소 이름</string>
+    <string name="address">주소:</string>
+    <string name="name">이름:</string>
+    <string name="type">종류:</string>
+    <string name="food_type_not_entered">음식 종류가 없습니다</string>
+    <string name="rating">평점:</string>
+    <string name="rating_not_entered">평점이 없습니다</string>
+    <string name="location_address">주소</string>
+</resources>

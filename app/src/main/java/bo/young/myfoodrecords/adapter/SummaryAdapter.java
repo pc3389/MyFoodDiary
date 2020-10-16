@@ -6,6 +6,7 @@ import android.example.myfoodrecords.R;
 
 import bo.young.myfoodrecords.activities.SummaryDetailActivity;
 import bo.young.myfoodrecords.model.SummaryItem;
+import bo.young.myfoodrecords.utils.Constants;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryViewHolder> {
-
-    public static final String KEY_SUMMARY_NAME = "summaryName";
-    public static final String KEY_FOOD_OR_PLACE = "foodOrPlace";
 
     private List<SummaryItem> summaryItemList;
     private Context context;
@@ -60,8 +58,8 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, SummaryDetailActivity.class);
-                intent.putExtra(KEY_SUMMARY_NAME, summaryItemList.get(position).getName());
-                intent.putExtra(KEY_FOOD_OR_PLACE,foodOrPlace);
+                intent.putExtra(Constants.KEY_SUMMARY_NAME, summaryItemList.get(position).getName());
+                intent.putExtra(Constants.KEY_FOOD_OR_PLACE,foodOrPlace);
                 context.startActivity(intent);
             }
         });

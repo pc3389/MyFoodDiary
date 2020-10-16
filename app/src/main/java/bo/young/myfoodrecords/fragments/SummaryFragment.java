@@ -36,9 +36,6 @@ public class SummaryFragment extends Fragment {
     private View rootView;
 
     private RecyclerView recyclerView;
-    private Button foodButton;
-    private Button placeButton;
-    private Button typeButton;
 
 
     private static final String KEY_INDICATOR = "keyIndicator";
@@ -72,7 +69,7 @@ public class SummaryFragment extends Fragment {
 
         updateUi();
 
-        foodButton = rootView.findViewById(R.id.summary_food_button);
+        Button foodButton = rootView.findViewById(R.id.summary_food_button);
         foodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,7 +80,7 @@ public class SummaryFragment extends Fragment {
                 SummaryAdapter.foodOrPlace = Constants.FOOD_STRING;
             }
         });
-        placeButton = rootView.findViewById(R.id.summary_place_button);
+        Button placeButton = rootView.findViewById(R.id.summary_place_button);
         placeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +91,7 @@ public class SummaryFragment extends Fragment {
                 SummaryAdapter.foodOrPlace = Constants.PLACE_STRING;
             }
         });
-        typeButton = rootView.findViewById(R.id.summary_type_button);
+        Button typeButton = rootView.findViewById(R.id.summary_type_button);
         typeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -238,9 +235,10 @@ public class SummaryFragment extends Fragment {
             float rating = 0;
 
             for (int i = 0; i < sortedFoodList.size() - 1; i++) {
-                rating += sortedFoodList.get(i).getRating();
+                Food food = sortedFoodList.get(i);
+                rating += food.getRating();
                 count++;
-                if (!sortedFoodList.get(i).getFoodType().equals(sortedFoodList.get(i + 1).getFoodType())) {
+                if (!food.getFoodType().equals(sortedFoodList.get(i + 1).getFoodType())) {
 
                     String foodType = sortedFoodList.get(i).getFoodType();
                     addItemToSummayItemList(foodType, count, rating);

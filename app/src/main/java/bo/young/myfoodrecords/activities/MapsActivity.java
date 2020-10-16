@@ -113,7 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //If the user wants private place, set isPrivatePlace to true
         if (requestCode == PrivatePlaceActivity.REQUSET_PRIVATE_PLACE) {
             isPrivatePlace = true;
-            id = getIntent().getExtras().getInt(PrivatePlaceAdapter.PRIVATE_PLACE_KEY);
+            id = getIntent().getExtras().getInt(Constants.PRIVATE_PLACE_KEY);
         }
 
         loadMapLocationFromRealm();

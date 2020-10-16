@@ -46,7 +46,7 @@
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="Name: "
+                android:text="@string/name"
                 app:layout_constraintBottom_toBottomOf="@id/detail_food_name_tv"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/detail_food_name_tv" />
@@ -67,7 +67,7 @@
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="Type: "
+                android:text="@string/type"
                 app:layout_constraintBottom_toBottomOf="@id/detail_food_type_tv"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/detail_food_type_tv" />
@@ -78,7 +78,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:paddingVertical="8dp"
-                android:text="Food Type not entered"
+                android:text="@string/food_type_not_entered"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/guide30"
                 app:layout_constraintTop_toBottomOf="@id/detail_food_name_tv" />
@@ -87,7 +87,7 @@
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="Reting: "
+                android:text="@string/rating"
                 app:layout_constraintBottom_toBottomOf="@id/detail_rating_tv"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/detail_rating_tv" />
@@ -98,7 +98,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:paddingVertical="8dp"
-                android:text="Rating not entered"
+                android:text="@string/rating_not_entered"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/guide30"
                 app:layout_constraintTop_toBottomOf="@id/detail_food_type_tv" />
@@ -107,7 +107,7 @@
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="Date: "
+                android:text="@string/date"
                 app:layout_constraintBottom_toBottomOf="@id/detail_date_tv"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/detail_date_tv" />
@@ -166,7 +166,7 @@
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="Location: "
+                android:text="@string/location_name"
                 app:layout_constraintBottom_toBottomOf="@id/detail_place_name_tv"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/detail_place_name_tv" />
@@ -188,7 +188,7 @@
                 style="@style/DetailMediumText"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="Address: "
+                android:text="@string/address"
                 app:layout_constraintBottom_toBottomOf="@id/detail_place_address_tv"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/detail_place_address_tv" />
@@ -202,7 +202,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/guide302"
                 app:layout_constraintTop_toBottomOf="@id/detail_place_name_tv"
-                tools:text="Place Address" />
+                tools:text="@string/location_address" />
 
             <Button
                 android:id="@+id/show_map_button"

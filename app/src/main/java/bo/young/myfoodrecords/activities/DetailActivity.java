@@ -290,7 +290,7 @@ public class DetailActivity extends AppCompatActivity {
      */
     private void setupDeleteDialog() {
         AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(context);
-        deleteBuilder.setTitle("Delete Food Item")
+        deleteBuilder.setTitle(getString(R.string.delete_food_item))
                 .setMessage("Are you sure you want to delete this food item?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

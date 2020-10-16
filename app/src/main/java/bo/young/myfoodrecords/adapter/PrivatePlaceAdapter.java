@@ -29,9 +29,6 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
     private List<PlaceModel> placeModelList;
     private static Context context;
 
-    public static final String PRIVATE_PLACE_KEY = "PrivatePlace";
-    public static final String PUT_PLACE_ID = "placeKey";
-    public static final int RESULT_PRIVATE_PLACE = 13;
     private static Activity mActivity;
     private static PlaceModel placeModel;
     public static AlertDialog dialog;
@@ -101,15 +98,15 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
                     // Select the place detail and pass the placeId
                     case 0: {
                         Intent intent = new Intent();
-                        intent.putExtra(PUT_PLACE_ID, placeModel.getId());
-                        mActivity.setResult(RESULT_PRIVATE_PLACE, intent);
+                        intent.putExtra(Constants.PUT_PLACE_ID, placeModel.getId());
+                        mActivity.setResult(Constants.RESULT_PRIVATE_PLACE, intent);
                         mActivity.finish();
                         break;
                     }
                     //Edit the place detail in MapsActivity
                     case 1: {
                         Intent intent = new Intent(context, MapsActivity.class);
-                        intent.putExtra(PRIVATE_PLACE_KEY, placeModel.getId());
+                        intent.putExtra(Constants.PRIVATE_PLACE_KEY, placeModel.getId());
                         intent.putExtra(Constants.KEY_REQUEST_CODE, PrivatePlaceActivity.REQUSET_PRIVATE_PLACE);
                         context.startActivity(intent);
                         break;
