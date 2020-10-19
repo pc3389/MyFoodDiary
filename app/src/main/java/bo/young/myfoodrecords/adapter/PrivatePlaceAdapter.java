@@ -89,7 +89,7 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
      */
     public static void setupDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Location");
+        builder.setTitle(context.getString(R.string.location_button));
         String[] placeArray = {context.getResources().getString(R.string.select), context.getResources().getString(R.string.edit), context.getResources().getString(R.string.delete)};
         builder.setItems(placeArray, new DialogInterface.OnClickListener() {
             @Override
@@ -133,8 +133,8 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
         int placeId = placeModel.getId();
 
         AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(context);
-        deleteBuilder.setTitle("Delete Location")
-                .setMessage("Are you sure you want to delete this Location?")
+        deleteBuilder.setTitle(context.getString(R.string.delete))
+                .setMessage(context.getString(R.string.delete_description))
 
                 // Specifying a listener allows you to take an action before dismissing the dialog.
                 // The dialog is automatically dismissed when a dialog button is clicked.

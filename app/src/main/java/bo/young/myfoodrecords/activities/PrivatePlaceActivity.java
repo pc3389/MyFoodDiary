@@ -49,7 +49,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
 
     private void setupUi() {
         context = PrivatePlaceActivity.this;
-        getSupportActionBar().setTitle("Private Place");
+        getSupportActionBar().setTitle(getString(R.string.private_place_title));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.private_address_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
@@ -144,8 +144,8 @@ public class PrivatePlaceActivity extends AppCompatActivity {
 
     private void setupDeleteAllDialog() {
         AlertDialog.Builder deleteAllBuilder = new AlertDialog.Builder(context);
-        deleteAllBuilder.setTitle("Delete All Locations")
-                .setMessage("Are you sure you want to delete all location details?")
+        deleteAllBuilder.setTitle(getString(R.string.delete_all_items))
+                .setMessage(getString(R.string.delete_all_description))
 
                 // Specifying a listener allows you to take an action before dismissing the dialog.
                 // The dialog is automatically dismissed when a dialog button is clicked.

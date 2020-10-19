@@ -1,5 +1,10 @@
 package bo.young.myfoodrecords.adapter;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.example.myfoodrecords.R;
+
+import bo.young.myfoodrecords.activities.MainActivity;
 import bo.young.myfoodrecords.fragments.FavoriteFragment;
 import bo.young.myfoodrecords.fragments.ItemViewFragment;
 import bo.young.myfoodrecords.fragments.MovieFragment;
@@ -11,8 +16,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 public class MyPagerAdapter extends FragmentPagerAdapter {
 
-    public MyPagerAdapter(FragmentManager supportFragmentManager) {
+    Context context;
+
+    public MyPagerAdapter(FragmentManager supportFragmentManager, Context context) {
         super(supportFragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        this.context = context;
     }
 
     // Returns the fragment to display for that page
@@ -41,16 +49,16 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch(position) {
             case 0:
-                return "Foods";
+                return context.getString(R.string.food_title);
 
             case 1:
-                return "Favorite";
+                return context.getString(R.string.favorite_title);
 
             case 2:
-                return "Summary";
+                return  context.getString(R.string.summary_title);
 
             case 3:
-                return "Movie";
+                return  context.getString(R.string.movie_title);
 
             default:
                 return null;

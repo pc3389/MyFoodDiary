@@ -82,7 +82,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void setupUi() {
-        getSupportActionBar().setTitle("Detail");
+        getSupportActionBar().setTitle(getString(R.string.detail_title));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         nameTextView = findViewById(R.id.detail_food_name_tv);
@@ -209,7 +209,7 @@ public class DetailActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (id == R.id.delete_menu) {
             if (food == null) {
-                Toast.makeText(DetailActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailActivity.this, getString(R.string.delete_error_message), Toast.LENGTH_SHORT).show();
             } else {
                 setupDeleteDialog();
             }
@@ -291,7 +291,7 @@ public class DetailActivity extends AppCompatActivity {
     private void setupDeleteDialog() {
         AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(context);
         deleteBuilder.setTitle(getString(R.string.delete_food_item))
-                .setMessage("Are you sure you want to delete this food item?")
+                .setMessage(getString(R.string.delete_description))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         if (food.getPhotoPath() == null) {
@@ -300,7 +300,7 @@ public class DetailActivity extends AppCompatActivity {
                         } else {
                             boolean deleteSuccessful = new File(food.getPhotoPath()).delete();
                             if (!deleteSuccessful) {
-                                Toast.makeText(context, "Error occuled. Deleted failure", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, getString(R.string.delete_error_message), Toast.LENGTH_SHORT).show();
                                 Log.d(Constants.TAG_DELETE_LOG, "Delete failed");
                             } else {
                                 helper.deleteFood();

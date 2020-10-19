@@ -103,7 +103,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     }
 
     private void setupUi() {
-        getSupportActionBar().setTitle("Edit");
+        getSupportActionBar().setTitle(getString(R.string.editor_title));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         todayDate();
 
@@ -169,7 +169,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         datePickerDialog = DatePickerDialog.newInstance(EditorActivity.this, year, month, day);
         datePickerDialog.setThemeDark(false);
         datePickerDialog.showYearPickerFirst(false);
-        datePickerDialog.setTitle("Date Picker");
         datePickerDialog.show(getSupportFragmentManager(), "DatePickerDialog");
     }
 
@@ -261,6 +260,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 deletePhotoFile(previousPhotoPath);
             }
             loadPhoto();
+            galleryAddPic();
             previousPhotoPath = currentPhotoPath;
         } else if (requestCode == Constants.REQUEST_TAKE_PHOTO && resultCode == RESULT_CANCELED) {
             currentPhotoPath = previousPhotoPath;
@@ -309,6 +309,14 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         }
     }
 
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(currentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
     /**
      * Create temporal image file here
      *
@@ -337,7 +345,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
      */
     private void setupPlaceDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Location");
+        builder.setTitle(getString(R.string.location_button));
         String[] placeArray = {getResources().getString((R.string.location_private_place)), getResources().getString((R.string.location_select_from_map))};
         builder.setItems(placeArray, new DialogInterface.OnClickListener() {
             @Override
@@ -374,12 +382,10 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         if (id == R.id.edit_menu_save) {
             hideKeyboard();
 
-            /*
-            If the food name is not entered, shows the toast
-            and doesn't save the data
-             */
+            // If the food name is not entered, shows the toast and stay
+
             if (nameEditText.getText().toString().equals("")) {
-                Toast.makeText(this, "Please enter the Food Name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.name_not_entered), Toast.LENGTH_SHORT).show();
             } else {
                 saveFoodData();
                 if (realm != null && realmChangeListener != null) {
@@ -567,7 +573,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private void deletePhotoFile(String photoPath) {
         boolean deleteSuccessful = new File(photoPath).delete();
         if (!deleteSuccessful) {
-            Toast.makeText(context, "Error occuled. Delete failure", Toast.LENGTH_SHORT).show();
             Log.d(Constants.TAG_DELETE_LOG, "Delete failed");
         }
     }

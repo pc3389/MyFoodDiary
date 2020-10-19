@@ -55,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupUi() {
 
-        getSupportActionBar().setTitle("Foods");
+        getSupportActionBar().setTitle(getString(R.string.app_name));
         // Get the ViewPager and apply the PagerAdapter
-        MyPagerAdapter mFragmentAdapter = new MyPagerAdapter(getSupportFragmentManager());
+        MyPagerAdapter mFragmentAdapter = new MyPagerAdapter(getSupportFragmentManager(), context);
         ViewPager mViewPager = findViewById(R.id.viewpager);
         mViewPager.setAdapter(mFragmentAdapter);
 
@@ -113,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setupDeleteAllDialog() {
         dialog = new AlertDialog.Builder(context)
-                .setTitle("Delete All Food Items")
-                .setMessage("Are you sure you want to delete all food items?")
+                .setTitle(getString(R.string.delete_all_items))
+                .setMessage(getString(R.string.delete_all_description))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         deleteAllPhotoFiles();

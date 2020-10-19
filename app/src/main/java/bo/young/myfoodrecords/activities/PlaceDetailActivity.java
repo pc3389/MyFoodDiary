@@ -81,7 +81,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
                 helper.insertPlace(newPlaceModel);
                 finish();
             } else {
-                Toast.makeText(this, "Please enter the Food Name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.name_not_entered), Toast.LENGTH_SHORT).show();
             }
             return true;
         }

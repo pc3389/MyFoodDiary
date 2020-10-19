@@ -49,8 +49,8 @@ public class SummaryDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        String valueFoodOrPlace = intent.getExtras().getString(SummaryAdapter.KEY_FOOD_OR_PLACE);
-        String name = intent.getExtras().getString(SummaryAdapter.KEY_SUMMARY_NAME);
+        String valueFoodOrPlace = intent.getExtras().getString(Constants.KEY_FOOD_OR_PLACE);
+        String name = intent.getExtras().getString(Constants.KEY_SUMMARY_NAME);
 
         //Check from which fragment the intent is sent and query the data from Realm accordingly
         if(valueFoodOrPlace.equals(Constants.FOOD_STRING)) {

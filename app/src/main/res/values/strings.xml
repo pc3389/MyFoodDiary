@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Food Records</string>
+    <string name="app_name">Food Diary</string>
     <string name="add_item">Add</string>
     <string name="setting">Settings</string>
     <string name="edit">Edit</string>
@@ -9,7 +9,6 @@
     <string name="show_in_map_btn">Show in Map</string>
     <string name="location_private_place">Private Address</string>
     <string name="location_select_from_map">Select from Map</string>
-    <string name="location_set_current_address">Set Current Home Address</string>
     <string name="spinner_not_selected">Click to Edit Location</string>
     <string name="delete_all_items">Delete All Items</string>
     <string name="location_button">Location</string>
@@ -18,7 +17,7 @@
     <string name="summary_average_rating">Average Rating:</string>
     <string name="food_name">Food Name</string>
     <string name="food_type">Food Type</string>
-    <string name="description">Description:</string>
+    <string name="description_label">Description:</string>
     <string name="type_button">Type</string>
     <string name="select">Select</string>
     <string name="overview_label"><u>Overview</u></string>
@@ -35,5 +34,23 @@
     <string name="rating">Rating:</string>
     <string name="rating_not_entered">Rating not entered</string>
     <string name="location_address">Location Address</string>
+    <string name="editor_title">Edit</string>
+    <string name="description">Description</string>
+    <string name="delete_all_description">Are you sure you want to delete all items? Deleted items cannot be recovered.</string>
+    <string name="delete_description">Are you sure you want to delete this item? Deleted items cannot be recovered.</string>
+    <string name="delete_error_message">Error occurred. Delete failure</string>
+
+    <string name="detail_title">Detail</string>
+    <string name="location_not_selected">Please select the location</string>
+    <string name="name_not_entered">Please enter the Food Name</string>
+    <string name="private_place_title">Private Location</string>
+
+    <string name="food_title">Foods</string>
+    <string name="favorite_title">Favorites</string>
+    <string name="summary_title">Summary</string>
+    <string name="movie_title">Movie</string>
+
+
+
 
 </resources>

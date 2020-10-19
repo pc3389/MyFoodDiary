@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Food Records</string>
+    <string name="app_name">음식 일기</string>
     <string name="add_item">추가</string>
     <string name="setting">설정</string>
     <string name="edit">수정</string>
     <string name="delete">삭제</string>
     <string name="save">저장</string>
     <string name="show_in_map_btn">맵에서 보기</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_maps">지도</string>
     <string name="location_private_place">개인 장소</string>
     <string name="location_select_from_map">맵에서 선택</string>
-    <string name="location_set_current_address">Set Current Home Address</string>
-    <string name="spinner_not_selected">Click to Edit Location</string>
+    <string name="spinner_not_selected">장소 선택</string>
     <string name="delete_all_items">모두 삭제</string>
     <string name="location_button">장소</string>
     <string name="food_button">음식</string>
@@ -19,7 +18,7 @@
     <string name="summary_average_rating">평점:</string>
     <string name="food_name">이름</string>
     <string name="food_type">종류</string>
-    <string name="description">내용:</string>
+    <string name="description_label">내용:</string>
     <string name="type_button">종류</string>
     <string name="select">선택</string>
     <string name="overview_label"><u>Overview</u></string>
@@ -36,4 +35,19 @@
     <string name="rating">평점:</string>
     <string name="rating_not_entered">평점이 없습니다</string>
     <string name="location_address">주소</string>
+    <string name="editor_title">수정</string>
+    <string name="description">내용</string>
+    <string name="delete_all_description">저장된 모든 데이타를 삭제 하시겠습니까? 삭제된 데이터는 복구할 수 없습니다.</string>
+    <string name="delete_description">이 항목을 삭제 하시겠습니까? 삭제된 데이터는 복구할 수 없습니다.</string>
+    <string name="delete_error_message">에러가 발생하여 삭제에 실패했습니다</string>
+
+    <string name="detail_title">정보</string>
+    <string name="location_not_selected">장소를 선택해 주십시오</string>
+    <string name="name_not_entered">음식 이름은 입력되어야 합니다</string>
+    <string name="private_place_title">개인 장소</string>
+
+    <string name="food_title">음식</string>
+    <string name="favorite_title">특별</string>
+    <string name="summary_title">통계</string>
+    <string name="movie_title">영화</string>
 </resources>

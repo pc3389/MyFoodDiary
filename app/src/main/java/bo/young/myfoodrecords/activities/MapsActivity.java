@@ -349,7 +349,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         newPlaceModel.setId(placeModel.getId());
                     }
                     if (placeName == null) {
-                        Toast.makeText(MapsActivity.this, "Please select the location", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MapsActivity.this, getString(R.string.location_not_selected), Toast.LENGTH_SHORT).show();
                         break;
                     }
                     savePlace();
