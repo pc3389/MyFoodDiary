@@ -19,6 +19,7 @@
         android:ellipsize="end"
         android:scrollHorizontally="true"
         android:hint="@string/food_type_restaurant_search"
+        android:imeOptions="actionNext"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,6 +33,7 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:scrollHorizontally="true"
+        android:imeOptions="actionSend"
         android:hint="@string/location_restaurant_search"
         app:layout_constraintBottom_toBottomOf="@+id/restaurant_search_food_name_tv"
         app:layout_constraintEnd_toStartOf="@+id/restaurant_button"

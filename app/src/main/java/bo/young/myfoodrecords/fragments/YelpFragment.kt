@@ -7,8 +7,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import bo.young.myfoodrecords.adapter.RestaurantsAdapter
@@ -37,10 +38,15 @@ class YelpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val api_key = getString(R.string.yelp_api_key)
         restaurant_button.setOnClickListener{
-            val searchTerm = restaurant_search_food_name_tv.text.toString()
-            val location = restaurant_search_location_tv.text.toString()
-            updateRecyclerView(api_key, searchTerm, location)
-            hideKeyboard(view)
+            search(view, api_key)
+        }
+        restaurant_search_location_tv.setOnEditorActionListener { v, actionId, event ->
+            if(actionId == EditorInfo.IME_ACTION_SEND) {
+                search(view, api_key)
+                true
+            } else{
+                false
+            }
         }
     }
 
@@ -75,12 +81,22 @@ class YelpFragment : Fragment() {
                     override fun onFailure(call: Call<YelpSearchResult>, t: Throwable) {
                         Log.i(TAG, "onResponse $t")
                     }
-
                 })
     }
 
     private fun hideKeyboard(view: View) {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun search(view: View, api_key: String) {
+        if(restaurant_search_food_name_tv.text.isEmpty() || restaurant_search_location_tv.text.isEmpty()) {
+            Toast.makeText(requireContext(), R.string.require_name_and_location, Toast.LENGTH_SHORT).show()
+            return
+        }
+        val searchTerm = restaurant_search_food_name_tv.text.toString()
+        val location = restaurant_search_location_tv.text.toString()
+        updateRecyclerView(api_key, searchTerm, location)
+        hideKeyboard(view)
     }
 }
