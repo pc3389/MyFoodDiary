@@ -1,14 +1,12 @@
 package bo.young.myfoodrecords.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.example.myfoodrecords.R;
 
-import bo.young.myfoodrecords.activities.MainActivity;
 import bo.young.myfoodrecords.fragments.FavoriteFragment;
 import bo.young.myfoodrecords.fragments.ItemViewFragment;
-import bo.young.myfoodrecords.fragments.MovieFragment;
 import bo.young.myfoodrecords.fragments.SummaryFragment;
+import bo.young.myfoodrecords.fragments.YelpFragment;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -36,11 +34,8 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
             case 2:
                 return new SummaryFragment();
 
-            case 3:
-                return new MovieFragment();
-
             default:
-                return null;
+                return new YelpFragment();
         }
     }
 
@@ -58,7 +53,7 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
                 return  context.getString(R.string.summary_title);
 
             case 3:
-                return  context.getString(R.string.movie_title);
+                return  context.getString(R.string.yelp_title);
 
             default:
                 return null;

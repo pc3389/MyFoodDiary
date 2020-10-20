@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupUi() {
-
         getSupportActionBar().setTitle(getString(R.string.app_name));
         // Get the ViewPager and apply the PagerAdapter
         MyPagerAdapter mFragmentAdapter = new MyPagerAdapter(getSupportFragmentManager(), context);
@@ -137,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             if (photoPath != null) {
                 boolean deleteSuccessful = new File(photoPath).delete();
                 if (!deleteSuccessful) {
-                    Toast.makeText(context, "Error occuled. Deleted failure", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, getString(R.string.delete_error_message), Toast.LENGTH_SHORT).show();
                     Log.d(Constants.TAG_DELETE_LOG, "Delete failed");
                 }
             }

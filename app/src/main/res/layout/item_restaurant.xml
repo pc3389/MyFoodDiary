@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@color/colorBackGround">
+
+    <ImageView
+        android:id="@+id/restaurant_iv"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+
+    <TextView
+        android:id="@+id/restaurant_name_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_distance_tv"
+        app:layout_constraintStart_toEndOf="@+id/restaurant_iv"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Bo" />
+
+    <RatingBar
+        android:id="@+id/restaurant_ratingBar"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:numStars="5"
+        android:rating="4.5"
+        android:stepSize="0.5"
+        app:layout_constraintStart_toStartOf="@+id/restaurant_name_tv"
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_name_tv" />
+
+    <TextView
+        android:id="@+id/restaurant_numReview_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        tools:text="321 Reviews"
+        app:layout_constraintBottom_toBottomOf="@+id/restaurant_ratingBar"
+        app:layout_constraintStart_toEndOf="@+id/restaurant_ratingBar"
+        app:layout_constraintTop_toTopOf="@+id/restaurant_ratingBar" />
+
+    <TextView
+        android:id="@+id/restaurant_address_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="@+id/restaurant_ratingBar"
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_ratingBar"
+        tools:text="42 Yonge St" />
+
+    <TextView
+        android:id="@+id/restaurant_category_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="Breakfast"
+        app:layout_constraintStart_toStartOf="@+id/restaurant_address_tv"
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_address_tv" />
+
+    <TextView
+        android:id="@+id/restaurant_distance_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="1.7 mi"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/restaurant_price_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="$$"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_distance_tv" />
+</androidx.constraintlayout.widget.ConstraintLayout>

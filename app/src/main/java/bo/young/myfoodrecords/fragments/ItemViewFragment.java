@@ -27,7 +27,6 @@ public class ItemViewFragment extends Fragment {
 
     private RecyclerView recyclerView;
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -48,9 +48,9 @@
     <string name="food_title">Foods</string>
     <string name="favorite_title">Favorites</string>
     <string name="summary_title">Summary</string>
-    <string name="movie_title">Movie</string>
-
-
+    <string name="yelp_title">Yelp</string>
+    <string name="food_type_restaurant_search">Food Type</string>
+    <string name="location_restaurant_search">Location</string>
 
 
 </resources>

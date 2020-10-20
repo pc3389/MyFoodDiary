@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:background="@color/colorBackGround">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -51,13 +52,14 @@
             android:text="@string/summary_average_rating"
             android:textColor="@color/primary_text"/>
 
-        <TextView
+        <RatingBar
             android:id="@+id/item_summary_rating"
+            style="@style/Widget.AppCompat.RatingBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            tools:text="3.5"
-            android:textColor="@color/primary_text"/>
+            android:textColor="@color/primary_text"
+            tools:text="3.5" />
     </LinearLayout>
     <View
         android:layout_width="match_parent"

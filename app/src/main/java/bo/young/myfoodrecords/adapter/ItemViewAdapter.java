@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,7 +30,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         private ImageView foodImageView;
         private TextView foodNameTextView;
-        private TextView foodRatingTextView;
+        private RatingBar ratingBar;
         private TextView foodDateTextView;
         private TextView foodTypeTextView;
 
@@ -37,7 +38,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
             super(itemView);
             foodImageView =itemView.findViewById(R.id.food_pic_iv);
             foodNameTextView = itemView.findViewById(R.id.food_name_tv);
-            foodRatingTextView = itemView.findViewById(R.id.food_rating_tv);
+            ratingBar = itemView.findViewById(R.id.food_rating_tv);
             foodDateTextView = itemView.findViewById(R.id.food_date_tv);
             foodTypeTextView = itemView.findViewById(R.id.food_type_tv);
         }
@@ -64,7 +65,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
             holder.foodTypeTextView.setText(food.getFoodType());
         }
         holder.foodDateTextView.setText(food.getDate());
-        holder.foodRatingTextView.setText(String.valueOf(food.getRating()));
+        holder.ratingBar.setRating(food.getRating());
         if(food.getPhotoPath() != null) {
             Glide.with(context)
                     .load(food.getPhotoPath())

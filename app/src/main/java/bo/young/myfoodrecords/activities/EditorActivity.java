@@ -260,7 +260,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 deletePhotoFile(previousPhotoPath);
             }
             loadPhoto();
-            galleryAddPic();
             previousPhotoPath = currentPhotoPath;
         } else if (requestCode == Constants.REQUEST_TAKE_PHOTO && resultCode == RESULT_CANCELED) {
             currentPhotoPath = previousPhotoPath;
@@ -307,14 +306,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 hasPhoto = true;
             }
         }
-    }
-
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(currentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
     }
 
     /**

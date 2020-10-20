@@ -49,5 +49,5 @@
     <string name="food_title">음식</string>
     <string name="favorite_title">특별</string>
     <string name="summary_title">통계</string>
-    <string name="movie_title">영화</string>
+    <string name="yelp_title">레스토랑 찾기</string>
 </resources>

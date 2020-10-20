@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +47,7 @@ public class DetailActivity extends AppCompatActivity {
     private final Context context = DetailActivity.this;
 
     private TextView nameTextView;
-    private TextView ratingTextView;
+    private RatingBar ratingBar;
     private TextView dateTextView;
     private TextView typeTextView;
     private ImageView photoImageView;
@@ -86,7 +87,7 @@ public class DetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         nameTextView = findViewById(R.id.detail_food_name_tv);
-        ratingTextView = findViewById(R.id.detail_rating_tv);
+        ratingBar = findViewById(R.id.detail_rating_tv);
         dateTextView = findViewById(R.id.detail_date_tv);
         typeTextView = findViewById(R.id.detail_food_type_tv);
         photoImageView = findViewById(R.id.detail_food_iv);
@@ -104,7 +105,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void loadData() {
         nameTextView.setText(food.getName());
-        ratingTextView.setText(String.valueOf(food.getRating()));
+        ratingBar.setRating(food.getRating());
         dateTextView.setText(food.getDate());
         typeTextView.setText(food.getFoodType());
         descriptionTextView.setText(food.getDescription());

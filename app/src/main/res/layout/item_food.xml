@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/colorBackGround">
 
     <RelativeLayout
         android:id="@+id/temp111"
@@ -43,12 +44,11 @@
                 android:ellipsize="end"
                 />
 
-            <TextView
+            <RatingBar
                 android:id="@+id/food_rating_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/primary_text"
-                tools:text="Rating" />
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/food_date_tv"
