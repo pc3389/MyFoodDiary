@@ -1,5 +1,7 @@
 package bo.young.myfoodrecords.adapter;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.example.myfoodrecords.R;
@@ -8,6 +10,7 @@ import bo.young.myfoodrecords.activities.DetailActivity;
 import bo.young.myfoodrecords.model.Food;
 import bo.young.myfoodrecords.utils.Constants;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +29,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     private List<Food> foodList;
     private Context context;
+    private Activity activity;
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         private ImageView foodImageView;
@@ -33,9 +37,11 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         private RatingBar ratingBar;
         private TextView foodDateTextView;
         private TextView foodTypeTextView;
+        private View view;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
+            view = itemView.findViewById(R.id.item_food_layout);
             foodImageView =itemView.findViewById(R.id.food_pic_iv);
             foodNameTextView = itemView.findViewById(R.id.food_name_tv);
             ratingBar = itemView.findViewById(R.id.food_rating_tv);
@@ -44,9 +50,10 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         }
     }
 
-    public ItemViewAdapter(List<Food> foodList, Context context) {
+    public ItemViewAdapter(List<Food> foodList, Context context, Activity activity) {
         this.foodList = foodList;
         this.context = context;
+        this.activity = activity;
     }
 
     @NonNull
@@ -82,7 +89,11 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra(Constants.KEY_ITEM_FOOD_ID, food.getId());
-                context.startActivity(intent);
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity,
+                        Pair.<View, String>create(holder.view, context.getString(R.string.view_transition)),
+                        Pair.<View, String>create(holder.foodImageView, context.getString(R.string.image_transaction))
+                );
+                context.startActivity(intent, options.toBundle());
             }
         });
     }

@@ -11,7 +11,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="bo.young.myfoodrecords.activities.DetailActivity">
+        tools:context="bo.young.myfoodrecords.activities.DetailActivity"
+        android:transitionName="@string/view_transition">
 
 
         <ImageView
@@ -22,6 +23,7 @@
             android:minHeight="250dp"
             android:scaleType="fitCenter"
             android:src="@mipmap/ic_no_food"
+            android:transitionName="@string/image_transaction"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

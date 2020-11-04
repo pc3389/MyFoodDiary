@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="250"
+    android:fromAlpha="0.0"
+    android:interpolator="@android:anim/accelerate_interpolator"
+    android:fillAfter="true"
+    android:toAlpha="1.0">
+    <targets>
+        <target android:excludeId="@android:id/navigationBarBackground" />
+        <target android:excludeId="@android:id/statusBarBackground" />
+    </targets>
+</alpha>

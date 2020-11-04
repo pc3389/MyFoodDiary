@@ -49,6 +49,8 @@
     <string name="favorite_title">Favorites</string>
     <string name="summary_title">Summary</string>
     <string name="yelp_title">Yelp</string>
+    <string name="view_transition">viewTransition</string>
+    <string name="image_transaction">imageTransition</string>
     <string name="food_type_restaurant_search">Search</string>
     <string name="location_restaurant_search">Location</string>
     <string name="require_name_and_location">Please enter Search and Location</string>

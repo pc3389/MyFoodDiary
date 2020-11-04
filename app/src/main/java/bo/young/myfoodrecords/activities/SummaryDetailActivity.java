@@ -66,7 +66,7 @@ public class SummaryDetailActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.summary_detail_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        ItemViewAdapter itemViewAdapter = new ItemViewAdapter(foodList, this);
+        ItemViewAdapter itemViewAdapter = new ItemViewAdapter(foodList, this, this);
         recyclerView.setAdapter(itemViewAdapter);
     }
 

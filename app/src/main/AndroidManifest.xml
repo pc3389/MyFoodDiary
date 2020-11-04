@@ -20,13 +20,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="bo.young.myfoodrecords.activities.YelpActivity"></activity>
         <activity android:name="bo.young.myfoodrecords.activities.PhotoFullscreenActivity" />
         <!--
              //TODO copy and paste api keys in local.property
              placeApiKey = YOUR_API_KEY
              mapApiKey = YOUR_API_KEY
-             tmdbApiKey = YOUR_API_KEY
+             yelpApiKey = YOUR_API_KEY
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"

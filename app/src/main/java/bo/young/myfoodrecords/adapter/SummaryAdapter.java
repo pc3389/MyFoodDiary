@@ -23,7 +23,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
 
     private List<SummaryItem> summaryItemList;
     private Context context;
-    public static String foodOrPlace = "food";
+    public static String foodOrPlace = "Food";
 
     public static class SummaryViewHolder extends RecyclerView.ViewHolder {
         private TextView nameTextView;

@@ -66,6 +66,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
         setupRealm();
         setupUi();
         refresh();
@@ -80,6 +81,12 @@ public class DetailActivity extends AppCompatActivity {
         helper = new RealmHelper(realm);
         int foodId = getIntent().getIntExtra(Constants.KEY_ITEM_FOOD_ID, 0);
         food = helper.retrieveFoodWithId(foodId);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
     }
 
     private void setupUi() {
@@ -202,6 +209,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         } else if (id == android.R.id.home) {
             finish();
+            overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
             return true;
         } else if (id == R.id.edit_menu) {
             // pass the foodId and start EditorActivity

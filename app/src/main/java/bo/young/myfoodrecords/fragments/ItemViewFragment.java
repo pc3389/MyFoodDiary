@@ -54,7 +54,7 @@ public class ItemViewFragment extends Fragment {
     private void setupUi() {
         recyclerView = rootView.findViewById(R.id.item_view_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        ItemViewAdapter itemViewAdapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
+        ItemViewAdapter itemViewAdapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity(), getActivity());
         recyclerView.setAdapter(itemViewAdapter);
     }
 
@@ -69,7 +69,7 @@ public class ItemViewFragment extends Fragment {
                     @Override
                     public void run() {
                         if(recyclerView != null) {
-                            ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity());
+                            ItemViewAdapter adapter = new ItemViewAdapter(helper.retrieveAllFoodFromSelectedDb(), getActivity(), getActivity());
                             recyclerView.setAdapter(adapter);
                         }
                     }
