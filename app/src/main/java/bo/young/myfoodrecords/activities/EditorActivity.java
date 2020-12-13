@@ -15,10 +15,14 @@ import android.example.myfoodrecords.BuildConfig;
 import bo.young.myfoodrecords.MyEditText;
 import bo.young.myfoodrecords.model.Food;
 import bo.young.myfoodrecords.model.PlaceModel;
+
 import android.example.myfoodrecords.R;
+
 import bo.young.myfoodrecords.utils.Constants;
 import bo.young.myfoodrecords.utils.RealmHelper;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,8 +41,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,6 +55,8 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 
 public class EditorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+
+    private static final int PICK_IMAGE = 100;
 
     private Realm realm;
     private RealmHelper helper;
@@ -76,6 +86,8 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private String currentPhotoPath = null;
     private String previousPhotoPath;
     private AlertDialog dialog;
+
+    private Uri imageUri;
 
     private int foodId = 0;
     private boolean hasPhoto = false;
@@ -131,7 +143,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         photoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dispatchTakePictureIntent();
+                setupDialog();
             }
         });
 
@@ -142,6 +154,36 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         hasPhoto = false;
 
         refresh();
+    }
+
+    public void setupDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.location_button));
+        String[] placeArray = {context.getResources().getString(R.string.photo_from_camera), context.getResources().getString(R.string.photo_from_gallery)};
+        builder.setItems(placeArray, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    // Select the place detail and pass the placeId
+                    case 0: {
+                        dispatchTakePictureIntent();
+                        break;
+                    }
+                    //Edit the place detail in MapsActivity
+                    case 1: {
+                        openGallery();
+                        break;
+                    }
+                }
+            }
+        });
+        dialog = builder.create();
+        dialog.show();
+    }
+
+    private void openGallery() {
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, PICK_IMAGE);
     }
 
     /**
@@ -270,7 +312,38 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         } else if (requestCode == Constants.REQUEST_PRIVATE_PLACE && resultCode == Constants.RESULT_PRIVATE_PLACE) {
             placeModel = realm.where(PlaceModel.class).equalTo("id", data.getIntExtra(Constants.PUT_PLACE_ID, 0)).findFirst();
             showPlaceDetails();
+        } else if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+            imageUri = data.getData();
+
+
+            try {
+                File f = createImageFile();
+                Bitmap bitmap;
+                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                photoImageView.setImageBitmap(bitmap);
+                getPhotoPathFromGallery(f, bitmap);
+                currentPhotoPath = f.getAbsolutePath();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Glide.with(context)
+                    .load(currentPhotoPath)
+                    .into(photoImageView);
+            hasPhoto = true;
         }
+    }
+
+    private void getPhotoPathFromGallery(File file, Bitmap bitmap) {
+
+        OutputStream os = null;
+        try {
+            os = new BufferedOutputStream(new FileOutputStream(file));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -301,7 +374,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             } else {
                 Glide.with(context)
                         .load(currentPhotoPath)
-                        .override(1000)
                         .into(photoImageView);
                 hasPhoto = true;
             }
@@ -393,8 +465,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     /**
      * Prevent the losing of entered data when screen is rotated
      *
-     * @param outState
-     * Data is stored in bundle to pass it when restored
+     * @param outState Data is stored in bundle to pass it when restored
      */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -438,8 +509,8 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
 
     /**
      * After the screen is rotated, load the data saved in SaveInstanceState
-     * @param savedInstanceState
-     * Bring back the data from bundle
+     *
+     * @param savedInstanceState Bring back the data from bundle
      */
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
@@ -558,8 +629,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     }
 
     /**
-     * @param photoPath
-     * Delete the file located in photoPath
+     * @param photoPath Delete the file located in photoPath
      */
     private void deletePhotoFile(String photoPath) {
         boolean deleteSuccessful = new File(photoPath).delete();

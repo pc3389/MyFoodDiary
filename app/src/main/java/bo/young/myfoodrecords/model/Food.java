@@ -20,6 +20,15 @@ public class Food extends RealmObject {
     private Boolean isFavorite = false;
     private PlaceModel placeModel;
     private String description;
+    private Boolean isFromGallery;
+
+    public Boolean getFromGallery() {
+        return isFromGallery;
+    }
+
+    public void setFromGallery(Boolean fromGallery) {
+        isFromGallery = fromGallery;
+    }
 
     public Food(){}
 

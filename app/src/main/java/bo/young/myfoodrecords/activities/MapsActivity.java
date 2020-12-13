@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import bo.young.myfoodrecords.model.Food;
 import bo.young.myfoodrecords.model.PlaceModel;
 import bo.young.myfoodrecords.adapter.PrivatePlaceAdapter;
+
+import android.example.myfoodrecords.BuildConfig;
 import android.example.myfoodrecords.R;
 import bo.young.myfoodrecords.utils.Constants;
 import bo.young.myfoodrecords.utils.RealmHelper;

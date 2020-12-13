@@ -27,12 +27,12 @@ import io.realm.Realm;
 public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapter.PlaceViewHolder> {
 
     private List<PlaceModel> placeModelList;
-    private static Context context;
+    private Context context;
 
-    private static Activity mActivity;
-    private static PlaceModel placeModel;
-    public static AlertDialog dialog;
-    public static AlertDialog deleteDialog;
+    private Activity mActivity;
+    private PlaceModel placeModel;
+    public AlertDialog dialog;
+    public AlertDialog deleteDialog;
 
 
     public class PlaceViewHolder extends RecyclerView.ViewHolder {
@@ -87,7 +87,7 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
      * Setups the dialog showing the list (Set, Edit, Delete)
      * each items has ClickEvents accordingly
      */
-    public static void setupDialog() {
+    public void setupDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.location_button));
         String[] placeArray = {context.getResources().getString(R.string.select), context.getResources().getString(R.string.edit), context.getResources().getString(R.string.delete)};
@@ -127,7 +127,7 @@ public class PrivatePlaceAdapter extends RecyclerView.Adapter<PrivatePlaceAdapte
      * Opens the dialog asking if the user still wants to delete the file
      * Implemented to prevent the mis-click, and to make sure the user really wants to delete the data
      */
-    public static void setupDeleteDialog() {
+    public void setupDeleteDialog() {
         Realm realm = Realm.getDefaultInstance();
         RealmHelper helper = new RealmHelper(realm);
         int placeId = placeModel.getId();

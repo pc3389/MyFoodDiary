@@ -44,6 +44,8 @@
     <string name="location_not_selected">Please select the location</string>
     <string name="name_not_entered">Please enter the Food Name</string>
     <string name="private_place_title">Private Location</string>
+    <string name="photo_from_gallery">From Gallery</string>
+    <string name="photo_from_camera">Take Picture</string>
 
     <string name="food_title">Foods</string>
     <string name="favorite_title">Favorites</string>

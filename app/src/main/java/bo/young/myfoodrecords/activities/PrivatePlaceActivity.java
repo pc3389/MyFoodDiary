@@ -27,6 +27,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
     private RealmHelper helper;
     private RealmChangeListener realmChangeListener;
     private Context context;
+    private PrivatePlaceAdapter privatePlaceAdapter;
 
     public static final int REQUSET_PRIVATE_PLACE = 11;
 
@@ -53,7 +54,7 @@ public class PrivatePlaceActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         recyclerView = findViewById(R.id.private_address_rc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        PrivatePlaceAdapter privatePlaceAdapter = new PrivatePlaceAdapter(helper.selectAndRetrieveAllPlaces(), this, this);
+        privatePlaceAdapter = new PrivatePlaceAdapter(helper.selectAndRetrieveAllPlaces(), this, this);
         recyclerView.setAdapter(privatePlaceAdapter);
         refresh();
     }
@@ -109,17 +110,17 @@ public class PrivatePlaceActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (PrivatePlaceAdapter.dialog != null) {
-            if (PrivatePlaceAdapter.dialog.isShowing()) {
+        if (privatePlaceAdapter.dialog != null) {
+            if (privatePlaceAdapter.dialog.isShowing()) {
                 outState.putInt(Constants.KEY_INSTANCE_DIALOG, 1);
             }
-            PrivatePlaceAdapter.dialog.hide();
+            privatePlaceAdapter.dialog.hide();
         }
-        if (PrivatePlaceAdapter.deleteDialog != null) {
-            if (PrivatePlaceAdapter.deleteDialog.isShowing()) {
+        if (privatePlaceAdapter.deleteDialog != null) {
+            if (privatePlaceAdapter.deleteDialog.isShowing()) {
                 outState.putInt(Constants.KEY_INSTANCE_DIALOG, 2);
             }
-            PrivatePlaceAdapter.deleteDialog.hide();
+            privatePlaceAdapter.deleteDialog.hide();
         }
         if(deleteAllDialog != null) {
             if(deleteAllDialog.isShowing()) {
@@ -132,10 +133,10 @@ public class PrivatePlaceActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState.getInt(Constants.KEY_INSTANCE_DIALOG) == 1) {
-            PrivatePlaceAdapter.setupDialog();
+            privatePlaceAdapter.setupDialog();
         }
         if (savedInstanceState.getInt(Constants.KEY_INSTANCE_DIALOG) == 2) {
-            PrivatePlaceAdapter.setupDeleteDialog();
+            privatePlaceAdapter.setupDeleteDialog();
         }
         if(savedInstanceState.getInt(Constants.KEY_INSTANCE_DIALOG) == 3) {
             setupDeleteAllDialog();

@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:minHeight="250dp"
-            android:scaleType="fitCenter"
+            android:scaleType="centerCrop"
             android:src="@mipmap/ic_no_food"
             android:transitionName="@string/image_transaction"
             app:layout_constraintEnd_toEndOf="parent"

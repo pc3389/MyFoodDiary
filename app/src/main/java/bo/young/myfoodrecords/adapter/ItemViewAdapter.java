@@ -10,6 +10,7 @@ import bo.young.myfoodrecords.activities.DetailActivity;
 import bo.young.myfoodrecords.model.Food;
 import bo.young.myfoodrecords.utils.Constants;
 
+import android.net.Uri;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +43,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             view = itemView.findViewById(R.id.item_food_layout);
-            foodImageView =itemView.findViewById(R.id.food_pic_iv);
+            foodImageView = itemView.findViewById(R.id.food_pic_iv);
             foodNameTextView = itemView.findViewById(R.id.food_name_tv);
             ratingBar = itemView.findViewById(R.id.food_rating_tv);
             foodDateTextView = itemView.findViewById(R.id.food_date_tv);
@@ -68,12 +69,12 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         final Food food = foodList.get(position);
 
         holder.foodNameTextView.setText(food.getName());
-        if(!food.getFoodType().equals(Constants.NO_TYPE)) {
+        if (!food.getFoodType().equals(Constants.NO_TYPE)) {
             holder.foodTypeTextView.setText(food.getFoodType());
         }
         holder.foodDateTextView.setText(food.getDate());
         holder.ratingBar.setRating(food.getRating());
-        if(food.getPhotoPath() != null) {
+        if (food.getPhotoPath() != null) {
             Glide.with(context)
                     .load(food.getPhotoPath())
                     .into(holder.foodImageView);
@@ -90,8 +91,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra(Constants.KEY_ITEM_FOOD_ID, food.getId());
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity,
-                        Pair.<View, String>create(holder.view, context.getString(R.string.view_transition)),
-                        Pair.<View, String>create(holder.foodImageView, context.getString(R.string.image_transaction))
+                        Pair.<View, String>create(holder.view, context.getString(R.string.view_transition))
                 );
                 context.startActivity(intent, options.toBundle());
             }
@@ -106,8 +106,6 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
             return foodList.size();
         }
     }
-
-
 
 
 }

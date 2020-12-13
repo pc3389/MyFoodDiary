@@ -16,6 +16,7 @@ import bo.young.myfoodrecords.model.PlaceModel;
 import bo.young.myfoodrecords.utils.Constants;
 import bo.young.myfoodrecords.utils.RealmHelper;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -57,6 +58,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView descriptionTextView;
     private ConstraintLayout placeConstraintLayout;
     private String currentPhotoPath = null;
+    private boolean isFromGallery = false;
 
     private AlertDialog deleteDialog;
     private boolean isFavorite;
@@ -66,7 +68,6 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
         setupRealm();
         setupUi();
         refresh();
@@ -199,7 +200,7 @@ public class DetailActivity extends AppCompatActivity {
                 isFavorite = false;
             }
             // Save the food data for automatic update (RealmChangeListener)
-            try(Realm realm = Realm.getDefaultInstance()) {
+            try (Realm realm = Realm.getDefaultInstance()) {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(@NotNull Realm realm) {
@@ -208,8 +209,7 @@ public class DetailActivity extends AppCompatActivity {
                 });
             }
         } else if (id == android.R.id.home) {
-            finish();
-            overridePendingTransition(R.transition.fade_in, R.transition.fade_out);
+            onBackPressed();
             return true;
         } else if (id == R.id.edit_menu) {
             // pass the foodId and start EditorActivity
@@ -233,7 +233,7 @@ public class DetailActivity extends AppCompatActivity {
      */
     private void loadPhoto() {
         if (!isFinishing() && !isDestroyed()) {
-            if (currentPhotoPath == null) {
+             if (currentPhotoPath == null) {
                 Glide.with(context)
                         .load(R.mipmap.ic_no_food)
                         .into(photoImageView);
@@ -303,7 +303,7 @@ public class DetailActivity extends AppCompatActivity {
                 .setMessage(getString(R.string.delete_description))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if (food.getPhotoPath() == null) {
+                        if (food.getPhotoPath() == null || isFromGallery) {
                             helper.deleteFood();
                             finish();
                         } else {
