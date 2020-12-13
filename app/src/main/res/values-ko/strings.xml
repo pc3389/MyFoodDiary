@@ -45,9 +45,17 @@
     <string name="location_not_selected">장소를 선택해 주십시오</string>
     <string name="name_not_entered">음식 이름은 입력되어야 합니다</string>
     <string name="private_place_title">개인 장소</string>
+    <string name="photo_from_gallery">앨범에서 선택</string>
+    <string name="photo_from_camera">사진 촬영</string>
 
     <string name="food_title">음식</string>
     <string name="favorite_title">특별</string>
     <string name="summary_title">통계</string>
     <string name="yelp_title">레스토랑 찾기</string>
+    <string name="view_transition">viewTransition</string>
+    <string name="image_transaction">imageTransition</string>
+    <string name="food_type_restaurant_search">검색</string>
+    <string name="location_restaurant_search">장소</string>
+    <string name="require_name_and_location">검색과 장소가 필요합니다</string>
+
 </resources>
