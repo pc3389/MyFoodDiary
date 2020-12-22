@@ -22,7 +22,7 @@ class RestaurantsAdapter(val context: Context, val restaurants: List<YelpRestaur
         fun bind(restaurant: YelpRestaurants) {
             itemView.restaurant_name_tv.text = restaurant.name
             itemView.restaurant_ratingBar.rating = restaurant.rating.toFloat()
-            val numReview: String = "${restaurant.numReview} Reviews"
+            val numReview = "${restaurant.numReview} Reviews"
             itemView.restaurant_numReview_tv.text = numReview
             itemView.restaurant_address_tv.text = restaurant.location.address
             itemView.restaurant_category_tv.text = restaurant.categories[0].title
