@@ -98,7 +98,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         latLng = new LatLng(43.765, -79.419);
 
-        //TOOD: git test master
+        //TOOD: git test master two
         setupRealm();
         setupUI();
     }
