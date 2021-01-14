@@ -53,6 +53,7 @@ import io.realm.Realm;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPoiClickListener {
 
+    // git test
     private GoogleMap map;
     private Realm realm;
     private RealmHelper helper;
